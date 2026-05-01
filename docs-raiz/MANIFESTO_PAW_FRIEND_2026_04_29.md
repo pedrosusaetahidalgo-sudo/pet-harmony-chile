@@ -251,8 +251,8 @@ México · Argentina · Colombia. Mismo modelo B2B de acceso a la ficha.
 > Manada $9.990 con descuentos exclusivos, soporte prioritario y $2.000
 > mensuales al fondo de refugios. Las marcas grandes — pharma, seguros,
 > retail — pagan por acceso con consent ARCO. El activo es la ficha,
-> no la app. Hecho en Chile por una persona y la IA en 8 meses.
-> Lanzamiento 1 de junio 2026."*
+> no la app. Hecho en Chile por una persona y la IA en 2 meses
+> (febrero–abril 2026). Lanzamiento 1 de junio 2026."*
 
 ---
 
@@ -276,9 +276,9 @@ México · Argentina · Colombia. Mismo modelo B2B de acceso a la ficha.
 > (vet-only, sin layer B2B).*
 >
 > *Construido en Chile por una persona y la IA: 503 commits, 587 tests,
-> 197 migraciones SQL, 42 edge functions en 8 meses. Apalancamiento
-> documentado de 15x output equipo equivalente — moat real difícil de
-> replicar.*
+> 197 migraciones SQL, 42 edge functions en 2 meses (febrero–abril 2026).
+> Apalancamiento documentado de 15x output equipo equivalente — moat real
+> difícil de replicar.*
 >
 > *Lanzamiento 1 junio 2026. Pre-seed USD 150k (CORFO + Start-Up Chile +
 > angel SAFE) para llegar a M$ MRR mes 6 y Series A en mes 12-18 con USD

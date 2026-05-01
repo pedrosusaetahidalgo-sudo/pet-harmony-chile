@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend · Demo data Gobierno · Ley 21.020 + cobertura por barrio</title>
+  <meta name="description" content="Demo ilustrativo de la data que ve un municipio o ente público tras firmar Paw Friend. Cobertura por barrio, % microchip, % vacunas vigentes, alertas zoonosis, reportes SAG. Cifras representativas del cohort target Y1." />
+  <meta name="theme-color" content="#16a34a" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://pawfriend.cl/pitch/demo-gobierno.html" />
+  <link rel="icon" type="image/svg+xml" href="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --gov-50: #f0fdf4; --gov-100: #dcfce7; --gov-200: #bbf7d0;
+      --gov-500: #22c55e; --gov-600: #16a34a; --gov-700: #15803d;
+      --gov-800: #166534; --gov-900: #14532d;
+      --gold: #eab308; --gold-soft: #fef3c7; --gold-dark: #a16207;
+      --emerald: #10b981; --emerald-soft: #d1fae5;
+      --rose: #f43f5e; --rose-soft: #ffe4e6;
+      --amber: #f59e0b; --amber-soft: #fef3c7;
+      --ink: #14532d; --ink-soft: #166534; --ink-faint: #4ade80;
+      --ink-base: #052e16; --ink-base-soft: #166534; --ink-faint2: #86efac;
+      --paper: #f7fef9; --surface: #fff; --surface-alt: #f0fdf4;
+      --border: #bbf7d0;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
+      --radius-lg: 18px; --radius-md: 12px;
+      --shadow-md: 0 8px 30px -10px rgba(22, 163, 74, .18);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: var(--ink-base); background: var(--paper); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .demo-banner { background: linear-gradient(90deg, #fef3c7 0%, #fde68a 50%, #fef3c7 100%); border-bottom: 1px solid rgba(234, 179, 8, .4); padding: 10px 20px; text-align: center; font-size: 12.5px; font-weight: 600; color: #713f12; position: sticky; top: 0; z-index: 50; }
+    .demo-banner strong { background: #eab308; color: #fff; padding: 2px 10px; border-radius: 999px; margin-right: 10px; font-weight: 800; letter-spacing: .08em; font-size: 10.5px; text-transform: uppercase; }
+    header.hero { background: radial-gradient(ellipse 80% 60% at 80% 20%, rgba(234,179,8,.22), transparent 60%), radial-gradient(ellipse 70% 60% at 20% 100%, rgba(34,197,94,.4), transparent 70%), linear-gradient(135deg, var(--gov-900) 0%, var(--gov-700) 50%, var(--gov-500) 100%); color: #fff; padding: 56px 0 80px; position: relative; overflow: hidden; }
+    .hero-tag { display: inline-flex; gap: 8px; align-items: center; padding: 6px 14px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3); border-radius: 999px; font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .dot-live { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 4px rgba(234,179,8,.25); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .7; } }
+    header h1 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: clamp(34px, 5vw, 56px); line-height: 1.05; letter-spacing: -.02em; margin: 20px 0 12px; color: #fff; }
+    header h1 .x { display: inline-block; margin: 0 .15em; font-weight: 300; color: rgba(255,255,255,.6); font-family: 'Plus Jakarta Sans', sans-serif; }
+    header .sub { font-size: 17px; color: rgba(255,255,255,.85); max-width: 660px; line-height: 1.5; }
+    .hero-meta { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 32px; font-size: 13px; }
+    .hero-meta .item { display: flex; flex-direction: column; gap: 2px; }
+    .hero-meta .k { font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+    .hero-meta .v { font-weight: 600; color: #fff; font-size: 14px; }
+    .hero-meta .v strong { color: var(--gold); font-weight: 800; }
+
+    .kpis-wrap { padding-bottom: 36px; }
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: -48px; position: relative; z-index: 3; }
+    @media (max-width: 820px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+    .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 20px 20px; box-shadow: var(--shadow-md); position: relative; overflow: hidden; }
+    .kpi::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--accent, var(--gov-600)); }
+    .kpi-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .kpi-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+    .kpi-spark { width: 52px; height: 18px; }
+    .kpi-value { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 32px; color: var(--ink-base); margin: 4px 0 2px; font-variant-numeric: tabular-nums; }
+    .kpi-delta { font-size: 12px; font-weight: 700; }
+    .delta-up { color: #059669; }
+    .delta-down { color: #dc2626; }
+    .delta-flat { color: var(--ink-base-soft); }
+    .kpi:nth-child(1) { --accent: var(--gov-600); }
+    .kpi:nth-child(2) { --accent: var(--gold); }
+    .kpi:nth-child(3) { --accent: var(--rose); }
+    .kpi:nth-child(4) { --accent: var(--amber); }
+
+    section.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 30px; margin-top: 24px; box-shadow: var(--shadow-md); color: var(--ink-base); }
+    .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 6px; }
+    .panel-eyebrow { font-size: 10.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--gov-700); }
+    section.panel h2 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 26px; line-height: 1.15; letter-spacing: -.015em; color: var(--ink-base); margin: 4px 0 4px; }
+    .panel-sub { font-size: 14.5px; color: var(--ink-base-soft); margin-bottom: 26px; max-width: 720px; }
+    .panel-tag { align-self: center; padding: 4px 10px; background: var(--gov-100); border: 1px solid var(--border); border-radius: 999px; font-size: 11px; font-weight: 700; color: var(--gov-700); letter-spacing: .04em; white-space: nowrap; }
+
+    /* Heatmap por barrio */
+    .heatmap { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+    @media (max-width: 700px) { .heatmap { grid-template-columns: repeat(3, 1fr); } }
+    .heat-cell { aspect-ratio: 1.4; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; color: #fff; position: relative; }
+    .heat-cell .barrio { font-size: 11px; font-weight: 700; line-height: 1.2; }
+    .heat-cell .pct { font-family: 'Fredoka', sans-serif; font-size: 22px; font-weight: 600; line-height: 1; }
+    .heat-cell.h-100 { background: linear-gradient(135deg, #14532d, #166534); }
+    .heat-cell.h-90 { background: linear-gradient(135deg, #15803d, #16a34a); }
+    .heat-cell.h-80 { background: linear-gradient(135deg, #16a34a, #22c55e); }
+    .heat-cell.h-70 { background: linear-gradient(135deg, #65a30d, #84cc16); }
+    .heat-cell.h-60 { background: linear-gradient(135deg, #ca8a04, #eab308); color: #fff; }
+    .heat-cell.h-50 { background: linear-gradient(135deg, #d97706, #f59e0b); }
+    .heat-cell.h-40 { background: linear-gradient(135deg, #c2410c, #ea580c); }
+    .heat-cell.h-30 { background: linear-gradient(135deg, #b91c1c, #dc2626); }
+
+    .heat-legend { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: 12px; color: var(--ink-base-soft); margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+    .heat-legend-item { display: flex; align-items: center; gap: 6px; }
+    .heat-legend-dot { width: 14px; height: 14px; border-radius: 4px; }
+
+    /* Bars compliance */
+    .bars { display: grid; gap: 10px; }
+    .bar-row { display: grid; grid-template-columns: 200px 1fr 80px; gap: 14px; align-items: center; font-size: 13.5px; }
+    @media (max-width: 700px) { .bar-row { grid-template-columns: 1fr; gap: 4px; padding: 8px 0; border-bottom: 1px dashed var(--border); } }
+    .bar-label { font-weight: 600; color: var(--ink-base); }
+    .bar-label small { display: block; font-size: 11px; font-weight: 500; color: var(--ink-base-soft); margin-top: 2px; }
+    .bar-track { height: 26px; background: linear-gradient(90deg, rgba(34,197,94,.06), rgba(34,197,94,.12)); border-radius: 999px; overflow: hidden; position: relative; }
+    .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #4ade80, var(--gov-600)); }
+    .bar-row[data-tone="amber"] .bar-fill { background: linear-gradient(90deg, #fcd34d, #d97706); }
+    .bar-row[data-tone="rose"] .bar-fill { background: linear-gradient(90deg, #fda4af, #dc2626); }
+    .bar-value { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); font-size: 13px; color: var(--gov-700); }
+
+    .alert-card { background: linear-gradient(135deg, var(--rose-soft), #fff); border: 2px solid #fda4af; border-left: 6px solid #dc2626; border-radius: var(--radius-md); padding: 18px 22px; }
+    .alert-card .alert-head { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
+    .alert-card .alert-icon { font-size: 28px; }
+    .alert-card .alert-title { font-family: 'Fredoka', sans-serif; font-size: 18px; color: #991b1b; font-weight: 600; }
+    .alert-card .alert-body { font-size: 13.5px; color: var(--ink-base); line-height: 1.6; }
+    .alert-card .alert-meta { display: flex; gap: 14px; margin-top: 12px; font-size: 12px; color: var(--ink-base-soft); flex-wrap: wrap; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    @media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    @media (max-width: 800px) { .grid-3 { grid-template-columns: 1fr; } }
+
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    table.data-table th { text-align: left; padding: 12px 14px; background: var(--gov-100); color: var(--gov-800); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+    table.data-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+    table.data-table tr:last-child td { border-bottom: none; }
+    table.data-table td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; font-weight: 600; }
+    .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+    .pill-up { background: var(--emerald-soft); color: #047857; }
+    .pill-down { background: var(--rose-soft); color: #be123c; }
+    .pill-flat { background: #f1f5f9; color: #475569; }
+
+    .trend-chart { background: var(--gov-50); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px; }
+    .trend-chart svg { width: 100%; height: 220px; display: block; }
+
+    .ops-card { background: linear-gradient(135deg, var(--gov-50), #fff); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; }
+    .ops-card .icon { font-size: 32px; margin-bottom: 8px; }
+    .ops-card h4 { font-family: 'Fredoka', sans-serif; font-size: 16px; color: var(--ink-base); margin-bottom: 6px; }
+    .ops-card p { font-size: 13px; color: var(--ink-base-soft); line-height: 1.5; }
+    .ops-card .stat { font-family: 'Fredoka', sans-serif; font-size: 28px; color: var(--gov-700); font-weight: 600; margin: 8px 0; line-height: 1; }
+
+    .deliverables { background: linear-gradient(135deg, var(--surface-alt), #fff); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px; margin-top: 22px; }
+    .deliverables h3 { font-family: 'Fredoka', sans-serif; font-size: 22px; color: var(--ink-base); margin-bottom: 6px; }
+    .deliverables .delivery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
+    @media (max-width: 800px) { .deliverables .delivery-grid { grid-template-columns: 1fr; } }
+    .delivery-item { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px 18px; }
+    .delivery-item .icon { font-size: 28px; margin-bottom: 8px; }
+    .delivery-item h4 { font-size: 14px; font-weight: 800; color: var(--ink-base); margin-bottom: 4px; }
+    .delivery-item p { font-size: 12.5px; color: var(--ink-base-soft); line-height: 1.5; }
+
+    .signoff { margin: 40px auto 28px; padding: 36px 32px; background: radial-gradient(ellipse 80% 60% at 80% 0%, rgba(234,179,8,.32), transparent 65%), linear-gradient(135deg, var(--gov-900), var(--gov-700) 60%, var(--gov-500)); color: #fff; border-radius: var(--radius-lg); text-align: center; overflow: hidden; position: relative; }
+    .signoff h3 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: clamp(22px, 3vw, 30px); margin-bottom: 10px; color: #fff; }
+    .signoff p { max-width: 620px; margin: 0 auto 18px; font-size: 14.5px; color: rgba(255,255,255,.9); }
+    .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 12px; font-weight: 800; font-size: 14px; text-decoration: none; transition: transform .15s; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: #fff; color: var(--ink-base); box-shadow: 0 14px 30px rgba(0,0,0,.25); }
+    .btn-secondary { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.3); }
+    .btn-tertiary { background: var(--gold); color: var(--ink-base); }
+    footer { text-align: center; padding: 28px 24px 44px; font-size: 11.5px; color: var(--ink-base-soft); line-height: 1.7; }
+    footer strong { color: var(--ink-base); }
+    footer a { color: var(--gov-700); text-decoration: none; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<div class="demo-banner" role="alert">
+  <strong>DEMO · PRE-LAUNCH</strong>
+  Hoy 0 usuarios públicos · Cifras representativas del cohort target (Y1: 8.000-15.000 pets · 50.000 = goal Y2-Y3) · Lanzamiento Junio 2026 · Modelado con datos sintéticos calibrados a comuna real (Ñuñoa, Providencia, Las Condes pre-pilot)
+</div>
+
+<header class="hero">
+  <div class="container">
+    <span class="hero-tag"><span class="dot-live"></span> Gobierno · Municipio · Reporte mensual</span>
+    <h1>Municipalidad de Ñuñoa<span class="x">×</span>Paw Friend</h1>
+    <p class="sub">Esto es lo que verías mes a mes en tu cuenta partner. Cobertura por barrio, % microchip, % vacunas vigentes, alertas zoonosis, reportes SAG generados automáticamente y operativos planificados con data real.</p>
+    <div class="hero-meta">
+      <div class="item"><span class="k">Período</span><span class="v">01 — 31 Octubre 2026</span></div>
+      <div class="item"><span class="k">Mascotas registradas</span><span class="v"><strong>4.318</strong> · cobertura comunal 38%</span></div>
+      <div class="item"><span class="k">Marco legal</span><span class="v">Ley 21.020 · Reglamento DS N°1007</span></div>
+      <div class="item"><span class="k">Entregado por</span><span class="v">Paw Founder · pawfriendcl@gmail.com</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="container kpis-wrap">
+
+  <div class="kpis">
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">Mascotas registradas</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,16 10,13 20,11 30,8 40,5 52,3" fill="none" stroke="#16a34a" stroke-width="2"/><circle cx="52" cy="3" r="2" fill="#16a34a"/></svg>
+      </div>
+      <div class="kpi-value">4.318</div>
+      <div class="kpi-delta delta-up">▲ 412 en el mes</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">% Microchip</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,12 10,11 20,10 30,8 40,7 52,6" fill="none" stroke="#eab308" stroke-width="2"/><circle cx="52" cy="6" r="2" fill="#eab308"/></svg>
+      </div>
+      <div class="kpi-value">62,3%</div>
+      <div class="kpi-delta delta-up">+8pp vs Q3</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">Vacuna rabia vigente</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,8 10,8 20,7 30,6 40,5 52,4" fill="none" stroke="#dc2626" stroke-width="2"/><circle cx="52" cy="4" r="2" fill="#dc2626"/></svg>
+      </div>
+      <div class="kpi-value">78,1%</div>
+      <div class="kpi-delta delta-up">▲ 4pp · meta legal 80%</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">Esterilización</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,14 10,12 20,10 30,9 40,7 52,5" fill="none" stroke="#f59e0b" stroke-width="2"/><circle cx="52" cy="5" r="2" fill="#f59e0b"/></svg>
+      </div>
+      <div class="kpi-value">54,8%</div>
+      <div class="kpi-delta delta-up">▲ 12pp post-operativo Sep</div>
+    </div>
+  </div>
+
+  <!-- 1. COBERTURA POR BARRIO -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">01 · Mapa de cobertura por barrio</div>
+        <h2>% de mascotas registradas por sector</h2>
+      </div>
+      <span class="panel-tag">Heatmap · Octubre 2026</span>
+    </div>
+    <p class="panel-sub">Cobertura calculada como mascotas registradas en Paw Friend / hogares con mascota estimados (encuesta Casen 2022 · 50,2% hogares Ñuñoa). Barrios con cobertura <50% son priorizables para próximo operativo.</p>
+
+    <div class="heatmap">
+      <div class="heat-cell h-90"><span class="barrio">Plaza Egaña</span><span class="pct">88%</span></div>
+      <div class="heat-cell h-80"><span class="barrio">Suecia</span><span class="pct">82%</span></div>
+      <div class="heat-cell h-80"><span class="barrio">Sucre</span><span class="pct">78%</span></div>
+      <div class="heat-cell h-70"><span class="barrio">Irarrázaval</span><span class="pct">71%</span></div>
+      <div class="heat-cell h-70"><span class="barrio">Bilbao</span><span class="pct">68%</span></div>
+      <div class="heat-cell h-60"><span class="barrio">Pedro de Valdivia</span><span class="pct">62%</span></div>
+      <div class="heat-cell h-60"><span class="barrio">Salvador</span><span class="pct">58%</span></div>
+      <div class="heat-cell h-50"><span class="barrio">Grecia</span><span class="pct">52%</span></div>
+      <div class="heat-cell h-50"><span class="barrio">Tobalaba norte</span><span class="pct">48%</span></div>
+      <div class="heat-cell h-40"><span class="barrio">El Aguilucho</span><span class="pct">42%</span></div>
+      <div class="heat-cell h-40"><span class="barrio">Chile-España</span><span class="pct">38%</span></div>
+      <div class="heat-cell h-30"><span class="barrio">Villa Frei</span><span class="pct">28%</span></div>
+    </div>
+
+    <div class="heat-legend">
+      <div class="heat-legend-item"><span class="heat-legend-dot" style="background: #14532d;"></span><span>Excelente (80%+)</span></div>
+      <div class="heat-legend-item"><span class="heat-legend-dot" style="background: #65a30d;"></span><span>Bueno (60-80%)</span></div>
+      <div class="heat-legend-item"><span class="heat-legend-dot" style="background: #d97706;"></span><span>Medio (40-60%)</span></div>
+      <div class="heat-legend-item"><span class="heat-legend-dot" style="background: #b91c1c;"></span><span>Crítico (&lt;40%)</span></div>
+    </div>
+  </section>
+
+  <!-- 2. COMPLIANCE LEY 21.020 -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">02 · Cumplimiento Ley 21.020</div>
+        <h2>Microchip · vacuna · esterilización por categoría</h2>
+      </div>
+      <span class="panel-tag">n=4.318 mascotas</span>
+    </div>
+    <p class="panel-sub">Las 3 obligaciones legales de la Ley de Tenencia Responsable de Mascotas (microchip + vacuna antirrábica anual + esterilización por categoría considerada potencialmente peligrosa).</p>
+
+    <div class="bars">
+      <div class="bar-row"><div class="bar-label">Microchip implantado<small>obligación Art. 4 · trigger SAG si <50%</small></div><div class="bar-track"><div class="bar-fill" style="width: 62%;"></div></div><span class="bar-value">62,3%</span></div>
+      <div class="bar-row"><div class="bar-label">Microchip + registro municipal<small>cruzado con Sistema Registro Mascota</small></div><div class="bar-track"><div class="bar-fill" style="width: 47%;"></div></div><span class="bar-value">47,8%</span></div>
+      <div class="bar-row"><div class="bar-label">Vacuna antirrábica vigente<small>protocolo MINSAL · meta 80%</small></div><div class="bar-track"><div class="bar-fill" style="width: 78%;"></div></div><span class="bar-value">78,1%</span></div>
+      <div class="bar-row"><div class="bar-label">Vacuna séxtuple/triple felina<small>opcional · cobertura indicativa</small></div><div class="bar-track"><div class="bar-fill" style="width: 71%;"></div></div><span class="bar-value">71,4%</span></div>
+      <div class="bar-row" data-tone="amber"><div class="bar-label">Esterilización general<small>meta operativos vouchers gratuitos</small></div><div class="bar-track"><div class="bar-fill" style="width: 55%;"></div></div><span class="bar-value">54,8%</span></div>
+      <div class="bar-row" data-tone="rose"><div class="bar-label">Razas potencialmente peligrosas<small>Art. 8 · obligación esterilización</small></div><div class="bar-track"><div class="bar-fill" style="width: 38%;"></div></div><span class="bar-value">38,1%</span></div>
+      <div class="bar-row" data-tone="amber"><div class="bar-label">Antiparasitario interno al día<small>indicador zoonosis (toxocara)</small></div><div class="bar-track"><div class="bar-fill" style="width: 64%;"></div></div><span class="bar-value">64,2%</span></div>
+    </div>
+  </section>
+
+  <!-- 3. ALERTAS ZOONOSIS -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">03 · Alertas zoonosis · Q3 2026</div>
+        <h2>Casos notificados en la comuna · trazabilidad</h2>
+      </div>
+      <span class="panel-tag">3 alertas en último trimestre</span>
+    </div>
+    <p class="panel-sub">Casos detectados en la ficha clínica vet (con consentimiento explícito del dueño para reporte sanitario agregado). El sistema notifica automáticamente al Departamento de Salud Municipal y al SAG cuando se cruza el threshold legal.</p>
+
+    <div style="display: grid; gap: 14px;">
+      <div class="alert-card">
+        <div class="alert-head"><span class="alert-icon">⚠️</span><span class="alert-title">3 casos rabia notificados · Q3 2026</span></div>
+        <div class="alert-body">3 quirópteros (murciélagos) positivos a virus rabia silvestre detectados por SEREMI RM. Aumento brigadas de vacunación en zonas afectadas. Cobertura de vacunación rabia post-alerta subió 4pp comuna.</div>
+        <div class="alert-meta"><span><strong>Reporte SAG:</strong> generado automáticamente</span><span><strong>SEREMI Salud RM:</strong> notificado el 12-Sep</span><span><strong>Status:</strong> contenido</span></div>
+      </div>
+      <div class="alert-card" style="border-left-color: #d97706; background: linear-gradient(135deg, var(--amber-soft), #fff); border-color: #fcd34d;">
+        <div class="alert-head"><span class="alert-icon">🦠</span><span class="alert-title" style="color: #92400e;">Cluster Parvovirus canino · Villa Frei</span></div>
+        <div class="alert-body">12 casos parvovirus canino registrados en Villa Frei en 30 días (vs baseline 2/mes). Cluster confirmado. Operativo de vacunación antiparvovirus gratuito agendado 18-Oct.</div>
+        <div class="alert-meta"><span><strong>Detectado por:</strong> 4 vets de la comuna</span><span><strong>Operativo agendado:</strong> 18-Oct, Plaza Villa Frei</span><span><strong>Status:</strong> en respuesta</span></div>
+      </div>
+      <div class="alert-card" style="border-left-color: var(--gov-700); background: linear-gradient(135deg, var(--gov-50), #fff); border-color: var(--gov-200);">
+        <div class="alert-head"><span class="alert-icon">✅</span><span class="alert-title" style="color: var(--gov-800);">Cluster sarna sarcóptica · Sucre · CERRADO</span></div>
+        <div class="alert-body">8 casos sarna sarcóptica detectados Jul-Ago en Sucre. Operativo desparasitación gratuito 28-Ago resolvió el cluster. Sin nuevos casos en 60 días → CERRADO.</div>
+        <div class="alert-meta"><span><strong>Resuelto:</strong> 28-Sep</span><span><strong>Tratamientos aplicados:</strong> 142</span><span><strong>Costo operativo:</strong> $1.870.000</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. REPORTES SAG -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">04 · Reportes SAG generados</div>
+        <h2>Cumplimiento automático del reporte estadístico mensual</h2>
+      </div>
+      <span class="panel-tag">Auto-generación · CSV + PDF firmado</span>
+    </div>
+    <p class="panel-sub">Exportes en formato CSV listos para subir al portal del SAG (Sistema Registro Mascotas) y PDF firmado para entrega oficial. Refresh diario, pero el reporte legal se cierra el 1° hábil del mes siguiente.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Reporte</th><th>Período</th><th>Status</th><th>Mascotas incluidas</th><th>Acción</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Estadístico mensual SAG · Octubre</td><td>01–31 Oct 2026</td><td><span class="pill pill-up">Listo</span></td><td class="num">4.318</td><td>Descargar CSV + PDF</td></tr>
+        <tr><td>Estadístico mensual SAG · Septiembre</td><td>01–30 Sep 2026</td><td><span class="pill pill-up">Enviado</span></td><td class="num">3.906</td><td>Ver acuse SAG</td></tr>
+        <tr><td>Reporte zoonosis trimestral · Q3</td><td>Jul–Sep 2026</td><td><span class="pill pill-up">Enviado</span></td><td class="num">3.906</td><td>Ver acuse SEREMI</td></tr>
+        <tr><td>Notificación rabia · Caso 2026-Q3</td><td>15-Sep-2026</td><td><span class="pill pill-up">Enviado</span></td><td class="num">3</td><td>Ver acuse SAG</td></tr>
+        <tr><td>Padrón razas peligrosas · Art. 8</td><td>Mensual</td><td><span class="pill pill-flat">Pendiente refresh</span></td><td class="num">182</td><td>Generar ahora</td></tr>
+      </tbody>
+    </table>
+
+    <div style="background: var(--gov-100); border-left: 4px solid var(--gov-600); padding: 14px 16px; border-radius: 8px; margin-top: 22px; font-size: 13.5px; color: var(--gov-800);">
+      <strong>Auditoría legal:</strong> el sistema mantiene log inmutable de cada reporte enviado al SAG (timestamp + hash SHA-256 + acuse). Cumple con artículo 17 Ley 21.020 sobre obligación de reporte estadístico.
+    </div>
+  </section>
+
+  <!-- 5. OPERATIVOS PLANIFICADOS -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">05 · Operativos planificados con data</div>
+        <h2>Dónde llevar los próximos vouchers gratuitos</h2>
+      </div>
+      <span class="panel-tag">Priorización por gap de cobertura</span>
+    </div>
+    <p class="panel-sub">Combinamos cobertura por barrio + cluster zoonosis + brecha por categoría legal para sugerir el barrio con mayor impacto marginal por peso invertido. Te entregamos la planificación lista para ejecutar.</p>
+
+    <div class="grid-3">
+      <div class="ops-card">
+        <div class="icon">📍</div>
+        <h4>Operativo #1 · Villa Frei</h4>
+        <div class="stat">$8,2M</div>
+        <p><strong>Razón:</strong> cobertura 28% (más bajo) · cluster parvovirus activo. <strong>Servicios:</strong> vacuna séxtuple + antirrábica + microchip gratuito. <strong>Proyección:</strong> +180 mascotas registradas (cobertura comuna +1pp).</p>
+      </div>
+      <div class="ops-card">
+        <div class="icon">📍</div>
+        <h4>Operativo #2 · Chile-España</h4>
+        <div class="stat">$5,4M</div>
+        <p><strong>Razón:</strong> cobertura 38% · 24 razas peligrosas sin esterilizar. <strong>Servicios:</strong> esterilización canina + microchip + ficha digital. <strong>Proyección:</strong> +80 mascotas registradas + compliance Art. 8.</p>
+      </div>
+      <div class="ops-card">
+        <div class="icon">📍</div>
+        <h4>Operativo #3 · El Aguilucho</h4>
+        <div class="stat">$4,8M</div>
+        <p><strong>Razón:</strong> cobertura 42% · adherencia rabia bajo media. <strong>Servicios:</strong> vacuna antirrábica masiva + chequeo general. <strong>Proyección:</strong> +60 mascotas registradas + compliance vacunal +6pp barrio.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. TREND -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">06 · Trend mensual</div>
+        <h2>Mascotas registradas · serie 12 meses</h2>
+      </div>
+      <span class="panel-tag">Refresh diario</span>
+    </div>
+    <p class="panel-sub">Crecimiento mensual de mascotas registradas en la comuna. Permite proyectar cuándo se alcanza la meta legal del 80% de cobertura comunal estimada (Ley 21.020 Art. 11 reglamento).</p>
+
+    <div class="trend-chart">
+      <svg viewBox="0 0 600 220" preserveAspectRatio="none">
+        <line x1="0" y1="200" x2="600" y2="200" stroke="#bbf7d0" stroke-width="1"/>
+        <line x1="0" y1="160" x2="600" y2="160" stroke="#bbf7d0" stroke-width="1" stroke-dasharray="4 4"/>
+        <line x1="0" y1="120" x2="600" y2="120" stroke="#bbf7d0" stroke-width="1" stroke-dasharray="4 4"/>
+        <line x1="0" y1="80" x2="600" y2="80" stroke="#bbf7d0" stroke-width="1" stroke-dasharray="4 4"/>
+        <line x1="0" y1="40" x2="600" y2="40" stroke="#bbf7d0" stroke-width="1" stroke-dasharray="4 4"/>
+        <text x="0" y="38" font-size="11" fill="#166534" font-weight="700">5000 mascotas</text>
+        <text x="0" y="118" font-size="11" fill="#166534" font-weight="700">3000</text>
+        <text x="0" y="198" font-size="11" fill="#166534" font-weight="700">1000</text>
+
+        <polyline points="20,182 70,176 120,168 170,156 220,142 270,128 320,116 370,100 420,84 470,66 520,50 570,32"
+          fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline points="20,182 70,176 120,168 170,156 220,142 270,128 320,116 370,100 420,84 470,66 520,50 570,32 600,32 600,200 20,200"
+          fill="url(#gradGov)"/>
+        <defs>
+          <linearGradient id="gradGov" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#16a34a" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#16a34a" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+
+        <circle cx="20" cy="182" r="4" fill="#16a34a"/>
+        <circle cx="320" cy="116" r="4" fill="#16a34a"/>
+        <circle cx="570" cy="32" r="5" fill="#fff" stroke="#16a34a" stroke-width="3"/>
+
+        <text x="20" y="216" text-anchor="middle" font-size="10" fill="#166534">Nov-25</text>
+        <text x="170" y="216" text-anchor="middle" font-size="10" fill="#166534">Feb-26</text>
+        <text x="320" y="216" text-anchor="middle" font-size="10" fill="#166534">May-26</text>
+        <text x="470" y="216" text-anchor="middle" font-size="10" fill="#166534">Ago-26</text>
+        <text x="570" y="20" text-anchor="middle" font-size="11" font-weight="800" fill="#15803d">4.318 ▲</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- DELIVERABLES -->
+  <div class="deliverables">
+    <h3>Esta data se entrega así</h3>
+    <p style="font-size: 14px; color: var(--ink-base-soft);">Tres canales auditables, con SLA mensual + cumplimiento legal del reporte SAG.</p>
+    <div class="delivery-grid">
+      <div class="delivery-item"><div class="icon">🏛️</div><h4>Dashboard municipal</h4><p>Esto que estás viendo, en vivo, para tu departamento de salud + tenencia responsable. Filtros por barrio + categoría.</p></div>
+      <div class="delivery-item"><div class="icon">📑</div><h4>Reportes SAG auto</h4><p>CSV + PDF firmado listos para subir al portal SAG. Cumplimiento Ley 21.020 sin trabajo manual del equipo.</p></div>
+      <div class="delivery-item"><div class="icon">🔌</div><h4>API integración municipal</h4><p>Sync con tu Sistema Registro Mascota actual (export CSV o API) + webhook de alertas zoonosis a tu equipo.</p></div>
+    </div>
+  </div>
+
+  <!-- SIGNOFF -->
+  <div class="signoff">
+    <h3>¿Vale la pena que lo veamos juntos 30 minutos?</h3>
+    <p>Te muestro el dashboard live de un cohort real (anonimizado) de tu comuna, revisamos qué barrios tienen mayor brecha y discutimos un piloto Q3 alineado con tu plan operativo de tenencia responsable.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://pawfriend.cl/aplicar?tipo=gobierno_municipio&from=demo-gobierno" target="_blank" rel="noopener">📅 Agendar 30 min · Founder Partner</a>
+      <a class="btn btn-tertiary" href="https://pawfriend.cl/pitch/gobierno.html" target="_blank" rel="noopener">📑 Ver pitch deck completo</a>
+      <a class="btn btn-secondary" href="https://pawfriend.cl" target="_blank" rel="noopener">🌐 Ver app en vivo</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <strong>SpA SUSAETA GARNHAM SOFTWARE ENGINEERING</strong> · RUT 78.328.659-9 · Pedro Susaeta, founder<br>
+  ✉️ <a href="mailto:pawfriendcl@gmail.com">pawfriendcl@gmail.com</a> · 📱 WhatsApp <a href="https://wa.me/56982092588" target="_blank" rel="noopener">+56 9 8209 2588</a> · 🌐 <a href="https://pawfriend.cl" target="_blank" rel="noopener">pawfriend.cl</a><br>
+  <span style="opacity: .65;">Datos representativos del Y1 target · cohort real disponible Q3 2026 · Lanzamiento app Junio 2026</span>
+</footer>
+
+</body>
+</html>

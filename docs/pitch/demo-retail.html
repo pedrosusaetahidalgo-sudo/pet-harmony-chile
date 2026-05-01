@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend · Demo data Retail · Catálogo contextual + clicks + AOV</title>
+  <meta name="description" content="Demo ilustrativo de la data que ve un retail pet tras firmar Paw Friend. Top SKUs por raza, click-through por categoría, replenish cycle, AOV por segmento, attribution mensual. Cifras representativas del cohort target Y1." />
+  <meta name="theme-color" content="#f97316" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://pawfriend.cl/pitch/demo-retail.html" />
+  <link rel="icon" type="image/svg+xml" href="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --retail-50: #fff7ed; --retail-100: #ffedd5; --retail-200: #fed7aa;
+      --retail-500: #f97316; --retail-600: #ea580c; --retail-700: #c2410c;
+      --retail-800: #9a3412; --retail-900: #7c2d12;
+      --gold: #eab308; --gold-soft: #fef3c7; --gold-dark: #a16207;
+      --emerald: #10b981; --emerald-soft: #d1fae5;
+      --rose: #f43f5e; --rose-soft: #ffe4e6;
+      --brand-600: #9333ea; --brand-700: #7e22ce;
+      --ink: #1c1917; --ink-soft: #57534e; --ink-faint: #a8a29e;
+      --paper: #fff8f1; --surface: #fff; --surface-alt: #fff7ed;
+      --border: #fed7aa;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
+      --radius-lg: 18px; --radius-md: 12px;
+      --shadow-md: 0 8px 30px -10px rgba(234, 88, 12, .18);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .demo-banner { background: linear-gradient(90deg, #fef3c7 0%, #fde68a 50%, #fef3c7 100%); border-bottom: 1px solid rgba(234, 179, 8, .4); padding: 10px 20px; text-align: center; font-size: 12.5px; font-weight: 600; color: #713f12; position: sticky; top: 0; z-index: 50; }
+    .demo-banner strong { background: #eab308; color: #fff; padding: 2px 10px; border-radius: 999px; margin-right: 10px; font-weight: 800; letter-spacing: .08em; font-size: 10.5px; text-transform: uppercase; }
+    header.hero { background: radial-gradient(ellipse 80% 60% at 80% 20%, rgba(234,179,8,.28), transparent 60%), radial-gradient(ellipse 70% 60% at 20% 100%, rgba(249,115,22,.45), transparent 70%), linear-gradient(135deg, var(--retail-900) 0%, var(--retail-700) 50%, var(--retail-500) 100%); color: #fff; padding: 56px 0 80px; position: relative; overflow: hidden; }
+    .hero-tag { display: inline-flex; gap: 8px; align-items: center; padding: 6px 14px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3); border-radius: 999px; font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .dot-live { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 4px rgba(234,179,8,.25); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .7; } }
+    header h1 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: clamp(34px, 5vw, 56px); line-height: 1.05; letter-spacing: -.02em; margin: 20px 0 12px; }
+    header h1 .x { display: inline-block; margin: 0 .15em; font-weight: 300; color: rgba(255,255,255,.6); font-family: 'Plus Jakarta Sans', sans-serif; }
+    header .sub { font-size: 17px; color: rgba(255,255,255,.85); max-width: 660px; line-height: 1.5; }
+    .hero-meta { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 32px; font-size: 13px; }
+    .hero-meta .item { display: flex; flex-direction: column; gap: 2px; }
+    .hero-meta .k { font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+    .hero-meta .v { font-weight: 600; color: #fff; font-size: 14px; }
+    .hero-meta .v strong { color: var(--gold); font-weight: 800; }
+
+    .kpis-wrap { padding-bottom: 36px; }
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: -48px; position: relative; z-index: 3; }
+    @media (max-width: 820px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+    .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 20px 20px; box-shadow: var(--shadow-md); position: relative; overflow: hidden; }
+    .kpi::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--accent, var(--retail-600)); }
+    .kpi-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .kpi-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+    .kpi-spark { width: 52px; height: 18px; }
+    .kpi-value { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 30px; color: var(--ink); margin: 4px 0 2px; font-variant-numeric: tabular-nums; }
+    .kpi-delta { font-size: 12px; font-weight: 700; }
+    .delta-up { color: #059669; }
+    .delta-down { color: #dc2626; }
+    .kpi:nth-child(1) { --accent: var(--retail-600); }
+    .kpi:nth-child(2) { --accent: var(--gold); }
+    .kpi:nth-child(3) { --accent: var(--emerald); }
+    .kpi:nth-child(4) { --accent: var(--brand-600); }
+
+    section.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 30px; margin-top: 24px; box-shadow: var(--shadow-md); }
+    .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 6px; }
+    .panel-eyebrow { font-size: 10.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--retail-700); }
+    section.panel h2 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 26px; line-height: 1.15; letter-spacing: -.015em; color: var(--ink); margin: 4px 0 4px; }
+    .panel-sub { font-size: 14.5px; color: var(--ink-soft); margin-bottom: 26px; max-width: 720px; }
+    .panel-tag { align-self: center; padding: 4px 10px; background: var(--retail-100); border: 1px solid var(--border); border-radius: 999px; font-size: 11px; font-weight: 700; color: var(--retail-700); letter-spacing: .04em; white-space: nowrap; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    @media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    @media (max-width: 800px) { .grid-3 { grid-template-columns: 1fr; } }
+
+    /* SKU cards */
+    .sku-card { background: linear-gradient(135deg, #fff, var(--retail-50)); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; }
+    .sku-card .breed { font-size: 11px; font-weight: 800; color: var(--retail-700); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+    .sku-card .sku-name { font-weight: 700; font-size: 14px; color: var(--ink); }
+    .sku-card .sku-meta { font-size: 12px; color: var(--ink-soft); margin: 4px 0 8px; }
+    .sku-card .stat-row { display: flex; gap: 14px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .sku-card .stat { font-size: 11.5px; }
+    .sku-card .stat strong { font-family: 'Fredoka', sans-serif; font-size: 18px; color: var(--retail-700); display: block; line-height: 1; }
+
+    /* Bars */
+    .bars { display: grid; gap: 10px; }
+    .bar-row { display: grid; grid-template-columns: 200px 1fr 100px; gap: 14px; align-items: center; font-size: 13.5px; }
+    @media (max-width: 700px) { .bar-row { grid-template-columns: 1fr; gap: 4px; padding: 8px 0; border-bottom: 1px dashed var(--border); } }
+    .bar-label { font-weight: 600; color: var(--ink); }
+    .bar-label small { display: block; font-size: 11px; font-weight: 500; color: var(--ink-faint); margin-top: 2px; }
+    .bar-track { height: 26px; background: linear-gradient(90deg, rgba(249,115,22,.06), rgba(249,115,22,.12)); border-radius: 999px; overflow: hidden; position: relative; }
+    .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #fdba74, var(--retail-600)); }
+    .bar-value { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); font-size: 13px; color: var(--retail-800); }
+
+    /* Replenish cycle */
+    .cycle-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    @media (max-width: 800px) { .cycle-grid { grid-template-columns: repeat(2, 1fr); } }
+    .cycle-card { background: linear-gradient(135deg, var(--retail-50), #fff); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 16px; text-align: center; }
+    .cycle-card .icon { font-size: 28px; margin-bottom: 6px; }
+    .cycle-card .days { font-family: 'Fredoka', sans-serif; font-size: 32px; color: var(--retail-700); font-weight: 600; line-height: 1; }
+    .cycle-card .days small { display: block; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; color: var(--ink-soft); font-weight: 500; margin-top: 4px; }
+    .cycle-card .cat { font-size: 12.5px; font-weight: 700; color: var(--ink); margin-top: 8px; }
+
+    /* AOV by segment */
+    .aov-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    @media (max-width: 900px) { .aov-grid { grid-template-columns: repeat(2, 1fr); } }
+    .aov-card { padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border); }
+    .aov-card.t1 { background: linear-gradient(135deg, var(--retail-50), #fff); }
+    .aov-card.t2 { background: linear-gradient(135deg, #fef3c7, #fff); border-color: #fbbf24; }
+    .aov-card.t3 { background: linear-gradient(135deg, #ddd6fe, #fff); border-color: #c4b5fd; }
+    .aov-card.t4 { background: linear-gradient(135deg, var(--emerald-soft), #fff); border-color: #6ee7b7; }
+    .aov-card .label { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 6px; }
+    .aov-card .num { font-family: 'Fredoka', sans-serif; font-size: 30px; font-weight: 600; line-height: 1; color: var(--ink); }
+    .aov-card .desc { font-size: 12.5px; color: var(--ink-soft); margin-top: 8px; line-height: 1.4; }
+
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    table.data-table th { text-align: left; padding: 12px 14px; background: var(--retail-100); color: var(--retail-800); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+    table.data-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+    table.data-table tr:last-child td { border-bottom: none; }
+    table.data-table td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; font-weight: 600; }
+    .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+    .pill-up { background: var(--emerald-soft); color: #047857; }
+    .pill-down { background: var(--rose-soft); color: #be123c; }
+    .pill-flat { background: #f1f5f9; color: #475569; }
+
+    /* Cart abandonment */
+    .abandon-row { display: grid; grid-template-columns: 1fr 80px 80px 100px; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .abandon-row:last-child { border-bottom: none; }
+    .abandon-row .sku { font-weight: 700; }
+    .abandon-row .meta { font-size: 11.5px; color: var(--ink-soft); margin-top: 2px; }
+    .abandon-row .num { font-family: var(--mono); font-weight: 700; text-align: right; }
+
+    .deliverables { background: linear-gradient(135deg, var(--surface-alt), #fff); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px; margin-top: 22px; }
+    .deliverables h3 { font-family: 'Fredoka', sans-serif; font-size: 22px; color: var(--ink); margin-bottom: 6px; }
+    .deliverables .delivery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
+    @media (max-width: 800px) { .deliverables .delivery-grid { grid-template-columns: 1fr; } }
+    .delivery-item { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px 18px; }
+    .delivery-item .icon { font-size: 28px; margin-bottom: 8px; }
+    .delivery-item h4 { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+    .delivery-item p { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
+
+    .signoff { margin: 40px auto 28px; padding: 36px 32px; background: radial-gradient(ellipse 80% 60% at 80% 0%, rgba(234,179,8,.32), transparent 65%), linear-gradient(135deg, var(--retail-900), var(--retail-700) 60%, var(--retail-500)); color: #fff; border-radius: var(--radius-lg); text-align: center; overflow: hidden; position: relative; }
+    .signoff h3 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: clamp(22px, 3vw, 30px); margin-bottom: 10px; }
+    .signoff p { max-width: 620px; margin: 0 auto 18px; font-size: 14.5px; color: rgba(255,255,255,.9); }
+    .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 12px; font-weight: 800; font-size: 14px; text-decoration: none; transition: transform .15s; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: #fff; color: var(--ink); box-shadow: 0 14px 30px rgba(0,0,0,.25); }
+    .btn-secondary { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.3); }
+    .btn-tertiary { background: var(--gold); color: var(--ink); }
+    footer { text-align: center; padding: 28px 24px 44px; font-size: 11.5px; color: var(--ink-faint); line-height: 1.7; }
+    footer strong { color: var(--ink-soft); }
+    footer a { color: var(--retail-700); text-decoration: none; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<div class="demo-banner" role="alert">
+  <strong>DEMO · PRE-LAUNCH</strong>
+  Hoy 0 usuarios públicos · Cifras representativas del cohort target (Y1: 8.000-15.000 pets · 50.000 = goal Y2-Y3) · Lanzamiento Junio 2026 · Modelado con datos sintéticos basados en literatura de retail pet (NRF Pet Product Trends 2024, Euromonitor pet category Chile)
+</div>
+
+<header class="hero">
+  <div class="container">
+    <span class="hero-tag"><span class="dot-live"></span> Retail · Dashboard mensual</span>
+    <h1>Master Dog<span class="x">×</span>Paw Friend</h1>
+    <p class="sub">Esto es lo que verías mes a mes en tu cuenta partner. Top SKUs por raza, click-through por categoría, replenish cycle predictivo, AOV por segmento, attribution mensual. Para que stockees lo que el cohort va a comprar, no lo que adivinaste.</p>
+    <div class="hero-meta">
+      <div class="item"><span class="k">Período</span><span class="v">01 — 31 Octubre 2026</span></div>
+      <div class="item"><span class="k">Cohort comprador</span><span class="v"><strong>3.847</strong> pets activos en /tienda</span></div>
+      <div class="item"><span class="k">SKUs trackeados</span><span class="v">128 SKUs en 6 categorías</span></div>
+      <div class="item"><span class="k">Entregado por</span><span class="v">Paw Founder · pawfriendcl@gmail.com</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="container kpis-wrap">
+
+  <div class="kpis">
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">Clicks atribuidos</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,16 10,13 20,11 30,8 40,5 52,3" fill="none" stroke="#ea580c" stroke-width="2"/><circle cx="52" cy="3" r="2" fill="#ea580c"/></svg>
+      </div>
+      <div class="kpi-value">12.847</div>
+      <div class="kpi-delta delta-up">▲ 24% MoM</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">Conversion → cart</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,12 10,11 20,10 30,9 40,8 52,6" fill="none" stroke="#eab308" stroke-width="2"/><circle cx="52" cy="6" r="2" fill="#eab308"/></svg>
+      </div>
+      <div class="kpi-value">11,8%</div>
+      <div class="kpi-delta delta-up">vs 4,2% display estándar</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">AOV cohort</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,14 10,12 20,10 30,8 40,7 52,5" fill="none" stroke="#10b981" stroke-width="2"/><circle cx="52" cy="5" r="2" fill="#10b981"/></svg>
+      </div>
+      <div class="kpi-value">$48.300</div>
+      <div class="kpi-delta delta-up">+18% vs cliente walk-in</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">Paw Member discount</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,15 10,12 20,9 30,7 40,5 52,3" fill="none" stroke="#9333ea" stroke-width="2"/><circle cx="52" cy="3" r="2" fill="#9333ea"/></svg>
+      </div>
+      <div class="kpi-value">42,1%</div>
+      <div class="kpi-delta delta-up">de los carts activan el descuento</div>
+    </div>
+  </div>
+
+  <!-- 1. TOP SKUs BY BREED -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">01 · Top SKUs por raza</div>
+        <h2>Lo que el cohort de cada raza compra de verdad</h2>
+      </div>
+      <span class="panel-tag">6 razas · top SKU mostrado</span>
+    </div>
+    <p class="panel-sub">Cuando un dueño abre <code style="font-family: var(--mono); font-size: 12px; background: var(--retail-100); padding: 2px 8px; border-radius: 6px; color: var(--retail-700);">/tienda/:petId/master-dog</code>, el catálogo está pre-filtrado por raza, edad, peso y condiciones. Esto es lo más comprado por raza en el cohort:</p>
+
+    <div class="grid-3">
+      <div class="sku-card">
+        <div class="breed">Pastor Alemán adulto</div>
+        <div class="sku-name">Royal Canin German Shepherd Adult 12kg</div>
+        <div class="sku-meta">Alimento large breed · digestivo + articular</div>
+        <div class="stat-row">
+          <div class="stat">Pets compradores<strong>312</strong></div>
+          <div class="stat">CTR cohort<strong>14,2%</strong></div>
+          <div class="stat">AOV ticket<strong>$58k</strong></div>
+        </div>
+      </div>
+      <div class="sku-card">
+        <div class="breed">Bulldog Francés</div>
+        <div class="sku-name">Hill's Science Diet Small &amp; Mini Adult 7kg</div>
+        <div class="sku-meta">Alimento razas pequeñas + control peso</div>
+        <div class="stat-row">
+          <div class="stat">Pets compradores<strong>284</strong></div>
+          <div class="stat">CTR cohort<strong>18,7%</strong></div>
+          <div class="stat">AOV ticket<strong>$45k</strong></div>
+        </div>
+      </div>
+      <div class="sku-card">
+        <div class="breed">Labrador adulto</div>
+        <div class="sku-name">Pro Plan Sport All Sizes Performance 15kg</div>
+        <div class="sku-meta">Alimento alta energía + control peso</div>
+        <div class="stat-row">
+          <div class="stat">Pets compradores<strong>421</strong></div>
+          <div class="stat">CTR cohort<strong>11,4%</strong></div>
+          <div class="stat">AOV ticket<strong>$52k</strong></div>
+        </div>
+      </div>
+      <div class="sku-card">
+        <div class="breed">Mestizo grande adulto</div>
+        <div class="sku-name">Master Dog Premium Adultos Razas Grandes 22kg</div>
+        <div class="sku-meta">Alimento value · marca propia</div>
+        <div class="stat-row">
+          <div class="stat">Pets compradores<strong>587</strong></div>
+          <div class="stat">CTR cohort<strong>9,8%</strong></div>
+          <div class="stat">AOV ticket<strong>$32k</strong></div>
+        </div>
+      </div>
+      <div class="sku-card">
+        <div class="breed">Cachorro 0–6 meses</div>
+        <div class="sku-name">Royal Canin Maxi Puppy 15kg</div>
+        <div class="sku-meta">Alimento crecimiento + inmunidad</div>
+        <div class="stat-row">
+          <div class="stat">Pets compradores<strong>198</strong></div>
+          <div class="stat">CTR cohort<strong>22,1%</strong></div>
+          <div class="stat">AOV ticket<strong>$42k</strong></div>
+        </div>
+      </div>
+      <div class="sku-card">
+        <div class="breed">Gato adulto común</div>
+        <div class="sku-name">Whiskas Adulto Carne 10kg</div>
+        <div class="sku-meta">Alimento value gato adulto</div>
+        <div class="stat-row">
+          <div class="stat">Pets compradores<strong>342</strong></div>
+          <div class="stat">CTR cohort<strong>13,5%</strong></div>
+          <div class="stat">AOV ticket<strong>$28k</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. CLICK-THROUGH BY CATEGORY -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">02 · Click-through por categoría</div>
+        <h2>Qué categoría le interesa al cohort este mes</h2>
+      </div>
+      <span class="panel-tag">12.847 clicks totales · Octubre</span>
+    </div>
+    <p class="panel-sub">CTR sobre impresión del bloque /tienda en /home. Comparación contra benchmark de display estándar (~4%) muestra el lift por contextualización con la ficha clínica.</p>
+
+    <div class="bars">
+      <div class="bar-row"><div class="bar-label">Snacks &amp; recompensas<small>n=1.927 clicks · category lift más alto</small></div><div class="bar-track"><div class="bar-fill" style="width: 100%;"></div></div><span class="bar-value">15,0%</span></div>
+      <div class="bar-row"><div class="bar-label">Antiparasitario externo<small>n=1.541 clicks · ciclo mensual visible</small></div><div class="bar-track"><div class="bar-fill" style="width: 87%;"></div></div><span class="bar-value">13,0%</span></div>
+      <div class="bar-row"><div class="bar-label">Alimento principal<small>n=1.541 clicks · replenish predictivo</small></div><div class="bar-track"><div class="bar-fill" style="width: 80%;"></div></div><span class="bar-value">12,0%</span></div>
+      <div class="bar-row"><div class="bar-label">Suplementos &amp; vitaminas<small>n=1.027 clicks · seniors sobreíndice</small></div><div class="bar-track"><div class="bar-fill" style="width: 67%;"></div></div><span class="bar-value">10,0%</span></div>
+      <div class="bar-row"><div class="bar-label">Accesorios (collares, juguetes)<small>n=1.027 clicks</small></div><div class="bar-track"><div class="bar-fill" style="width: 53%;"></div></div><span class="bar-value">8,0%</span></div>
+      <div class="bar-row"><div class="bar-label">Higiene &amp; baño<small>n=771 clicks</small></div><div class="bar-track"><div class="bar-fill" style="width: 40%;"></div></div><span class="bar-value">6,0%</span></div>
+    </div>
+  </section>
+
+  <!-- 3. REPLENISH CYCLE -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">03 · Replenish cycle predictivo</div>
+        <h2>Cada cuánto vuelve el dueño a comprar</h2>
+      </div>
+      <span class="panel-tag">Tracking re-compras 6 meses</span>
+    </div>
+    <p class="panel-sub">Trackeamos la cadencia real de re-compra por categoría. Esto te permite armar campañas de re-engagement con timing perfecto (no antes, no después). El recordatorio sale 3 días antes del esperado, push opcional al dueño.</p>
+
+    <div class="cycle-grid">
+      <div class="cycle-card"><div class="icon">🍖</div><div class="days">28 <small>días</small></div><div class="cat">Alimento perro grande</div></div>
+      <div class="cycle-card"><div class="icon">🐈</div><div class="days">21 <small>días</small></div><div class="cat">Alimento gato adulto</div></div>
+      <div class="cycle-card"><div class="icon">💊</div><div class="days">30 <small>días</small></div><div class="cat">Antiparasitario externo</div></div>
+      <div class="cycle-card"><div class="icon">🦴</div><div class="days">14 <small>días</small></div><div class="cat">Snacks &amp; treats</div></div>
+      <div class="cycle-card"><div class="icon">🧴</div><div class="days">45 <small>días</small></div><div class="cat">Shampoo · grooming</div></div>
+      <div class="cycle-card"><div class="icon">🎾</div><div class="days">120 <small>días</small></div><div class="cat">Juguetes (recompra)</div></div>
+      <div class="cycle-card"><div class="icon">💉</div><div class="days">90 <small>días</small></div><div class="cat">Antiparasitario interno</div></div>
+      <div class="cycle-card"><div class="icon">🪥</div><div class="days">60 <small>días</small></div><div class="cat">Higiene dental</div></div>
+    </div>
+  </section>
+
+  <!-- 4. AOV BY SEGMENT -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">04 · AOV por segmento</div>
+        <h2>Ticket promedio según raza · edad · plan Paw Friend</h2>
+      </div>
+      <span class="panel-tag">Tracking en /tienda</span>
+    </div>
+    <p class="panel-sub">El ticket promedio cambia mucho por segmento. Esto te ayuda a priorizar dónde gastar margen en discount y dónde no es necesario.</p>
+
+    <div class="aov-grid">
+      <div class="aov-card t1">
+        <div class="label">Mestizo pequeño</div>
+        <div class="num">$32.400</div>
+        <div class="desc">Alimento value + accesorio ocasional. AOV bajo, volumen alto.</div>
+      </div>
+      <div class="aov-card t2">
+        <div class="label">Raza grande adulto</div>
+        <div class="num">$58.700</div>
+        <div class="desc">Alimento premium + suplemento articular. AOV alto, replenish 28d.</div>
+      </div>
+      <div class="aov-card t3">
+        <div class="label">Gato adulto</div>
+        <div class="num">$35.200</div>
+        <div class="desc">Alimento + arena + treats. AOV medio, replenish quincenal.</div>
+      </div>
+      <div class="aov-card t4">
+        <div class="label">Paw Member premium</div>
+        <div class="num">$72.800</div>
+        <div class="desc">+38% vs cohort regular. Activan descuento + compran más categorías.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. CART ABANDONMENT -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">05 · Cart abandonment por SKU</div>
+        <h2>Lo que el cohort agregó · pero no compró</h2>
+      </div>
+      <span class="panel-tag">Top 6 SKUs · Octubre</span>
+    </div>
+    <p class="panel-sub">SKUs con mayor abandono de carrito en el cohort. Útil para priorizar campañas de retargeting con descuento puntual o re-armar bundle.</p>
+
+    <div style="margin-top: 8px;">
+      <div class="abandon-row" style="border-bottom: 2px solid var(--border); font-weight: 800; font-size: 11px; text-transform: uppercase; color: var(--ink-soft); letter-spacing: .08em;">
+        <div>SKU</div><div style="text-align: right;">Adds</div><div style="text-align: right;">Aband.</div><div style="text-align: right;">Tasa</div>
+      </div>
+      <div class="abandon-row">
+        <div><div class="sku">Royal Canin German Shepherd Adult 12kg</div><div class="meta">Alimento large breed · $58.000</div></div>
+        <div class="num">412</div><div class="num">187</div><div class="num"><span class="pill pill-down">45,4%</span></div>
+      </div>
+      <div class="abandon-row">
+        <div><div class="sku">Pro Plan Sport All Sizes 15kg</div><div class="meta">Alimento performance · $52.000</div></div>
+        <div class="num">587</div><div class="num">221</div><div class="num"><span class="pill pill-down">37,6%</span></div>
+      </div>
+      <div class="abandon-row">
+        <div><div class="sku">NexGard L 4 tabletas</div><div class="meta">Antiparasitario externo · $42.000</div></div>
+        <div class="num">324</div><div class="num">98</div><div class="num"><span class="pill pill-flat">30,2%</span></div>
+      </div>
+      <div class="abandon-row">
+        <div><div class="sku">Cama ortopédica perro grande</div><div class="meta">Accesorio · $89.000</div></div>
+        <div class="num">142</div><div class="num">87</div><div class="num"><span class="pill pill-down">61,3%</span></div>
+      </div>
+      <div class="abandon-row">
+        <div><div class="sku">Hill's Renal k/d 7kg</div><div class="meta">Alimento veterinario · $76.000</div></div>
+        <div class="num">98</div><div class="num">42</div><div class="num"><span class="pill pill-flat">42,8%</span></div>
+      </div>
+      <div class="abandon-row">
+        <div><div class="sku">Whiskas Adulto Carne 10kg</div><div class="meta">Alimento gato value · $28.000</div></div>
+        <div class="num">421</div><div class="num">87</div><div class="num"><span class="pill pill-up">20,6%</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. ATTRIBUTION -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">06 · Attribution mensual</div>
+        <h2>Leads y compras atribuidos a Paw Friend</h2>
+      </div>
+      <span class="panel-tag">Octubre 2026</span>
+    </div>
+    <p class="panel-sub">Cada click hacia tu sitio se trackea con UTM <code style="font-family: var(--mono); font-size: 12px; background: var(--retail-100); padding: 2px 8px; border-radius: 6px; color: var(--retail-700);">utm_source=pawfriend&amp;utm_medium=tienda</code> + RPC <code style="font-family: var(--mono); font-size: 12px; background: var(--retail-100); padding: 2px 8px; border-radius: 6px; color: var(--retail-700);">track_retail_click</code> deja log auditable. Postback opcional para compra confirmada.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Métrica</th><th>Octubre 2026</th><th>vs Septiembre</th><th>Comentario</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Sesiones únicas atribuidas</td><td class="num">12.847</td><td class="num"><span class="pill pill-up">▲ 24%</span></td><td>Ramp-up post-onboarding cohort</td></tr>
+        <tr><td>Carts iniciados</td><td class="num">1.516</td><td class="num"><span class="pill pill-up">▲ 18%</span></td><td>Conversion a cart 11,8%</td></tr>
+        <tr><td>Compras confirmadas</td><td class="num">847</td><td class="num"><span class="pill pill-up">▲ 21%</span></td><td>Cart-to-purchase 55,9%</td></tr>
+        <tr><td>GMV atribuido</td><td class="num">$40.910.100</td><td class="num"><span class="pill pill-up">▲ 28%</span></td><td>AOV $48.300 promedio</td></tr>
+        <tr><td>Comisión Paw Friend (afiliado 8%)</td><td class="num">$3.272.808</td><td class="num"><span class="pill pill-up">▲ 28%</span></td><td>Tarifa first-90d, después negociable</td></tr>
+        <tr style="background: var(--surface-alt);"><td><strong>Costo CAC implícito</strong></td><td class="num"><strong>$3.864</strong></td><td class="num"><span class="pill pill-up">▼ 14%</span></td><td>Cliente trae LTV ~$220k → ROI 57x</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- DELIVERABLES -->
+  <div class="deliverables">
+    <h3>Esta data se entrega así</h3>
+    <p style="font-size: 14px; color: var(--ink-soft);">Tres canales auditables, con SLA mensual + integración a tu PIM/ERP.</p>
+    <div class="delivery-grid">
+      <div class="delivery-item"><div class="icon">🔌</div><h4>API REST + webhooks</h4><p>Sync de catálogo (CSV/JSON daily) + click stream + postback de venta confirmada para attribution end-to-end.</p></div>
+      <div class="delivery-item"><div class="icon">📊</div><h4>Dashboard mensual</h4><p>Esto que estás viendo, en vivo, con tu marca y cohort. Filtros guardables. Acceso para equipo de category &amp; trade marketing.</p></div>
+      <div class="delivery-item"><div class="icon">📄</div><h4>Reporte PDF mensual</h4><p>Resumen ejecutivo el 1° hábil del mes para presentar a tu director comercial / category manager.</p></div>
+    </div>
+  </div>
+
+  <!-- SIGNOFF -->
+  <div class="signoff">
+    <h3>¿Vale la pena que lo veamos juntos 30 minutos?</h3>
+    <p>Te muestro el dashboard live de un cohort real (anonimizado), revisamos qué SKUs tuyos performarían mejor con este cohort, y discutimos un piloto con tu top-10 de catálogo.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://pawfriend.cl/aplicar?tipo=b2b_api&from=demo-retail" target="_blank" rel="noopener">📅 Agendar 30 min · Founder Partner</a>
+      <a class="btn btn-tertiary" href="https://pawfriend.cl/pitch/retail.html" target="_blank" rel="noopener">📑 Ver pitch deck completo</a>
+      <a class="btn btn-secondary" href="https://pawfriend.cl" target="_blank" rel="noopener">🌐 Ver app en vivo</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <strong>SpA SUSAETA GARNHAM SOFTWARE ENGINEERING</strong> · RUT 78.328.659-9 · Pedro Susaeta, founder<br>
+  ✉️ <a href="mailto:pawfriendcl@gmail.com">pawfriendcl@gmail.com</a> · 📱 WhatsApp <a href="https://wa.me/56982092588" target="_blank" rel="noopener">+56 9 8209 2588</a> · 🌐 <a href="https://pawfriend.cl" target="_blank" rel="noopener">pawfriend.cl</a><br>
+  <span style="opacity: .65;">Datos representativos del Y1 target · cohort real disponible Q3 2026 · Lanzamiento app Junio 2026</span>
+</footer>
+
+</body>
+</html>

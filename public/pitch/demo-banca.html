@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend · Demo data Banca · Engagement Paw Member + retención cliente premium</title>
+  <meta name="description" content="Demo ilustrativo de la data que ve un banco tras firmar Paw Friend. Paw Member activos, NPS pet benefit, ARPU pet, retención de tarjeta con vs sin Paw Member, conversion seguro pet bundled. Cifras representativas del cohort target Y1." />
+  <meta name="theme-color" content="#3b82f6" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://pawfriend.cl/pitch/demo-banca.html" />
+  <link rel="icon" type="image/svg+xml" href="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bank-50: #eff6ff; --bank-100: #dbeafe; --bank-200: #bfdbfe;
+      --bank-500: #3b82f6; --bank-600: #2563eb; --bank-700: #1d4ed8;
+      --bank-800: #1e40af; --bank-900: #1e3a8a;
+      --navy-deep: #0f172a;
+      --gold: #eab308; --gold-soft: #fef3c7; --gold-dark: #a16207; --gold-bright: #facc15;
+      --emerald: #10b981; --emerald-soft: #d1fae5;
+      --rose: #f43f5e; --rose-soft: #ffe4e6;
+      --ink: #0f172a; --ink-soft: #475569; --ink-faint: #94a3b8;
+      --paper: #f8fafc; --surface: #fff; --surface-alt: #eff6ff;
+      --border: #bfdbfe;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
+      --radius-lg: 18px; --radius-md: 12px;
+      --shadow-md: 0 8px 30px -10px rgba(37, 99, 235, .18);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .demo-banner { background: linear-gradient(90deg, #fef3c7 0%, #fde68a 50%, #fef3c7 100%); border-bottom: 1px solid rgba(234, 179, 8, .4); padding: 10px 20px; text-align: center; font-size: 12.5px; font-weight: 600; color: #713f12; position: sticky; top: 0; z-index: 50; }
+    .demo-banner strong { background: #eab308; color: #fff; padding: 2px 10px; border-radius: 999px; margin-right: 10px; font-weight: 800; letter-spacing: .08em; font-size: 10.5px; text-transform: uppercase; }
+    header.hero { background: radial-gradient(ellipse 80% 60% at 80% 20%, rgba(250,204,21,.28), transparent 60%), radial-gradient(ellipse 70% 60% at 20% 100%, rgba(59,130,246,.4), transparent 70%), linear-gradient(135deg, var(--navy-deep) 0%, var(--bank-900) 50%, var(--bank-700) 100%); color: #fff; padding: 56px 0 80px; position: relative; overflow: hidden; }
+    .hero-tag { display: inline-flex; gap: 8px; align-items: center; padding: 6px 14px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3); border-radius: 999px; font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .dot-live { width: 8px; height: 8px; border-radius: 50%; background: var(--gold-bright); box-shadow: 0 0 0 4px rgba(250,204,21,.25); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .7; } }
+    header h1 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: clamp(34px, 5vw, 56px); line-height: 1.05; letter-spacing: -.02em; margin: 20px 0 12px; }
+    header h1 .x { display: inline-block; margin: 0 .15em; font-weight: 300; color: rgba(255,255,255,.6); font-family: 'Plus Jakarta Sans', sans-serif; }
+    header .sub { font-size: 17px; color: rgba(255,255,255,.85); max-width: 660px; line-height: 1.5; }
+    .hero-meta { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 32px; font-size: 13px; }
+    .hero-meta .item { display: flex; flex-direction: column; gap: 2px; }
+    .hero-meta .k { font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+    .hero-meta .v { font-weight: 600; color: #fff; font-size: 14px; }
+    .hero-meta .v strong { color: var(--gold-bright); font-weight: 800; }
+
+    .kpis-wrap { padding-bottom: 36px; }
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: -48px; position: relative; z-index: 3; }
+    @media (max-width: 820px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+    .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 20px 20px; box-shadow: var(--shadow-md); position: relative; overflow: hidden; }
+    .kpi::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--accent, var(--bank-600)); }
+    .kpi-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .kpi-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+    .kpi-spark { width: 52px; height: 18px; }
+    .kpi-value { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 30px; color: var(--ink); margin: 4px 0 2px; font-variant-numeric: tabular-nums; }
+    .kpi-delta { font-size: 12px; font-weight: 700; }
+    .delta-up { color: #059669; }
+    .delta-down { color: #dc2626; }
+    .kpi:nth-child(1) { --accent: var(--bank-600); }
+    .kpi:nth-child(2) { --accent: var(--gold); }
+    .kpi:nth-child(3) { --accent: var(--emerald); }
+    .kpi:nth-child(4) { --accent: var(--rose); }
+
+    section.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 30px; margin-top: 24px; box-shadow: var(--shadow-md); }
+    .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 6px; }
+    .panel-eyebrow { font-size: 10.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--bank-700); }
+    section.panel h2 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 26px; line-height: 1.15; letter-spacing: -.015em; color: var(--ink); margin: 4px 0 4px; }
+    .panel-sub { font-size: 14.5px; color: var(--ink-soft); margin-bottom: 26px; max-width: 720px; }
+    .panel-tag { align-self: center; padding: 4px 10px; background: var(--bank-100); border: 1px solid var(--border); border-radius: 999px; font-size: 11px; font-weight: 700; color: var(--bank-700); letter-spacing: .04em; white-space: nowrap; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    @media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    @media (max-width: 800px) { .grid-3 { grid-template-columns: 1fr; } }
+
+    /* Chart - Paw Member activos serie */
+    .trend-chart { background: var(--bank-50); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px; }
+    .trend-chart svg { width: 100%; height: 220px; display: block; }
+
+    /* NPS gauge */
+    .gauge-wrap { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; }
+    .gauge { width: 240px; height: 130px; position: relative; flex-shrink: 0; }
+    .gauge-info { flex: 1; min-width: 220px; }
+    .gauge-info .big { font-family: 'Fredoka', sans-serif; font-size: 56px; color: var(--bank-700); font-weight: 600; line-height: 1; }
+    .gauge-info .label { font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+    .gauge-info ul { margin-top: 14px; font-size: 13.5px; line-height: 1.7; padding-left: 18px; }
+
+    /* Retention compare */
+    .retention-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: stretch; }
+    @media (max-width: 800px) { .retention-grid { grid-template-columns: 1fr; } }
+    .retention-card { padding: 22px; border-radius: var(--radius-lg); text-align: center; }
+    .retention-card.before { background: linear-gradient(135deg, #fef2f2, #fff); border: 2px solid #fecaca; }
+    .retention-card.after { background: linear-gradient(135deg, var(--emerald-soft), #fff); border: 2px solid #6ee7b7; }
+    .retention-card .label { font-size: 10.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    .retention-card.before .label { color: #b91c1c; }
+    .retention-card.after .label { color: #047857; }
+    .retention-card .big { font-family: 'Fredoka', sans-serif; font-size: 56px; font-weight: 600; line-height: 1; margin: 8px 0 4px; }
+    .retention-card.before .big { color: #dc2626; }
+    .retention-card.after .big { color: #059669; }
+    .retention-card .desc { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+    .retention-arrow { font-size: 32px; color: var(--bank-600); align-self: center; text-align: center; padding: 0 8px; }
+
+    /* Top categories */
+    .bars { display: grid; gap: 10px; }
+    .bar-row { display: grid; grid-template-columns: 200px 1fr 100px; gap: 14px; align-items: center; font-size: 13.5px; }
+    @media (max-width: 700px) { .bar-row { grid-template-columns: 1fr; gap: 4px; padding: 8px 0; border-bottom: 1px dashed var(--border); } }
+    .bar-label { font-weight: 600; color: var(--ink); }
+    .bar-label small { display: block; font-size: 11px; font-weight: 500; color: var(--ink-faint); margin-top: 2px; }
+    .bar-track { height: 26px; background: linear-gradient(90deg, rgba(59,130,246,.06), rgba(59,130,246,.12)); border-radius: 999px; overflow: hidden; position: relative; }
+    .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #93c5fd, var(--bank-600)); }
+    .bar-value { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); font-size: 13px; color: var(--bank-800); }
+
+    /* Segment compare */
+    .segment-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    @media (max-width: 800px) { .segment-grid { grid-template-columns: 1fr; } }
+    .segment-card { padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border); }
+    .segment-card.s1 { background: linear-gradient(135deg, #f1f5f9, #fff); }
+    .segment-card.s2 { background: linear-gradient(135deg, var(--bank-50), #fff); }
+    .segment-card.s3 { background: linear-gradient(135deg, #fef3c7, #fff); border-color: #fbbf24; }
+    .segment-card .tier { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 6px; }
+    .segment-card.s3 .tier { color: var(--gold-dark); }
+    .segment-card .num { font-family: 'Fredoka', sans-serif; font-size: 32px; font-weight: 600; line-height: 1; color: var(--ink); }
+    .segment-card .desc { font-size: 12.5px; color: var(--ink-soft); margin-top: 8px; line-height: 1.5; }
+    .segment-card .stats { display: flex; gap: 12px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 11.5px; }
+
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    table.data-table th { text-align: left; padding: 12px 14px; background: var(--bank-100); color: var(--bank-800); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+    table.data-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+    table.data-table tr:last-child td { border-bottom: none; }
+    table.data-table td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; font-weight: 600; }
+    .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+    .pill-up { background: var(--emerald-soft); color: #047857; }
+    .pill-down { background: var(--rose-soft); color: #be123c; }
+    .pill-flat { background: #f1f5f9; color: #475569; }
+
+    .deliverables { background: linear-gradient(135deg, var(--surface-alt), #fff); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px; margin-top: 22px; }
+    .deliverables h3 { font-family: 'Fredoka', sans-serif; font-size: 22px; color: var(--ink); margin-bottom: 6px; }
+    .deliverables .delivery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
+    @media (max-width: 800px) { .deliverables .delivery-grid { grid-template-columns: 1fr; } }
+    .delivery-item { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px 18px; }
+    .delivery-item .icon { font-size: 28px; margin-bottom: 8px; }
+    .delivery-item h4 { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+    .delivery-item p { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
+
+    .signoff { margin: 40px auto 28px; padding: 36px 32px; background: radial-gradient(ellipse 80% 60% at 80% 0%, rgba(250,204,21,.32), transparent 65%), linear-gradient(135deg, var(--navy-deep), var(--bank-900) 60%, var(--bank-700)); color: #fff; border-radius: var(--radius-lg); text-align: center; overflow: hidden; position: relative; }
+    .signoff h3 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: clamp(22px, 3vw, 30px); margin-bottom: 10px; }
+    .signoff p { max-width: 620px; margin: 0 auto 18px; font-size: 14.5px; color: rgba(255,255,255,.9); }
+    .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 12px; font-weight: 800; font-size: 14px; text-decoration: none; transition: transform .15s; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: #fff; color: var(--ink); box-shadow: 0 14px 30px rgba(0,0,0,.25); }
+    .btn-secondary { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.3); }
+    .btn-tertiary { background: var(--gold-bright); color: var(--ink); }
+    footer { text-align: center; padding: 28px 24px 44px; font-size: 11.5px; color: var(--ink-faint); line-height: 1.7; }
+    footer strong { color: var(--ink-soft); }
+    footer a { color: var(--bank-700); text-decoration: none; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<div class="demo-banner" role="alert">
+  <strong>DEMO · PRE-LAUNCH</strong>
+  Cifras representativas del cohort target Y1 (8.000-15.000 pets · 50.000 = goal Y2-Y3) · Hoy 0 usuarios públicos · Lanzamiento Junio 2026 · Modelado con datos sintéticos basados en literatura de affinity benefits (Mastercard Pet Benefits 2023, ABA premium card retention reports)
+</div>
+
+<header class="hero">
+  <div class="container">
+    <span class="hero-tag"><span class="dot-live"></span> Banca · Tarjeta premium · Reporte mensual</span>
+    <h1>BCI Premium<span class="x">×</span>Paw Friend</h1>
+    <p class="sub">Esto es lo que verías mes a mes en tu cuenta partner. Paw Member activos en tu base, NPS del beneficio pet, ARPU pet, retención de tarjeta con vs sin Paw Member, y conversion a seguro pet bundled.</p>
+    <div class="hero-meta">
+      <div class="item"><span class="k">Período</span><span class="v">01 — 31 Octubre 2026</span></div>
+      <div class="item"><span class="k">Base activable</span><span class="v"><strong>18.420</strong> tarjetahabientes Premier/Black con mascota</span></div>
+      <div class="item"><span class="k">Beneficio</span><span class="v">Paw Member 12 meses + 20% off seguro pet</span></div>
+      <div class="item"><span class="k">Entregado por</span><span class="v">Paw Founder · pawfriendcl@gmail.com</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="container kpis-wrap">
+
+  <div class="kpis">
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">Paw Members activos</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,16 10,13 20,11 30,8 40,5 52,3" fill="none" stroke="#2563eb" stroke-width="2"/><circle cx="52" cy="3" r="2" fill="#2563eb"/></svg>
+      </div>
+      <div class="kpi-value">7.214</div>
+      <div class="kpi-delta delta-up">▲ 39% MoM · 39,2% activación</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">NPS pet benefit</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,12 10,11 20,10 30,8 40,7 52,5" fill="none" stroke="#eab308" stroke-width="2"/><circle cx="52" cy="5" r="2" fill="#eab308"/></svg>
+      </div>
+      <div class="kpi-value">+72</div>
+      <div class="kpi-delta delta-up">vs +28 promedio benefits</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">ARPU pet/mes</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,14 10,12 20,10 30,8 40,7 52,5" fill="none" stroke="#10b981" stroke-width="2"/><circle cx="52" cy="5" r="2" fill="#10b981"/></svg>
+      </div>
+      <div class="kpi-value">$94.300</div>
+      <div class="kpi-delta delta-up">+38% vs cliente sin Paw Member</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">Retención 12m</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,9 10,8 20,6 30,5 40,4 52,3" fill="none" stroke="#f43f5e" stroke-width="2"/><circle cx="52" cy="3" r="2" fill="#f43f5e"/></svg>
+      </div>
+      <div class="kpi-value">94,2%</div>
+      <div class="kpi-delta delta-up">vs 87,1% sin pet benefit</div>
+    </div>
+  </div>
+
+  <!-- 1. PAW MEMBER ACTIVATION -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">01 · Paw Member activos · serie mensual</div>
+        <h2>Cuántos clientes Premier activaron el beneficio</h2>
+      </div>
+      <span class="panel-tag">12 meses · refresh diario</span>
+    </div>
+    <p class="panel-sub">Tracking de cuántos tarjetahabientes BCI Premier/Black redimieron el código de activación Paw Member desde su app del banco. Activación promedio Y1: 39,2% del cohort target.</p>
+
+    <div class="trend-chart">
+      <svg viewBox="0 0 600 220" preserveAspectRatio="none">
+        <line x1="0" y1="200" x2="600" y2="200" stroke="#bfdbfe" stroke-width="1"/>
+        <line x1="0" y1="160" x2="600" y2="160" stroke="#bfdbfe" stroke-width="1" stroke-dasharray="4 4"/>
+        <line x1="0" y1="120" x2="600" y2="120" stroke="#bfdbfe" stroke-width="1" stroke-dasharray="4 4"/>
+        <line x1="0" y1="80" x2="600" y2="80" stroke="#bfdbfe" stroke-width="1" stroke-dasharray="4 4"/>
+        <line x1="0" y1="40" x2="600" y2="40" stroke="#bfdbfe" stroke-width="1" stroke-dasharray="4 4"/>
+        <text x="0" y="38" font-size="11" fill="#1d4ed8" font-weight="700">8000</text>
+        <text x="0" y="118" font-size="11" fill="#1d4ed8" font-weight="700">5000</text>
+        <text x="0" y="198" font-size="11" fill="#1d4ed8" font-weight="700">2000</text>
+
+        <polyline points="20,182 70,178 120,170 170,158 220,142 270,124 320,108 370,90 420,72 470,58 520,46 570,32"
+          fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline points="20,182 70,178 120,170 170,158 220,142 270,124 320,108 370,90 420,72 470,58 520,46 570,32 600,32 600,200 20,200"
+          fill="url(#gradBank)"/>
+        <defs>
+          <linearGradient id="gradBank" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#2563eb" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#2563eb" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+
+        <circle cx="20" cy="182" r="4" fill="#2563eb"/>
+        <circle cx="320" cy="108" r="4" fill="#2563eb"/>
+        <circle cx="570" cy="32" r="5" fill="#fff" stroke="#2563eb" stroke-width="3"/>
+
+        <text x="20" y="216" text-anchor="middle" font-size="10" fill="#1d4ed8">Nov-25</text>
+        <text x="170" y="216" text-anchor="middle" font-size="10" fill="#1d4ed8">Feb-26</text>
+        <text x="320" y="216" text-anchor="middle" font-size="10" fill="#1d4ed8">May-26</text>
+        <text x="470" y="216" text-anchor="middle" font-size="10" fill="#1d4ed8">Ago-26</text>
+        <text x="570" y="20" text-anchor="middle" font-size="11" font-weight="800" fill="#1d4ed8">7.214 ▲</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- 2. NPS GAUGE -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">02 · NPS del beneficio pet</div>
+        <h2>Net Promoter Score · clientes que activaron</h2>
+      </div>
+      <span class="panel-tag">n=842 encuestas · Octubre</span>
+    </div>
+    <p class="panel-sub">Encuesta NPS post-activación (cuántos recomendarían el beneficio pet a un amigo Premier). Comparado contra el promedio histórico de benefits BCI Premier (+28).</p>
+
+    <div class="gauge-wrap">
+      <svg class="gauge" viewBox="0 0 240 130">
+        <path d="M 30 110 A 90 90 0 0 1 210 110" fill="none" stroke="#fee2e2" stroke-width="20" stroke-linecap="round"/>
+        <path d="M 30 110 A 90 90 0 0 1 210 110" fill="none" stroke="url(#gaugeGrad)" stroke-width="20" stroke-linecap="round" stroke-dasharray="240" stroke-dashoffset="48"/>
+        <defs>
+          <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#dc2626"/>
+            <stop offset="50%" stop-color="#eab308"/>
+            <stop offset="100%" stop-color="#10b981"/>
+          </linearGradient>
+        </defs>
+        <text x="120" y="80" text-anchor="middle" font-family="Fredoka" font-size="40" font-weight="600" fill="#1e3a8a">+72</text>
+        <text x="120" y="100" text-anchor="middle" font-size="11" fill="#475569">NPS</text>
+        <text x="30" y="125" text-anchor="middle" font-size="9" fill="#94a3b8">−100</text>
+        <text x="210" y="125" text-anchor="middle" font-size="9" fill="#94a3b8">+100</text>
+      </svg>
+      <div class="gauge-info">
+        <div class="big">+72</div>
+        <div class="label">vs benchmark BCI Premier benefits +28 · pet más alto del portafolio</div>
+        <ul>
+          <li><strong>78,3%</strong> promotores (9–10)</li>
+          <li><strong>15,4%</strong> pasivos (7–8)</li>
+          <li><strong>6,3%</strong> detractores (0–6)</li>
+        </ul>
+        <div style="margin-top: 12px; padding: 10px 14px; background: var(--bank-100); border-left: 4px solid var(--bank-600); border-radius: 8px; font-size: 12.5px; font-style: italic; color: var(--bank-800);">
+          “Por fin un beneficio que uso de verdad. Mi perro ya no es invisible para el banco.” — Cliente Premier, encuesta Oct 2026.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. RETENTION COMPARE -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">03 · Retención de tarjeta · 12 meses</div>
+        <h2>Cliente Premium con vs sin Paw Member</h2>
+      </div>
+      <span class="panel-tag">+7,1pp · Y1</span>
+    </div>
+    <p class="panel-sub">Cohort match: clientes Premier con mascota emparejados por edad, ingreso, antigüedad. Diferencia atribuible al beneficio pet activado. Cohort de control: ofrecimos Paw Member pero no activaron.</p>
+
+    <div class="retention-grid">
+      <div class="retention-card before">
+        <div class="label">Sin Paw Member activo</div>
+        <div class="big">87,1%</div>
+        <div class="desc">Retención 12m del cohort control. Baseline benefits Premier.</div>
+        <div style="margin-top: 14px; font-size: 11.5px; color: var(--ink-soft); padding-top: 12px; border-top: 1px solid var(--border);">
+          Churn anual <strong style="color: #dc2626;">12,9%</strong> · costo de reposición ~$240k USD/año (estimación interna)
+        </div>
+      </div>
+      <div class="retention-arrow">→</div>
+      <div class="retention-card after">
+        <div class="label">Con Paw Member activo</div>
+        <div class="big">94,2%</div>
+        <div class="desc"><strong>+7,1pp</strong> vs control. Cliente con mascota usa el beneficio mensualmente, fideliza la tarjeta.</div>
+        <div style="margin-top: 14px; font-size: 11.5px; color: var(--ink-soft); padding-top: 12px; border-top: 1px solid var(--border);">
+          Churn anual <strong style="color: #059669;">5,8%</strong> · ahorro CAC implícito ~$132k USD/año
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. TOP CATEGORIES PAW MEMBER USES -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">04 · Cómo se usa el Paw Member</div>
+        <h2>Top categorías que el cohort consume</h2>
+      </div>
+      <span class="panel-tag">% Paw Members con uso mensual</span>
+    </div>
+    <p class="panel-sub">Tracking de qué features Paw Member usan los Premier. Útil para diseñar campañas de re-engagement y comunicar valor del beneficio en tu app.</p>
+
+    <div class="bars">
+      <div class="bar-row"><div class="bar-label">Recordatorios &amp; calendario<small>core feature · uso semanal</small></div><div class="bar-track"><div class="bar-fill" style="width: 92%;"></div></div><span class="bar-value">92,1%</span></div>
+      <div class="bar-row"><div class="bar-label">Ficha clínica + PDF Paw Passport<small>uso vet visit</small></div><div class="bar-track"><div class="bar-fill" style="width: 78%;"></div></div><span class="bar-value">78,4%</span></div>
+      <div class="bar-row"><div class="bar-label">Descuento Paw Partners<small>retail + servicios pet</small></div><div class="bar-track"><div class="bar-fill" style="width: 64%;"></div></div><span class="bar-value">64,2%</span></div>
+      <div class="bar-row"><div class="bar-label">Cotización seguro pet bundled<small>cross-sell BCI</small></div><div class="bar-track"><div class="bar-fill" style="width: 38%;"></div></div><span class="bar-value">38,1%</span></div>
+      <div class="bar-row"><div class="bar-label">Audio notes consulta vet<small>premium feature</small></div><div class="bar-track"><div class="bar-fill" style="width: 42%;"></div></div><span class="bar-value">42,3%</span></div>
+      <div class="bar-row"><div class="bar-label">Insights Pro &amp; reportes<small>premium analytics</small></div><div class="bar-track"><div class="bar-fill" style="width: 28%;"></div></div><span class="bar-value">28,7%</span></div>
+    </div>
+  </section>
+
+  <!-- 5. CONVERSION SEGURO PET -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">05 · Conversion a seguro pet bundled</div>
+        <h2>Cross-sell del seguro pet BCI desde Paw Friend</h2>
+      </div>
+      <span class="panel-tag">Octubre 2026</span>
+    </div>
+    <p class="panel-sub">El Paw Member ve el banner "Cotiza tu seguro pet con BCI · 20% off por ser Premier". Clic → flujo <code style="font-family: var(--mono); font-size: 12px; background: var(--bank-100); padding: 2px 8px; border-radius: 6px; color: var(--bank-700);">/cotizar-seguro/:petId</code> con risk score pre-llenado. Conversion a póliza emitida 14,2%.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Etapa</th><th>Volumen Octubre</th><th>Tasa</th><th>Acumulado Y1</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Vio banner cotización seguro pet</td><td class="num">7.214</td><td class="num">100%</td><td class="num">62.480</td></tr>
+        <tr><td>Click → /cotizar-seguro</td><td class="num">2.748</td><td class="num"><span class="pill pill-up">38,1%</span></td><td class="num">23.860</td></tr>
+        <tr><td>Cotización completada</td><td class="num">1.456</td><td class="num"><span class="pill pill-up">53,0%</span></td><td class="num">12.640</td></tr>
+        <tr><td>Cotización aceptada</td><td class="num">562</td><td class="num"><span class="pill pill-flat">38,6%</span></td><td class="num">4.870</td></tr>
+        <tr><td><strong>Póliza pet BCI emitida</strong></td><td class="num"><strong>207</strong></td><td class="num"><span class="pill pill-up">14,2%</span></td><td class="num"><strong>1.794</strong></td></tr>
+      </tbody>
+    </table>
+
+    <div style="background: var(--bank-50); border-left: 4px solid var(--bank-600); padding: 14px 16px; border-radius: 8px; margin-top: 22px; font-size: 13.5px; color: var(--bank-800);">
+      <strong>Revenue cross-sell · MOCK ILUSTRATIVO:</strong> 1.794 pólizas × $24.800/mes ARPU × 12 meses = <strong>$534M CLP ARR modelado</strong> en escenario optimista del piloto. <em>Cifras representativas — modelado a calibrar con tu base real en piloto. Hoy en pre-launch, 0 pólizas reales atribuidas.</em> Comisión Paw Friend acordable.
+    </div>
+  </section>
+
+  <!-- 6. SEGMENT COMPARE BLACK / PREMIER -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">06 · Engagement por segmento</div>
+        <h2>Black vs Premier vs Premier Plus</h2>
+      </div>
+      <span class="panel-tag">Comparativa segmentos premium</span>
+    </div>
+    <p class="panel-sub">Performance del beneficio pet por segmento de tarjeta. Permite priorizar dónde escalar la campaña primero. Black tiene activación más alta (más conscientes del beneficio), Premier más volumen.</p>
+
+    <div class="segment-grid">
+      <div class="segment-card s1">
+        <div class="tier">Premier</div>
+        <div class="num">5.834</div>
+        <div class="desc">Paw Members activos · 38,2% del cohort target.</div>
+        <div class="stats">
+          <div><strong style="font-size: 14px; color: var(--bank-700);">+71</strong><br>NPS</div>
+          <div><strong style="font-size: 14px; color: var(--bank-700);">94,1%</strong><br>retención</div>
+          <div><strong style="font-size: 14px; color: var(--bank-700);">$84k</strong><br>ARPU pet</div>
+        </div>
+      </div>
+      <div class="segment-card s2">
+        <div class="tier">Premier Plus</div>
+        <div class="num">1.124</div>
+        <div class="desc">Paw Members activos · 42,8% del cohort target.</div>
+        <div class="stats">
+          <div><strong style="font-size: 14px; color: var(--bank-700);">+74</strong><br>NPS</div>
+          <div><strong style="font-size: 14px; color: var(--bank-700);">95,2%</strong><br>retención</div>
+          <div><strong style="font-size: 14px; color: var(--bank-700);">$112k</strong><br>ARPU pet</div>
+        </div>
+      </div>
+      <div class="segment-card s3">
+        <div class="tier">Black</div>
+        <div class="num">256</div>
+        <div class="desc">Paw Members activos · 51,6% del cohort target. Activación más alta del portafolio.</div>
+        <div class="stats">
+          <div><strong style="font-size: 14px; color: var(--gold-dark);">+78</strong><br>NPS</div>
+          <div><strong style="font-size: 14px; color: var(--gold-dark);">96,8%</strong><br>retención</div>
+          <div><strong style="font-size: 14px; color: var(--gold-dark);">$148k</strong><br>ARPU pet</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DELIVERABLES -->
+  <div class="deliverables">
+    <h3>Esta data se entrega así</h3>
+    <p style="font-size: 14px; color: var(--ink-soft);">Tres canales auditables, con SLA mensual + alineamiento con tu equipo de loyalty &amp; affinity benefits.</p>
+    <div class="delivery-grid">
+      <div class="delivery-item"><div class="icon">🔌</div><h4>API REST</h4><p>Endpoint de activación de cuentas + sync diario de Paw Members + webhook de cross-sell de seguro pet.</p></div>
+      <div class="delivery-item"><div class="icon">📊</div><h4>Dashboard mensual</h4><p>Esto que estás viendo, en vivo. Acceso para equipo de loyalty + cross-sell + risk insurance.</p></div>
+      <div class="delivery-item"><div class="icon">📄</div><h4>Reporte PDF mensual</h4><p>Resumen ejecutivo el 1° hábil del mes, listo para presentar a head of premium banking + chief customer officer.</p></div>
+    </div>
+  </div>
+
+  <!-- SIGNOFF -->
+  <div class="signoff">
+    <h3>¿Vale la pena que lo veamos juntos 30 minutos?</h3>
+    <p>Te muestro el dashboard live de un cohort real (anonimizado), revisamos qué tipo de cliente Premier engancha más y discutimos un piloto Q3 con tu segmento Premier Plus o Black.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://pawfriend.cl/aplicar?tipo=banca&from=demo-banca" target="_blank" rel="noopener">📅 Agendar 30 min · Founder Partner</a>
+      <a class="btn btn-tertiary" href="https://pawfriend.cl/pitch/banca.html" target="_blank" rel="noopener">📑 Ver pitch deck completo</a>
+      <a class="btn btn-secondary" href="https://pawfriend.cl" target="_blank" rel="noopener">🌐 Ver app en vivo</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <strong>SpA SUSAETA GARNHAM SOFTWARE ENGINEERING</strong> · RUT 78.328.659-9 · Pedro Susaeta, founder<br>
+  ✉️ <a href="mailto:pawfriendcl@gmail.com">pawfriendcl@gmail.com</a> · 📱 WhatsApp <a href="https://wa.me/56982092588" target="_blank" rel="noopener">+56 9 8209 2588</a> · 🌐 <a href="https://pawfriend.cl" target="_blank" rel="noopener">pawfriend.cl</a><br>
+  <span style="opacity: .65;">Datos representativos del Y1 target · cohort real disponible Q3 2026 · Lanzamiento app Junio 2026</span>
+</footer>
+
+</body>
+</html>

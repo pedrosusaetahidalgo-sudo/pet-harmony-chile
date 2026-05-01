@@ -34,7 +34,7 @@
 
 ## 3. El problema (Why now)
 
-**Chile tiene ~4 millones de hogares con mascota** y solo **&lt;15% digitalizacion** del mercado pet. Existe una ventana de 12-18 meses antes que competidores regionales (QVET espanol, Petlove brasileno) se consoliden.
+**Chile tiene millones de hogares con mascota** (~74% de hogares — *CADEM Plaza Pública 2023-2024*) y la mayoria de vets/clinicas todavia opera con planillas y papel (no hay sistema digital nacional homologado). Existe una ventana de 12-18 meses antes que competidores regionales (QVET espanol, Petlove brasileno) se consoliden en Chile.
 
 **Evidencia del dolor** — voces reales de beta testers:
 
@@ -92,31 +92,33 @@ Una **ficha clinica digital con PDF descargable** + **directorio publico de vete
 
 ### 6.2. Innovacion de metodo (el angulo SUP-CL)
 
-**Desarrollo 15× mas rapido con IA como co-engineer**. Un founder chileno + Claude construyo en 2 meses lo que un equipo de 6-8 personas tarda 12-14 meses. Ver [APALANCAMIENTO_FUNDADOR_IA.md](../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md).
+**Desarrollo apalancado por IA como co-engineer (estimación propia, ~15×)**. Un founder chileno solo + Claude Code (IA) construyo en 2 meses lo que estimamos que un equipo de 6-8 personas tardaria 12-14 meses. Ver [APALANCAMIENTO_FUNDADOR_IA.md](../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md). Pre-launch hoy (Junio 2026, 0 usuarios publicos).
 
 | | Paw Friend (CL) | Pawp (US) | Fuzzy (US) | Barkibu (ES) |
 |---|---|---|---|---|
-| Equipo | 1 + IA | 6 personas | 8 personas | 5 personas |
-| Tiempo MVP | **2 meses** | 12 meses | 14 meses | 10 meses |
+| Equipo | 1 founder + IA | 6 personas | 8 personas | 5 personas |
+| Tiempo MVP | **2 meses (pre-launch)** | 12 meses | 14 meses | 10 meses |
 | Pre-seed | <USD $25K | ~USD $3M | ~USD $4,5M | ~USD $1,8M |
 
 **Chile tiene la oportunidad de exportar esta metodologia**. Paw Friend es el caso de exito que demuestra que un founder chileno + IA puede competir con equipos US de 8 personas.
 
 ---
 
-## 7. Mercado y escalabilidad
+## 7. Mercado y escalabilidad — modelado founder (no oficial)
 
-### Chile (home market)
+> Las cifras absolutas TAM/SAM en USD requieren licencia Euromonitor / Mintel. Los rangos siguientes son **estimaciones del founder bajo modelo F7**, basadas en supuestos publicos: ~74% hogares con mascota (CADEM Plaza Pública 2023-2024), Euromonitor pet care Chile reporta crecimiento sostenido del sector.
 
-- TAM: USD $160M/ano (4M hogares × USD $40).
-- SAM: USD $25-35M/ano.
-- SOM 3 anos Chile: USD $1,5M ARR.
+### Chile (home market) — target modelado
 
-### LATAM Andino (vision global desde Chile)
+- TAM target: USD ~$160M/ano (modelado: 4M hogares × USD ~$40 digital pet spend asumido).
+- SAM target: USD ~$25-35M/ano (modelado).
+- SOM 3 anos Chile target: **USD ~$1,5M ARR** (escenario base modelo F7).
 
-- TAM: USD $2,5B/ano.
-- SAM: USD $120M/ano.
-- SOM 3 anos: USD $3-4M ARR.
+### LATAM Andino — target modelado
+
+- TAM target: USD ~$2,5B/ano (modelado: ~20M hogares × USD ~$125/ano supuesto).
+- SAM target: USD ~$120M/ano.
+- SOM 3 anos target: USD $3-4M ARR.
 
 **Plan exportador**: pais #2 en mes 7 (Peru o Colombia). Stack portable, idioma comun, pricing facil de localizar.
 
@@ -137,7 +139,7 @@ Una **ficha clinica digital con PDF descargable** + **directorio publico de vete
 
 - Mes 1-3: Apps iOS + Android publicadas + 1.000 MAU + 50 vets activos creando fichas (gratis) + 3 Paw Companys.
 - Mes 4-6: Marca registrada INAPI + 5.000 MAU + 150 vets activos + 5 Paw Companys + **primer deal pharma piloto** (Centrovet o Virbac).
-- Mes 7-9: Primer piloto LATAM + ARR USD $100-200K (pharma + seguros) + 8.000 MAU.
+- Mes 7-9: Primer piloto LATAM + ARR target USD $100-200K (pharma + seguros · modelado founder) + 8.000 MAU target.
 
 ---
 
@@ -145,7 +147,7 @@ Una **ficha clinica digital con PDF descargable** + **directorio publico de vete
 
 ### Fundador full-time
 
-**Paw Founder** — 10+ años como ingeniero de software, dueño real de Kai (perro, pastor suizo) y Ema (gata), clientes N°1 y 2. SpA constituida, inicio SII, sin salario por 2 meses construyendo el producto.
+**Paw Founder** — 10+ años como ingeniero de software, dueño real de Kai (perro, pastor suizo) y Ema (gata), clientes N°1 y 2. SpA constituida, inicio SII, sin salario por 2 meses construyendo el producto. **Founder solo** — sin co-founder firmado ni advisors con contrato hoy (en pipeline).
 
 ### Copiloto transparente
 

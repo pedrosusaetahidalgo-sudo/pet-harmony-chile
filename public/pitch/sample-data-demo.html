@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend — Demo de la data B2B · Esto es lo que verias mes a mes</title>
+  <meta name="description" content="Demo ilustrativo de la data agregada que reciben pharma, aseguradoras, retail y otros partners B2B. Cifras representativas del cohort target Y1 (8.000-15.000 pets · 50.000 = goal Y2-Y3). Pre-launch Junio 2026 · 0 usuarios reales hoy." />
+  <meta name="theme-color" content="#9333ea" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://pawfriend.cl/pitch/sample-data-demo.html" />
+  <link rel="icon" type="image/svg+xml" href="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Paw Friend" />
+  <meta property="og:url" content="https://pawfriend.cl/pitch/sample-data-demo.html" />
+  <meta property="og:title" content="Demo de la data B2B — Paw Friend" />
+  <meta property="og:description" content="Que data agregada accede cada partner: pharma, aseguradoras, retail, gobierno, banca, edificios, long-tail." />
+  <meta property="og:image" content="https://pawfriend.cl/paw-friend-assets-v2/social/og_image.jpg" />
+  <meta property="og:locale" content="es_CL" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/pitch/assets/brand.css" />
+
+  <style>
+    :root {
+      --brand-50: #faf5ff; --brand-100: #f3e8ff; --brand-200: #e9d5ff; --brand-300: #d8b4fe;
+      --brand-500: #a855f7; --brand-600: #9333ea; --brand-700: #7e22ce;
+      --brand-800: #6b21a8; --brand-900: #581c87;
+      --gold: #eab308; --gold-soft: #fef3c7; --gold-dark: #a16207;
+      --emerald: #10b981; --emerald-soft: #d1fae5; --emerald-dark: #047857;
+      --rose: #ec4899; --rose-soft: #fce7f3;
+      --sky: #0ea5e9; --sky-soft: #e0f2fe;
+      --orange: #f97316; --orange-soft: #ffedd5;
+      --ink: #1a102b; --ink-soft: #4b3b66; --ink-faint: #94889e;
+      --paper: #faf7ff; --surface: #fff; --surface-alt: #fbf7ff;
+      --border: #e9d5ff;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
+      --radius-xl: 24px; --radius-lg: 18px; --radius-md: 12px; --radius-sm: 8px;
+      --shadow-sm: 0 2px 8px -2px rgba(147, 51, 234, .12);
+      --shadow-md: 0 8px 30px -10px rgba(147, 51, 234, .15);
+      --shadow-lg: 0 24px 60px -12px rgba(147, 51, 234, .22);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* Demo banner */
+    .demo-banner {
+      background: linear-gradient(90deg, #fef3c7 0%, #fde68a 50%, #fef3c7 100%);
+      border-bottom: 1px solid rgba(234, 179, 8, .4);
+      padding: 12px 20px;
+      text-align: center;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #713f12;
+      position: sticky; top: 0; z-index: 50;
+      letter-spacing: .01em;
+    }
+    .demo-banner strong {
+      background: #eab308; color: #fff;
+      padding: 2px 10px; border-radius: 999px;
+      margin-right: 10px;
+      font-weight: 800; letter-spacing: .08em;
+      font-size: 10.5px; text-transform: uppercase;
+    }
+
+    /* Hero */
+    header.hero {
+      background:
+        radial-gradient(ellipse 80% 60% at 80% 20%, rgba(234, 179, 8, .28), transparent 60%),
+        radial-gradient(ellipse 70% 60% at 20% 100%, rgba(192, 132, 252, .35), transparent 70%),
+        linear-gradient(135deg, #2a1046 0%, #581c87 45%, #9333ea 100%);
+      color: #fff;
+      padding: 56px 0 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    header.hero::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><circle cx='30' cy='30' r='1' fill='rgba(255,255,255,0.06)'/></svg>");
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; z-index: 2; }
+    .hero-tag {
+      display: inline-flex; gap: 8px; align-items: center;
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, .14);
+      border: 1px solid rgba(255, 255, 255, .3);
+      border-radius: 999px;
+      font-size: 11.5px; font-weight: 700;
+      backdrop-filter: blur(8px);
+      letter-spacing: .1em; text-transform: uppercase;
+    }
+    .hero-tag .dot-live {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 0 4px rgba(234, 179, 8, .25);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .7; transform: scale(.85); }
+    }
+    header h1 {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: clamp(34px, 5vw, 54px);
+      line-height: 1.05;
+      letter-spacing: -.02em;
+      margin: 20px 0 12px;
+    }
+    header h1 .accent {
+      background: linear-gradient(90deg, #fbbf24, #fde68a);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    header .sub {
+      font-size: 17px;
+      color: rgba(255, 255, 255, .85);
+      max-width: 700px;
+      line-height: 1.55;
+    }
+    .hero-meta {
+      display: flex; gap: 28px; flex-wrap: wrap;
+      margin-top: 32px;
+      font-size: 13px;
+    }
+    .hero-meta .item { display: flex; flex-direction: column; gap: 2px; }
+    .hero-meta .k {
+      font-size: 10.5px; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: rgba(255, 255, 255, .55);
+    }
+    .hero-meta .v { font-weight: 600; color: #fff; font-size: 14px; }
+    .hero-meta .v strong { color: var(--gold); font-weight: 800; }
+
+    /* KPI band */
+    .kpis-wrap { padding-bottom: 36px; }
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: -48px;
+      position: relative; z-index: 3;
+    }
+    @media (max-width: 820px) { .kpis { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+    .kpi {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px 20px 20px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi::before {
+      content: "";
+      position: absolute; inset: 0 0 auto 0; height: 3px;
+      background: var(--accent, var(--brand-600));
+    }
+    .kpi-label {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .kpi-value {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: 30px;
+      line-height: 1.05;
+      color: var(--ink);
+      margin: 8px 0 4px;
+      font-variant-numeric: tabular-nums;
+    }
+    .kpi-sub { font-size: 12px; color: var(--ink-soft); font-weight: 500; }
+    .kpi:nth-child(1) { --accent: #9333ea; }
+    .kpi:nth-child(2) { --accent: #eab308; }
+    .kpi:nth-child(3) { --accent: #10b981; }
+    .kpi:nth-child(4) { --accent: #ec4899; }
+
+    /* Section panel */
+    section.panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 30px;
+      margin-top: 24px;
+      box-shadow: var(--shadow-md);
+    }
+    @media (max-width: 600px) { section.panel { padding: 24px 18px; } }
+
+    .panel-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 20px; flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .panel-eyebrow {
+      font-size: 10.5px; font-weight: 800;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--brand-700);
+    }
+    section.panel h2 {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: 26px;
+      line-height: 1.15;
+      letter-spacing: -.015em;
+      color: var(--ink);
+      margin: 4px 0 4px;
+    }
+    .panel-sub {
+      font-size: 14.5px;
+      color: var(--ink-soft);
+      margin-bottom: 24px;
+      max-width: 720px;
+    }
+    .panel-tag {
+      align-self: center;
+      padding: 4px 10px;
+      background: var(--brand-50);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 11px; font-weight: 700;
+      color: var(--brand-700);
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+
+    /* Footnote / Method */
+    .method {
+      margin-top: 18px;
+      padding: 12px 16px;
+      background: var(--brand-50);
+      border-left: 3px solid var(--brand-500);
+      border-radius: 8px;
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      line-height: 1.5;
+    }
+    .method strong { color: var(--brand-700); font-weight: 700; }
+
+    /* Tables */
+    .table-wrap { overflow-x: auto; margin: 0 -8px; }
+    table.data {
+      width: 100%; min-width: 640px;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    table.data th {
+      text-align: left;
+      padding: 10px 12px;
+      background: var(--surface-alt);
+      border-bottom: 2px solid var(--border);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    table.data td {
+      padding: 12px;
+      border-bottom: 1px solid #f3e8ff;
+      vertical-align: middle;
+    }
+    table.data tr:last-child td { border-bottom: none; }
+    table.data tr:hover td { background: var(--surface-alt); }
+    table.data .breed-name {
+      font-weight: 700; color: var(--ink);
+      display: flex; align-items: center; gap: 8px;
+    }
+    table.data .breed-name .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--brand-500);
+      flex-shrink: 0;
+    }
+    table.data .num {
+      font-family: var(--mono);
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      color: var(--brand-800);
+    }
+    table.data .pill {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+      background: var(--brand-50);
+      color: var(--brand-700);
+      margin-right: 4px;
+      margin-bottom: 2px;
+    }
+    table.data .pill.warn { background: #fef3c7; color: #a16207; }
+    table.data .pill.bad  { background: #fce7f3; color: #be185d; }
+    table.data .pill.ok   { background: #d1fae5; color: #047857; }
+
+    /* Inline progress bar (used in species + risk score) */
+    .ibar {
+      display: inline-block;
+      width: 100%;
+      height: 12px;
+      background: linear-gradient(90deg, rgba(147, 51, 234, .06), rgba(147, 51, 234, .12));
+      border-radius: 999px;
+      overflow: hidden;
+      vertical-align: middle;
+      position: relative;
+    }
+    .ibar > span {
+      display: block; height: 100%;
+      background: linear-gradient(90deg, var(--brand-500), var(--brand-700));
+      border-radius: 999px;
+      position: relative;
+    }
+    .ibar > span::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+    }
+    .ibar.gold > span    { background: linear-gradient(90deg, #fbbf24, #d97706); }
+    .ibar.emerald > span { background: linear-gradient(90deg, #34d399, #059669); }
+    .ibar.rose > span    { background: linear-gradient(90deg, #f472b6, #be185d); }
+    .ibar.sky > span     { background: linear-gradient(90deg, #38bdf8, #0369a1); }
+
+    /* Species split (perros vs gatos) */
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 720px) { .split-grid { grid-template-columns: 1fr; } }
+    .split-col {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 22px 22px 18px;
+      position: relative;
+    }
+    .split-col.dogs   { border-top: 4px solid var(--brand-600); }
+    .split-col.cats   { border-top: 4px solid var(--rose); }
+    .split-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .split-head h3 {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600; font-size: 20px;
+      color: var(--ink);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .split-head h3 .emoji { font-size: 26px; }
+    .split-count {
+      font-family: var(--mono);
+      font-size: 12.5px; font-weight: 700;
+      background: #fff; border: 1px solid var(--border);
+      padding: 4px 10px; border-radius: 999px;
+      color: var(--brand-800);
+    }
+    .split-row {
+      display: grid;
+      grid-template-columns: 1fr 60px 1.4fr;
+      gap: 12px;
+      align-items: center;
+      font-size: 13px;
+      padding: 8px 0;
+      border-bottom: 1px dashed var(--border);
+    }
+    .split-row:last-child { border-bottom: none; }
+    .split-row .label { font-weight: 600; color: var(--ink-soft); font-size: 12.5px; }
+    .split-row .val {
+      font-family: var(--mono); font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      color: var(--brand-800);
+      font-size: 13px;
+    }
+
+    /* Correlations */
+    .corr-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 720px) { .corr-grid { grid-template-columns: 1fr; } }
+    .corr-card {
+      background: linear-gradient(180deg, #fff, var(--surface-alt));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      position: relative;
+    }
+    .corr-card .corr-tag {
+      display: inline-block;
+      font-size: 10.5px; font-weight: 800;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--brand-700);
+      background: var(--brand-50);
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+    .corr-card .corr-statement {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+    .corr-card .corr-statement .strong {
+      color: var(--brand-700);
+      font-weight: 800;
+    }
+    .corr-card .corr-meta {
+      font-size: 12px;
+      color: var(--ink-faint);
+      font-family: var(--mono);
+      display: flex; gap: 14px; flex-wrap: wrap;
+    }
+    .corr-card .corr-meta b { color: var(--ink-soft); font-weight: 600; }
+
+    /* Risk score */
+    .risk-pill {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 13px;
+      font-family: var(--mono);
+      letter-spacing: .02em;
+    }
+    .risk-low    { background: #d1fae5; color: #047857; }
+    .risk-medium { background: #fef3c7; color: #a16207; }
+    .risk-high   { background: #fce7f3; color: #be185d; }
+
+    /* Audience cards (7 al final) */
+    .audience-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 980px) { .audience-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .audience-grid { grid-template-columns: 1fr; } }
+    .aud-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 22px 20px 20px;
+      position: relative;
+      overflow: hidden;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .aud-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .aud-card::before {
+      content: "";
+      position: absolute; inset: 0 0 auto 0; height: 4px;
+      background: var(--accent, var(--brand-600));
+    }
+    .aud-card[data-aud="pharma"]   { --accent: #9333ea; }
+    .aud-card[data-aud="seguros"]  { --accent: #0ea5e9; }
+    .aud-card[data-aud="retail"]   { --accent: #f97316; }
+    .aud-card[data-aud="gobierno"] { --accent: #059669; }
+    .aud-card[data-aud="banca"]    { --accent: #eab308; }
+    .aud-card[data-aud="edif"]     { --accent: #84cc16; }
+    .aud-card[data-aud="long"]     { --accent: #ec4899; }
+    .aud-emoji { font-size: 30px; margin-bottom: 10px; display: block; }
+    .aud-title {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: 18px;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .aud-desc {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .aud-endpoints {
+      display: flex; flex-wrap: wrap; gap: 4px;
+      margin-bottom: 10px;
+    }
+    .aud-endpoints .ep {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 2px 8px;
+      background: var(--brand-50);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--brand-700);
+      font-weight: 600;
+    }
+    .aud-price {
+      margin-top: 8px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border);
+      font-size: 12.5px;
+      color: var(--ink-soft);
+    }
+    .aud-price strong { color: var(--ink); font-weight: 700; }
+
+    /* CTA */
+    .cta-band {
+      margin-top: 36px;
+      background:
+        radial-gradient(ellipse 60% 80% at 80% 50%, rgba(234, 179, 8, .25), transparent 60%),
+        linear-gradient(135deg, #2a1046 0%, #581c87 50%, #9333ea 100%);
+      color: #fff;
+      border-radius: var(--radius-xl);
+      padding: 40px 36px;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-band h2 {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: clamp(24px, 4vw, 34px);
+      letter-spacing: -.015em;
+      margin-bottom: 10px;
+    }
+    .cta-band .accent {
+      background: linear-gradient(90deg, #fbbf24, #fde68a);
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent;
+    }
+    .cta-band p {
+      max-width: 620px;
+      margin: 0 auto 22px;
+      font-size: 15.5px;
+      color: rgba(255, 255, 255, .9);
+      line-height: 1.55;
+    }
+    .cta-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      letter-spacing: .01em;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .cta-btn.primary {
+      background: linear-gradient(90deg, #fbbf24, #f59e0b);
+      color: #1a102b;
+      box-shadow: 0 6px 24px -8px rgba(251, 191, 36, .6);
+    }
+    .cta-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 10px 30px -8px rgba(251, 191, 36, .7); }
+    .cta-btn.ghost {
+      background: rgba(255, 255, 255, .12);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, .25);
+      backdrop-filter: blur(8px);
+    }
+    .cta-btn.ghost:hover { background: rgba(255, 255, 255, .18); }
+
+    /* Footer */
+    footer.foot {
+      margin-top: 24px;
+      padding: 36px 0 48px;
+      text-align: center;
+      color: var(--ink-soft);
+      font-size: 12.5px;
+      line-height: 1.7;
+    }
+    footer.foot .disclaimer {
+      max-width: 780px;
+      margin: 0 auto 18px;
+      padding: 14px 18px;
+      background: #fffbeb;
+      border: 1px dashed #fde68a;
+      border-radius: 12px;
+      color: #713f12;
+      font-weight: 500;
+    }
+    footer.foot .links {
+      display: inline-flex; gap: 18px; flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    footer.foot .links a {
+      color: var(--brand-700);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    footer.foot .links a:hover { text-decoration: underline; }
+    footer.foot .legal {
+      font-size: 11px;
+      color: var(--ink-faint);
+      letter-spacing: .03em;
+    }
+
+    /* Section spacing */
+    main { padding-bottom: 60px; }
+    @media print {
+      .demo-banner, .cta-band { break-inside: avoid; }
+      header.hero { background: #581c87 !important; -webkit-print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Demo banner sticky -->
+  <div class="demo-banner">
+    <strong>Demo</strong>
+    Datos representativos del tipo de informacion disponible para partners B2B en cohort target (Y1: 8.000-15.000 pets · 50.000 = goal Y2-Y3). Cifras ilustrativas, no produccion.
+  </div>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="container hero-inner">
+      <span class="hero-tag"><span class="dot-live"></span> Demo de la data B2B</span>
+      <h1>
+        Esto es lo que <span class="accent">verias mes a mes</span>
+      </h1>
+      <p class="sub">
+        Pharma, aseguradoras, retail, gobierno y partners long-tail acceden a data
+        agregada de la cohorte Paw Friend. Aqui mostramos exactamente que tipo de
+        informacion recibirias: razas, especies, correlaciones y risk score por
+        mascota, todo refrescado trimestralmente.
+      </p>
+      <div class="hero-meta">
+        <div class="item">
+          <span class="k">Cohort target Y1</span>
+          <span class="v"><strong>50.000</strong> pets activas</span>
+        </div>
+        <div class="item">
+          <span class="k">Refresh</span>
+          <span class="v">Trimestral · Q1 / Q2 / Q3 / Q4</span>
+        </div>
+        <div class="item">
+          <span class="k">Lanzamiento</span>
+          <span class="v">Junio 2026 · cohort real Q3 2026</span>
+        </div>
+        <div class="item">
+          <span class="k">Privacy threshold</span>
+          <span class="v">n &ge; 50 mascotas / segmento</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- KPIs -->
+  <div class="container kpis-wrap">
+    <div class="kpis">
+      <div class="kpi">
+        <div class="kpi-label">Pets en cohorte (Y1 target)</div>
+        <div class="kpi-value">50.000</div>
+        <div class="kpi-sub">35k perros · 15k gatos</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Razas con n &ge; 50</div>
+        <div class="kpi-value">38</div>
+        <div class="kpi-sub">10 publicadas en SEO publico</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Correlaciones activas</div>
+        <div class="kpi-value">12</div>
+        <div class="kpi-sub">6 catalogo + 6 partner-only</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Endpoints API</div>
+        <div class="kpi-value">4 + 2</div>
+        <div class="kpi-sub">Catalogo + transaccionales</div>
+      </div>
+    </div>
+  </div>
+
+  <main class="container">
+
+    <!-- 1 · BREED STATS -->
+    <section class="panel" id="breed-stats">
+      <div class="panel-head">
+        <div>
+          <div class="panel-eyebrow">Seccion 1 / 4</div>
+          <h2>Breed Stats — perfil por raza</h2>
+        </div>
+        <span class="panel-tag">Endpoint: GET /breed_stats</span>
+      </div>
+      <p class="panel-sub">
+        Tu equipo de marketing puede preguntar: <em>&iquest;que razas crecen este
+        trimestre? &iquest;cual tiene mayor incidencia de dermatitis?</em> Esto es lo que
+        verias.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr>
+              <th>Raza</th>
+              <th>Pets (n)</th>
+              <th>Peso prom.</th>
+              <th>Edad prom.</th>
+              <th>% esteril.</th>
+              <th>Top condiciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="breed-name"><span class="dot"></span> Mestizo</span></td>
+              <td><span class="num">12.840</span></td>
+              <td><span class="num">14,8 kg</span></td>
+              <td><span class="num">5,4 a</span></td>
+              <td><span class="num">71%</span></td>
+              <td>
+                <span class="pill">Sobrepeso</span>
+                <span class="pill warn">Otitis</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="breed-name"><span class="dot" style="background:#0ea5e9"></span> Pastor Aleman</span></td>
+              <td><span class="num">2.140</span></td>
+              <td><span class="num">32,6 kg</span></td>
+              <td><span class="num">6,1 a</span></td>
+              <td><span class="num">58%</span></td>
+              <td>
+                <span class="pill bad">Displasia cadera</span>
+                <span class="pill warn">Dilatacion gastrica</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="breed-name"><span class="dot" style="background:#f59e0b"></span> Labrador</span></td>
+              <td><span class="num">1.920</span></td>
+              <td><span class="num">28,4 kg</span></td>
+              <td><span class="num">5,2 a</span></td>
+              <td><span class="num">65%</span></td>
+              <td>
+                <span class="pill">Sobrepeso</span>
+                <span class="pill warn">Otitis</span>
+                <span class="pill bad">Displasia</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="breed-name"><span class="dot" style="background:#10b981"></span> Cocker Spaniel</span></td>
+              <td><span class="num">1.180</span></td>
+              <td><span class="num">12,9 kg</span></td>
+              <td><span class="num">6,8 a</span></td>
+              <td><span class="num">62%</span></td>
+              <td>
+                <span class="pill warn">Otitis cronica</span>
+                <span class="pill bad">Atrofia retinal</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="breed-name"><span class="dot" style="background:#ec4899"></span> Maltes</span></td>
+              <td><span class="num">1.620</span></td>
+              <td><span class="num">3,4 kg</span></td>
+              <td><span class="num">5,9 a</span></td>
+              <td><span class="num">68%</span></td>
+              <td>
+                <span class="pill warn">Tartar dental</span>
+                <span class="pill">Luxacion patelar</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="breed-name"><span class="dot" style="background:#8b5cf6"></span> Yorkshire</span></td>
+              <td><span class="num">1.380</span></td>
+              <td><span class="num">3,1 kg</span></td>
+              <td><span class="num">6,4 a</span></td>
+              <td><span class="num">66%</span></td>
+              <td>
+                <span class="pill warn">Tartar dental</span>
+                <span class="pill bad">Colapso traqueal</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="breed-name"><span class="dot" style="background:#84cc16"></span> Golden Retriever</span></td>
+              <td><span class="num">1.090</span></td>
+              <td><span class="num">31,2 kg</span></td>
+              <td><span class="num">5,7 a</span></td>
+              <td><span class="num">61%</span></td>
+              <td>
+                <span class="pill bad">Linfoma</span>
+                <span class="pill warn">Displasia</span>
+                <span class="pill">Sobrepeso</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="breed-name"><span class="dot" style="background:#f97316"></span> Bulldog Frances</span></td>
+              <td><span class="num">980</span></td>
+              <td><span class="num">11,8 kg</span></td>
+              <td><span class="num">4,1 a</span></td>
+              <td><span class="num">55%</span></td>
+              <td>
+                <span class="pill bad">Dermatitis atopica</span>
+                <span class="pill bad">Sd. braquicefalico</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="breed-name"><span class="dot" style="background:#dc2626"></span> Pug</span></td>
+              <td><span class="num">740</span></td>
+              <td><span class="num">8,9 kg</span></td>
+              <td><span class="num">5,3 a</span></td>
+              <td><span class="num">63%</span></td>
+              <td>
+                <span class="pill bad">Sd. braquicefalico</span>
+                <span class="pill warn">Sobrepeso</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="breed-name"><span class="dot" style="background:#7c3aed"></span> Schnauzer</span></td>
+              <td><span class="num">680</span></td>
+              <td><span class="num">9,2 kg</span></td>
+              <td><span class="num">7,2 a</span></td>
+              <td><span class="num">69%</span></td>
+              <td>
+                <span class="pill warn">Pancreatitis</span>
+                <span class="pill">Hiperlipidemia</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="method">
+        <strong>Modelo:</strong> cohort target (Y1: 8.000-15.000 pets · 50.000 = goal Y2-Y3). Refresh trimestral.
+        Solo se publican razas con n &ge; 50 (privacy threshold). Top condiciones
+        ordenadas por prevalencia relativa al promedio nacional.
+      </div>
+    </section>
+
+    <!-- 2 · SPECIES STATS -->
+    <section class="panel" id="species-stats">
+      <div class="panel-head">
+        <div>
+          <div class="panel-eyebrow">Seccion 2 / 4</div>
+          <h2>Species Stats — perros vs gatos</h2>
+        </div>
+        <span class="panel-tag">Endpoint: GET /species_stats</span>
+      </div>
+      <p class="panel-sub">
+        El corte mas usado para campa&ntilde;as nacionales: cobertura sanitaria por
+        especie. Si vendes vacuna polivalente, esto te dice donde aprieta el zapato.
+      </p>
+
+      <div class="split-grid">
+        <div class="split-col dogs">
+          <div class="split-head">
+            <h3><span class="emoji">🐶</span> Perros</h3>
+            <span class="split-count">35.000 pets</span>
+          </div>
+          <div class="split-row">
+            <span class="label">Vacunacion al dia</span>
+            <span class="val">78%</span>
+            <span class="ibar emerald"><span style="width:78%"></span></span>
+          </div>
+          <div class="split-row">
+            <span class="label">Antiparasitario al dia</span>
+            <span class="val">65%</span>
+            <span class="ibar gold"><span style="width:65%"></span></span>
+          </div>
+          <div class="split-row">
+            <span class="label">Con microchip</span>
+            <span class="val">23%</span>
+            <span class="ibar rose"><span style="width:23%"></span></span>
+          </div>
+          <div class="split-row">
+            <span class="label">Esterilizados</span>
+            <span class="val">66%</span>
+            <span class="ibar"><span style="width:66%"></span></span>
+          </div>
+          <div class="split-row">
+            <span class="label">Edad media</span>
+            <span class="val">4,2 a</span>
+            <span class="ibar sky"><span style="width:42%"></span></span>
+          </div>
+        </div>
+
+        <div class="split-col cats">
+          <div class="split-head">
+            <h3><span class="emoji">🐱</span> Gatos</h3>
+            <span class="split-count">15.000 pets</span>
+          </div>
+          <div class="split-row">
+            <span class="label">Vacunacion al dia</span>
+            <span class="val">82%</span>
+            <span class="ibar emerald"><span style="width:82%"></span></span>
+          </div>
+          <div class="split-row">
+            <span class="label">Antiparasitario al dia</span>
+            <span class="val">71%</span>
+            <span class="ibar gold"><span style="width:71%"></span></span>
+          </div>
+          <div class="split-row">
+            <span class="label">Con microchip</span>
+            <span class="val">12%</span>
+            <span class="ibar rose"><span style="width:12%"></span></span>
+          </div>
+          <div class="split-row">
+            <span class="label">Esterilizados</span>
+            <span class="val">73%</span>
+            <span class="ibar"><span style="width:73%"></span></span>
+          </div>
+          <div class="split-row">
+            <span class="label">Edad media</span>
+            <span class="val">5,8 a</span>
+            <span class="ibar sky"><span style="width:58%"></span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="method">
+        <strong>Cobertura observada:</strong> definida como evento registrado en la
+        ficha clinica con fecha valida en los ultimos 12 meses (vacuna) / 3 meses
+        (antiparasitario). Microchip y esterilizacion son auto-reportadas por
+        due&ntilde;o + validacion vet cuando aplica.
+      </div>
+    </section>
+
+    <!-- 3 · CORRELATIONS -->
+    <section class="panel" id="correlations">
+      <div class="panel-head">
+        <div>
+          <div class="panel-eyebrow">Seccion 3 / 4</div>
+          <h2>Correlations — el moat real</h2>
+        </div>
+        <span class="panel-tag">Endpoint: GET /correlation_insights</span>
+      </div>
+      <p class="panel-sub">
+        Aqui es donde Paw Friend se diferencia: cohorte longitudinal con eventos
+        clinicos enlazados. Estas correlaciones no las puedes comprar a IPSOS o
+        Kantar — solo viven dentro de la ficha.
+      </p>
+
+      <div class="corr-grid">
+        <div class="corr-card">
+          <span class="corr-tag">Raza × condicion</span>
+          <p class="corr-statement">
+            Bulldog Frances <span class="strong">×</span> dermatitis atopica
+            <span class="strong">&rarr; 3,2x</span> prevalencia vs media nacional.
+          </p>
+          <div class="corr-meta">
+            <span><b>n:</b> 420</span>
+            <span><b>conf:</b> 95%</span>
+            <span><b>refresh:</b> Q1 2026</span>
+          </div>
+        </div>
+
+        <div class="corr-card">
+          <span class="corr-tag">Raza × condicion</span>
+          <p class="corr-statement">
+            Pastor Aleman <span class="strong">×</span> displasia cadera
+            <span class="strong">&rarr; 2,1x</span> prevalencia vs media nacional.
+          </p>
+          <div class="corr-meta">
+            <span><b>n:</b> 380</span>
+            <span><b>conf:</b> 94%</span>
+            <span><b>refresh:</b> Q1 2026</span>
+          </div>
+        </div>
+
+        <div class="corr-card">
+          <span class="corr-tag">Comuna × comportamiento</span>
+          <p class="corr-statement">
+            Comuna Las Condes <span class="strong">×</span> esterilizacion
+            <span class="strong">&rarr; 89%</span> (vs media nacional 67%).
+          </p>
+          <div class="corr-meta">
+            <span><b>n:</b> 1.140</span>
+            <span><b>conf:</b> 98%</span>
+            <span><b>refresh:</b> mensual</span>
+          </div>
+        </div>
+
+        <div class="corr-card">
+          <span class="corr-tag">Edad × visitas vet</span>
+          <p class="corr-statement">
+            Mascotas &gt;7 a&ntilde;os <span class="strong">×</span> visitas vet/a&ntilde;o
+            <span class="strong">&rarr; 4,2</span> (vs &lt;7 a&ntilde;os: 2,1).
+          </p>
+          <div class="corr-meta">
+            <span><b>n:</b> 8.720</span>
+            <span><b>conf:</b> 99%</span>
+            <span><b>refresh:</b> Q1 2026</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="method">
+        <strong>Catalogo:</strong> 6 correlaciones publicas accesibles via tier
+        Insights. <strong>Partner-only:</strong> 6 adicionales custom por vertical
+        (ej: Sura recibe correlaciones de claim severity por raza × edad).
+        Threshold privacy n &ge; 50.
+      </div>
+    </section>
+
+    <!-- 4 · RISK SCORE -->
+    <section class="panel" id="risk-score">
+      <div class="panel-head">
+        <div>
+          <div class="panel-eyebrow">Seccion 4 / 4</div>
+          <h2>Risk Score — score 0-100 por mascota</h2>
+        </div>
+        <span class="panel-tag">Endpoint: GET /risk_score?pet_id=...</span>
+      </div>
+      <p class="panel-sub">
+        Para aseguradoras: pricing real-time basado en perfil clinico real, no
+        encuesta. Para pharma: segmentacion accionable. El score combina raza,
+        edad, peso, esterilizacion y condiciones reportadas.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr>
+              <th>Perfil</th>
+              <th>Edad</th>
+              <th>Peso</th>
+              <th>Esteril.</th>
+              <th>Condiciones</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="breed-name"><span class="dot"></span> Mestizo macho</span></td>
+              <td><span class="num">3 a</span></td>
+              <td><span class="num">15 kg</span></td>
+              <td><span class="pill ok">Si</span></td>
+              <td>
+                <span class="pill ok">Vacunas al dia</span>
+                <span class="pill ok">Antipara al dia</span>
+              </td>
+              <td><span class="risk-pill risk-low">18 / bajo</span></td>
+            </tr>
+            <tr>
+              <td><span class="breed-name"><span class="dot" style="background:#f97316"></span> Bulldog Frances</span></td>
+              <td><span class="num">5 a</span></td>
+              <td><span class="num">12 kg</span></td>
+              <td><span class="pill bad">No</span></td>
+              <td>
+                <span class="pill warn">Dermatitis</span>
+                <span class="pill">Vacunas al dia</span>
+              </td>
+              <td><span class="risk-pill risk-medium">64 / medio</span></td>
+            </tr>
+            <tr>
+              <td><span class="breed-name"><span class="dot" style="background:#0ea5e9"></span> Pastor Aleman</span></td>
+              <td><span class="num">8 a</span></td>
+              <td><span class="num">35 kg</span></td>
+              <td><span class="pill ok">Si</span></td>
+              <td>
+                <span class="pill warn">Sobrepeso</span>
+                <span class="pill bad">Displasia leve</span>
+              </td>
+              <td><span class="risk-pill risk-high">78 / alto</span></td>
+            </tr>
+            <tr>
+              <td><span class="breed-name"><span class="dot" style="background:#ec4899"></span> Maltes hembra</span></td>
+              <td><span class="num">2 a</span></td>
+              <td><span class="num">3,2 kg</span></td>
+              <td><span class="pill bad">No</span></td>
+              <td>
+                <span class="pill ok">Vacunas al dia</span>
+              </td>
+              <td><span class="risk-pill risk-low">22 / bajo</span></td>
+            </tr>
+            <tr>
+              <td><span class="breed-name"><span class="dot" style="background:#84cc16"></span> Golden senior</span></td>
+              <td><span class="num">11 a</span></td>
+              <td><span class="num">34 kg</span></td>
+              <td><span class="pill ok">Si</span></td>
+              <td>
+                <span class="pill bad">Linfoma seguimiento</span>
+                <span class="pill warn">Sobrepeso</span>
+              </td>
+              <td><span class="risk-pill risk-high">86 / alto</span></td>
+            </tr>
+            <tr>
+              <td><span class="breed-name"><span class="dot" style="background:#7c3aed"></span> Gato comun europeo</span></td>
+              <td><span class="num">4 a</span></td>
+              <td><span class="num">4,2 kg</span></td>
+              <td><span class="pill ok">Si</span></td>
+              <td>
+                <span class="pill ok">Vacunas al dia</span>
+                <span class="pill ok">Indoor</span>
+              </td>
+              <td><span class="risk-pill risk-low">15 / bajo</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="method">
+        <strong>Score MVP heuristico:</strong> combina raza (predisposicion racial)
+        + edad + peso (vs ideal de raza) + esterilizacion + condiciones reportadas
+        + cobertura preventiva. Roadmap Y2: modelo entrenado con outcomes a 12 meses
+        sobre cohorte real. <em>RPC interna:</em> <code style="font-family: var(--mono); font-size: 12px; background: var(--brand-50); padding: 2px 8px; border-radius: 4px; color: var(--brand-700);">calculate_pet_risk_score(pet_id)</code>.
+      </div>
+    </section>
+
+    <!-- 5 · POR AUDIENCIA -->
+    <section class="panel" id="por-audiencia">
+      <div class="panel-head">
+        <div>
+          <div class="panel-eyebrow">A que data accede cada partner</div>
+          <h2>Por audiencia — los 7 motores B2B</h2>
+        </div>
+      </div>
+      <p class="panel-sub">
+        No todos los partners ven lo mismo. Cada vertical tiene un combo de endpoints
+        + permisos especificos. Los precios son referenciales del tier base.
+      </p>
+
+      <div class="audience-grid">
+        <div class="aud-card" data-aud="pharma">
+          <span class="aud-emoji">💊</span>
+          <div class="aud-title">Pharma animal</div>
+          <div class="aud-desc">
+            Sponsored reminders + insights racial &times; condicion + segmentacion
+            por cobertura preventiva. Centrovet, Virbac, Zoetis, MSD.
+          </div>
+          <div class="aud-endpoints">
+            <span class="ep">breed_stats</span>
+            <span class="ep">species_stats</span>
+            <span class="ep">correlations</span>
+            <span class="ep">risk_score</span>
+          </div>
+          <div class="aud-price">
+            <strong>Tier base:</strong> $5.000 USD piloto 90 dias · escala desde
+            $25.000 USD/a&ntilde;o.
+          </div>
+        </div>
+
+        <div class="aud-card" data-aud="seguros">
+          <span class="aud-emoji">🛡️</span>
+          <div class="aud-title">Aseguradoras</div>
+          <div class="aud-desc">
+            Risk score real-time por mascota + correlaciones claim severity +
+            captura de leads cualificados desde la ficha. Sura, BCI, Mapfre.
+          </div>
+          <div class="aud-endpoints">
+            <span class="ep">risk_score</span>
+            <span class="ep">correlations</span>
+            <span class="ep">lead_capture</span>
+          </div>
+          <div class="aud-price">
+            <strong>Modelo:</strong> CPA por lead cualificado + revshare en
+            primas anuales.
+          </div>
+        </div>
+
+        <div class="aud-card" data-aud="retail">
+          <span class="aud-emoji">🛍️</span>
+          <div class="aud-title">Retail pet</div>
+          <div class="aud-desc">
+            Catalogo filtrado por raza/edad + click tracking + descuento Paw Member
+            integrado. Master Dog, Falabella Pet, Puppis, Pet Star.
+          </div>
+          <div class="aud-endpoints">
+            <span class="ep">breed_stats</span>
+            <span class="ep">species_stats</span>
+            <span class="ep">click_tracking</span>
+          </div>
+          <div class="aud-price">
+            <strong>Modelo:</strong> revshare 5-10% en ventas tracked +
+            suscripcion alimento personalizado.
+          </div>
+        </div>
+
+        <div class="aud-card" data-aud="gobierno">
+          <span class="aud-emoji">🏛️</span>
+          <div class="aud-title">Gobierno / municipios</div>
+          <div class="aud-desc">
+            Cobertura sanitaria por comuna (vacunas, microchip, esterilizacion) +
+            white-label registro digital Ley 21.020. SAG, municipios.
+          </div>
+          <div class="aud-endpoints">
+            <span class="ep">comuna_stats</span>
+            <span class="ep">compliance_21020</span>
+            <span class="ep">aggregated_health</span>
+          </div>
+          <div class="aud-price">
+            <strong>Modelo:</strong> SaaS anual por municipio + reportes SAG
+            automaticos.
+          </div>
+        </div>
+
+        <div class="aud-card" data-aud="banca">
+          <span class="aud-emoji">🏦</span>
+          <div class="aud-title">Banca / fintech</div>
+          <div class="aud-desc">
+            Paw Member benefits dashboard + engagement metrics de tarjetahabientes
+            con mascotas. Programa fidelidad pet-segment.
+          </div>
+          <div class="aud-endpoints">
+            <span class="ep">paw_member_dashboard</span>
+            <span class="ep">engagement_metrics</span>
+          </div>
+          <div class="aud-price">
+            <strong>Modelo:</strong> sponsorship anual + costo per engaged user.
+          </div>
+        </div>
+
+        <div class="aud-card" data-aud="edif">
+          <span class="aud-emoji">🏢</span>
+          <div class="aud-title">Edificios / inmobiliarias</div>
+          <div class="aud-desc">
+            Cobertura compliance por edificio + reglamento digital de mascotas
+            + censo automatico de unidades con pet. Pet-friendly buildings.
+          </div>
+          <div class="aud-endpoints">
+            <span class="ep">building_compliance</span>
+            <span class="ep">pet_census</span>
+          </div>
+          <div class="aud-price">
+            <strong>Modelo:</strong> SaaS anual por edificio segun N de unidades.
+          </div>
+        </div>
+
+        <div class="aud-card" data-aud="long">
+          <span class="aud-emoji">🧩</span>
+          <div class="aud-title">Long-tail</div>
+          <div class="aud-desc">
+            Alianzas custom segun vertical: academia, ONGs, food delivery,
+            walkers/sitters franquicias. Revshare o sponsorship segun encaje.
+          </div>
+          <div class="aud-endpoints">
+            <span class="ep">custom</span>
+            <span class="ep">aggregated</span>
+          </div>
+          <div class="aud-price">
+            <strong>Modelo:</strong> caso a caso. Hablemos.
+          </div>
+        </div>
+      </div>
+
+      <div class="method">
+        <strong>Tier publico de catalogo:</strong> 4 endpoints (breed_stats,
+        species_stats, correlations, risk_score). <strong>Tier transaccional:</strong>
+        suma lead_capture, click_tracking y RPCs de scoring real-time.
+        <strong>Tier custom:</strong> data agregada nueva por vertical, NDA y
+        SLA dedicado.
+      </div>
+    </section>
+
+    <!-- CTA banda -->
+    <div class="cta-band">
+      <h2>30 minutos. Te muestro <span class="accent">la cohorte real</span>.</h2>
+      <p>
+        Esta vista es ilustrativa con cifras representativas. Si quieres ver el
+        dashboard live para tu vertical (con la data sintetica de tu categoria) y
+        discutir un piloto, agendemos.
+      </p>
+      <div class="cta-buttons">
+        <a class="cta-btn primary" href="mailto:pawfriendcl@gmail.com?subject=Quiero%20ver%20la%20data%20live%20de%20mi%20vertical">
+          ✉️ Agendar 30 min
+        </a>
+        <a class="cta-btn ghost" href="https://wa.me/56982092588?text=Hola%2C%20vi%20el%20demo%20de%20la%20data%20de%20Paw%20Friend%20y%20quiero%20agendar%2030%20min." target="_blank" rel="noopener">
+          💬 WhatsApp +56 9 8209 2588
+        </a>
+        <a class="cta-btn ghost" href="https://pawfriend.cl" target="_blank" rel="noopener">
+          🌐 pawfriend.cl
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <div class="container">
+      <div class="disclaimer">
+        <strong>Disclaimer:</strong> todos los datos mostrados en esta pagina son
+        ilustrativos · numeros sinteticos modelados por el founder · cohort real disponible
+        post-lanzamiento (Junio 2026). Los precios son referenciales y se ajustan por tier,
+        volumen y exclusividad de cada negociacion.
+      </div>
+      <div class="links">
+        <a href="https://pawfriend.cl" target="_blank" rel="noopener">pawfriend.cl</a>
+        <a href="mailto:pawfriendcl@gmail.com">pawfriendcl@gmail.com</a>
+        <a href="https://wa.me/56982092588" target="_blank" rel="noopener">WhatsApp +56 9 8209 2588</a>
+        <a href="/pitch/index.html">Indice de pitch decks</a>
+      </div>
+      <div class="legal">
+        SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9 ·
+        Luis Pasteur 6111 Dp 201, Vitacura · Chile
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

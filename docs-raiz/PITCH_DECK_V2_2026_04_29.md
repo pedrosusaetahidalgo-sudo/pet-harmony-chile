@@ -159,7 +159,7 @@
 - **Producto deployed**: pawfriend.cl + iOS/Android compilable.
 - **Compliance verificado**: Ley 21.719 + 19.628 + ARCO.
 
-**Producto ejecutado en 8 meses por founder solo + IA**:
+**Producto ejecutado en 2 meses por founder solo + IA (febrero–abril 2026)**:
 
 - 503 commits, 587 tests, 197 migraciones SQL, 42 edge functions, 78 rutas
 - Apalancamiento documentado: **15x output equipo equivalente** (USD 720k-1.4M valor desarrollo capitalizado).
@@ -300,7 +300,7 @@ Detalle completo: [CAP_TABLE_VALUACION_2026_04_29.md](CAP_TABLE_VALUACION_2026_0
 ### Por qué este equipo
 
 1. **Founder con track BI/data 5+ años** — entiende monetización de data agregada (consent ARCO + agregaciones por raza/comuna/edad).
-2. **Producto vivo de 8 meses** — no es PPT, es 503 commits + 587 tests + 197 migs.
+2. **Producto vivo construido en 2 meses solo + IA** — no es PPT, es 503 commits + 587 tests + 197 migs.
 3. **Compliance pre-resuelto** (Ley 21.719 + 19.628 + ARCO) — barrera de entrada para competidores.
 
 ### Por qué Paw Friend ganará

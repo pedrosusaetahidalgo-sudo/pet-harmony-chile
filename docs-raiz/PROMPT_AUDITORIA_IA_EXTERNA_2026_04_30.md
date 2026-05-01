@@ -57,7 +57,7 @@ Para cada pregunta que sigue:
 ### Quién soy
 Pedro, founder solo + IA (Claude Code) construyendo Paw Friend. SpA chilena.
 Track previo: 5+ años BI/data (SYNAP, Macrotel). Apalancamiento documentado:
-8 meses de desarrollo = ~15× output equipo equivalente.
+2 meses de desarrollo solo + IA (febrero–abril 2026) = ~15× output equipo equivalente.
 
 ### Qué es Paw Friend
 App pet-tech para dueños chilenos: ficha clínica longitudinal + directorio

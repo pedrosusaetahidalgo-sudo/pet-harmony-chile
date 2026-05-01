@@ -8,7 +8,7 @@
 >
 > **⚠️ Modelo v2.1 vigente desde 2026-04-29** (Plan v5 Opcion 3). Ver [`docs-raiz/pitch/MODELO_V2_2026_04_22.md`](../docs-raiz/pitch/MODELO_V2_2026_04_22.md)
 > con el addendum 2026-04-29 para el documento canonico. Cambios clave vs v1:
-> - **Freemium B2C 3 tiers**: Free $0 (lo esencial) · Paw Member $3.990/mes · Manada $9.990/mes (suma aporte $2K/mes a refugios). Cubre el COGS biometrico Petify (USD $0,75/mascota/mes opt-in).
+> - **Freemium B2C 3 tiers**: Free $0 (lo esencial) · Paw Member $3.990/mes · Manada $9.990/mes (suma aporte $2K/mes a refugios). Sin COGS externo en consumer (margen ~99% Paw Member). 🔮 Paw Shield (biometría Petify) en roadmap futuro · activable solo con financiamiento B2B.
 > - **B2B de acceso a la ficha en pharma + seguros + retail** sigue siendo el motor de escala (grueso del ARR a 50k MAU).
 > - **Vet = canal de adquisicion**, no revenue center (planes Clinica escondidos).
 > - **Donaciones → Paw Support / Manada** (reframe legal Ley 19.885: Paw Friend SpA es quien dona, no el usuario).
@@ -43,7 +43,7 @@ Las mascotas no son un negocio. Son familia. En Chile, **7 de cada 10 hogares** 
 
 Paw Friend es la carta de amor de un ingeniero chileno a cada perro, gato, conejo y dueño que se ha sentido solo en una sala de urgencia veterinaria.
 
-**Fundador**: Paw Founder — 10+ años como ingeniero de software, dueño real de **Kai** (perro, pastor suizo, cliente N°1) y **Ema** (gata, cliente N°2). Construyó Paw Friend en 2 meses con Claude como copiloto, desde Chile, sin capital externo.
+**Fundador**: Paw Founder — 10+ años como ingeniero de software, dueño real de **Kai** (perro, pastor suizo, cliente N°1) y **Ema** (gata, cliente N°2). Construyó Paw Friend en **2 meses** con Claude Code como copiloto, desde Chile, sin capital externo. **Founder solo · sin co-founder firmado · sin advisors con contrato · sin equipo contratado.**
 
 **Tagline oficial**: *"La ficha clinica digital de tu mascota, conectada con tu veterinario. Hecho en Chile, de pura mano, con IA de Claude."*
 
@@ -69,10 +69,10 @@ Paw Friend es la carta de amor de un ingeniero chileno a cada perro, gato, conej
 
 ### Evidencia cuantitativa
 
-- Tenencia de mascotas Chile: ~70% hogares.
-- Mercado pet Chile: ~USD 1B+/ano.
-- Digitalizacion: **<15%**.
-- Ley 21.020 de tenencia responsable exige registro RUP.
+- Tenencia de mascotas Chile: ~74% hogares — *CADEM Plaza Pública 2023-2024 (estudios de tenencia, citados ampliamente en prensa).*
+- Mercado pet Chile: crecimiento sostenido — *Euromonitor pet care Chile reporta crecimiento del sector (cifra absoluta en USD requiere licencia Euromonitor; "USD 1B+" usado historicamente es estimacion sin fuente publica auditable).*
+- Digitalizacion: **mayoria de vets/clinicas aun en papel y planilla** — no existe sistema digital nacional homologado para mascotas.
+- Ley 21.020 de tenencia responsable exige registro RUP — *BCN, vigente desde 2017.*
 
 ---
 
@@ -92,7 +92,7 @@ Paw Friend es la carta de amor de un ingeniero chileno a cada perro, gato, conej
 - **Vertical B2C + B2B + comunidad integrada** — nadie mas cruza los 4 ejes.
 - **Pricing CLP transparente** vs QVET/VetPraxis.
 - **Onboarding vet <5 minutos** con OCR de carnet.
-- **Costos variables <USD $100/mes** — producto artesanal + IA.
+- **Costo operativo actual ~USD $2k/mes** (Supabase Pro + APIs IA) — runway largo con poco capital.
 
 ---
 
@@ -195,35 +195,37 @@ React 18 + Vite + TypeScript + Tailwind + Supabase (Postgres + Edge Functions + 
 Free cubre lo esencial para siempre) → no se va → la ficha se enriquece sola →
 pharma/seguros/retail pagan por acceso a escala. Loop coherente.
 
-### Pilares ancla (80% del revenue proyectado)
+### Pilares ancla (80% del revenue **target**)
 
-| # | Pilar | Quien paga | Modelo | Ticket anual | Activacion |
+> Todos los tickets son **rangos del founder bajo modelo F7**, no contratos firmados. Pre-launch hoy (Junio 2026), 0 deals pagadores. Tickets se ajustan al cierre de cada negociacion real.
+
+| # | Pilar | Quien paga | Modelo | Ticket anual (target) | Activacion |
 |---|---|---|---|---|---|
-| 1 | **Pharma animal** | Centrovet (Agrosuper), Virbac, Zoetis, MSD, Elanco, Boehringer | Sponsored reminders + data deals agregados + contenido educacional | USD $20-500K / brand | Mes 4-6 post-seed |
-| 2 | **Seguros pet** | Sura, BCI, Mapfre, Consorcio, emergentes | Afiliado 10-20% sobre prima + white-label ficha + canal de claims | USD $500K-1M a escala (5% conv sobre 50k MAU) | Mes 6-9 |
-| 3 | **Retail pet** | Master Dog (Agrosuper), Falabella Pet, Puppis, Agrogarden | Afiliado 3-10% + suscripcion alimento integrada + ads contextuales | USD $50-200 / usuario activo-ano | Mes 8-12 |
+| 1 | **Pharma animal** | Centrovet (Agrosuper), Virbac, Zoetis, MSD, Elanco, Boehringer | Sponsored reminders + data deals agregados + contenido educacional | rango propuesto USD $20-500K / brand · negociable | Mes 4-6 post-seed |
+| 2 | **Seguros pet** | Sura, BCI, Mapfre, Consorcio, emergentes | Afiliado sobre prima + white-label ficha + canal de claims | a escala USD $500K-1M target · % se negocia | Mes 6-9 |
+| 3 | **Retail pet** | Master Dog (Agrosuper), Falabella Pet, Puppis, Agrogarden | Afiliado + suscripcion alimento integrada + ads contextuales | rango propuesto USD $50-200 / usuario activo-ano | Mes 8-12 |
 
 ### Pilares soporte (estabilizan + dan narrativa)
 
 | # | Pilar | Quien paga | Modelo | Ticket | Estado |
 |---|---|---|---|---|---|
-| 4 | **Paw Companys** | Empresas pet-friendly + corporates con benefits | Sponsorship badge + SaaS bienestar animal ($1-3 USD/empleado/mes) | USD $600-1.8K/mes/corporate | Vivo |
+| 4 | **Paw Companys** | Empresas pet-friendly + corporates con benefits | Sponsorship badge + SaaS bienestar animal | tiers $49.900 / $99.900 / $199.900 CLP/mes (publicos) | Vivo · 0 firmados publicamente |
 | 5 | **Paw Support** (ex-donaciones) | Duenos voluntariamente | Pago voluntario + aporte a refugios trazable | Residual, alto en NPS | Reframe en curso |
 
-### Long-tail (mes 12+)
+### Long-tail (mes 12+, todos rangos del modelo founder)
 
-| # | Pilar | Quien paga | Modelo | Ticket | Timing |
+| # | Pilar | Quien paga | Modelo | Ticket (target) | Timing |
 |---|---|---|---|---|---|
-| 6 | **Data agregada anonima** | SAG, Minsal, academia (UACh, UNAB), pharma R&D | Licensing con consent opt-in | USD $50-500K / deal | Mes 18+ (50k+ fichas) |
-| 7 | **Gobierno / municipios** | Las Condes, Providencia, Subdere | White-label registro digital Ley 21.020 | USD $10-50K / municipio | Mes 12+ |
+| 6 | **Data agregada anonima** | SAG, Minsal, academia (UACh, UNAB), pharma R&D | Licensing con consent opt-in | rango propuesto USD $50-500K / deal | Mes 18+ (con cohort suficiente) |
+| 7 | **Gobierno / municipios** | Las Condes, Providencia, Subdere | White-label registro digital Ley 21.020 | rango propuesto USD $10-50K / municipio | Mes 12+ |
 | 8 | **Publicidad programatica** | Brands pet + adjacentes | CPM residual | Marginal | Mes 12+ con escala MAU |
 
 ### B2C dueno — freemium 3 tiers (Plan v5 Opcion 3)
 
 - **Free ($0, hasta 2 mascotas)**: ficha clinica, recordatorios, calendario, OCR del carnet, Pet ID Card basica, QR, memorial, adoption, directorio vets. Lo esencial gratis para siempre. Conversion target 85%.
-- **Paw Member ($3.990/mes, hasta 4 mascotas)**: + Paw Passport PDF + Insights Pro + audio notes IA + reportes >30d + descuentos Paw Partners + badge 💛. Conversion target 13%. Sin COGS externo (margen ~99%). Biometria Paw Shield (Petify) fuera del modelo consumer (Opcion C 2026-04-30) — codigo dormido en repo, reactivable solo con financiamiento B2B futuro.
+- **Paw Member ($3.990/mes, hasta 4 mascotas)**: + Paw Passport PDF + Insights Pro + audio notes IA + reportes >30d + descuentos Paw Partners + badge 💛. Conversion target 13%. Sin COGS externo (margen ~99%). 🔮 Roadmap futuro: Paw Shield (biometría del hocico vía Petify) — pausado hoy, código dormido en repo, reactivable solo si entra un partner B2B que financie el COGS USD 0,75/pet/mes.
 - **Manada ($9.990/mes, hasta 5 mascotas)**: + descuentos exclusivos + soporte prioritario + early access + badge 👑 + **$2.000/mes a Fondo Paw Friend Refugios** (Paw Friend SpA es quien dona, no el usuario — evita la Ley 19.885). Conversion target 1-2%.
-- A escala el grueso del ARR sigue siendo B2B (pharma + seguros + retail). Freemium B2C es el puente que sostiene el COGS biometrico hasta firmar partners B2B.
+- A escala el grueso del ARR sigue siendo B2B (pharma + seguros + retail). Freemium B2C es el motor de monetización del dueño con margen ~99% (sin COGS externo en consumer). Si en el futuro reactivamos Paw Shield, su COGS lo cubre el partner B2B que la pida.
 
 ### B2B vet — canal de adquisicion, no revenue center
 
@@ -238,20 +240,22 @@ pharma/seguros/retail pagan por acceso a escala. Loop coherente.
 | **Clinica Starter** | $19.900 CLP/mes | NO — "Empresarial — contactanos" |
 | **Pro Max** | $29.900 CLP/mes | NO — on demand |
 
-### Unit economics v2 a escala (50k MAU, mes 18 post-seed)
+### Unit economics v2 a escala — TARGET MODELADO (50k MAU, mes 18 post-seed)
 
-| Motor | Deals/conversion | ARR estimado |
+> Tabla de proyeccion del founder · escenarios base/optimista del modelo F7. Pre-launch hoy. Numeros se calibran trimestralmente con traccion real post-launch.
+
+| Motor | Deals/conversion (asumidos) | ARR target |
 |---|---|---|
-| Pharma (3 brands) | 3 deals activos | USD $300-600K |
-| Seguros (2 aseguradoras) | 5% conv = 2.500 polizas | USD $200-500K |
-| Retail (2 retailers) | 10% conv activos | USD $250-500K |
-| Paw Companys | 20 empresas | USD $120-240K |
+| Pharma (3 brands) | 3 deals activos asumidos | USD $300-600K |
+| Seguros (2 aseguradoras) | 5% conv = 2.500 polizas asumidas | USD $200-500K |
+| Retail (2 retailers) | 10% conv activos asumido | USD $250-500K |
+| Paw Companys | 20 empresas asumidas | USD $120-240K |
 | Paw Support | voluntario | USD $20-50K |
-| Long-tail (data/gobierno) | 1-2 deals | USD $50-200K |
-| **Total ARR proyectado** | | **USD $940K - $2.1M** |
+| Long-tail (data/gobierno) | 1-2 deals asumidos | USD $50-200K |
+| **Total ARR target** | | **USD $940K - $2.1M** |
 
 vs modelo v1 vet-centrico (techo USD $400-600K ARR) → delta **2-4×** con el mismo
-producto, solo reorientando quien paga.
+producto, solo reorientando quien paga. *Ningun deal pagador firmado todavia.*
 
 ### Por que este modelo gana
 
@@ -265,28 +269,36 @@ producto, solo reorientando quien paga.
 
 ## 7. Mercado y timing
 
-### TAM / SAM / SOM
+### TAM / SAM / SOM — modelado founder (no oficial)
 
-| Nivel | Definicion | Tamano | Supuestos |
+> Estas cifras absolutas en USD son **estimaciones del founder bajo modelo F7**, no reportes auditados. Se construyen con supuestos publicos y privados a partes iguales:
+>
+> - Penetracion mascotas hogar: ~74% (CADEM Plaza Pública 2023-2024, estudios de tenencia)
+> - Numero de hogares con mascota: estimacion sobre INE Censo 2017 + proyecciones
+> - Gasto digital anual por mascota: **supuesto del founder** (no benchmark publicado, Euromonitor pet care Chile reporta crecimiento sostenido pero las cifras absolutas requieren licencia)
+>
+> Fuentes a confirmar antes de pitch presencial: Euromonitor *Pet Care in Chile* / *Pet Care in Latin America*, Mintel pet sector reports, INE.
+
+| Nivel | Definicion | Tamano TARGET | Supuestos del modelo |
 |---|---|---|---|
-| **TAM** | Hogares pet × gasto digital anual (Chile + LATAM Andino) | USD **~2,5B**/ano | 20M hogares × USD $125/ano |
-| **SAM** | Digital-native + ticket SaaS pet (CL + PE + CO) | USD **~120M**/ano | 5% del TAM |
-| **SOM 3 anos** | Cuota con outreach organico + CORFO + Paw Companys | USD **~3-4M ARR** | 5-6% del SAM Chile + piloto regional |
+| **TAM** target | Hogares pet × gasto digital anual (Chile + LATAM Andino) | USD ~2,5B/ano | 20M hogares × USD $125/ano (supuestos founder) |
+| **SAM** target | Digital-native + ticket SaaS pet (CL + PE + CO) | USD ~120M/ano | 5% del TAM (supuesto founder) |
+| **SOM 3 anos** target | Cuota con outreach organico + CORFO + Paw Companys | USD ~3-4M ARR | 5-6% del SAM Chile + piloto regional |
 
-### Solo Chile (para postulaciones CORFO / Start-Up Chile)
+### Solo Chile — modelado founder (para postulaciones CORFO / Start-Up Chile)
 
-- 4M hogares con mascota × USD $40/ano digital = TAM Chile **~USD 160M**.
-- SAM Chile: ~1.500 clinicas chicas pagables + ~500K duenos digital-native = **USD ~25-35M**/ano.
-- SOM 3 anos Chile solo = **USD ~1.5M ARR** (techo si no expandimos).
+- TAM Chile estimado: 4M hogares × USD $40/ano digital ≈ **USD ~160M** (ambos supuestos del founder).
+- SAM Chile estimado: ~1.500 clinicas chicas pagables + ~500K duenos digital-native ≈ **USD ~25-35M**/ano.
+- SOM 3 anos Chile solo target: **USD ~1.5M ARR** (techo si no expandimos).
 
-**Implicancia VC**: Chile solo no es venture-scale. LATAM Andino lo vuelve defendible para una Seed Series.
+**Implicancia VC**: Chile solo no es venture-scale; LATAM Andino vuelve la oportunidad defendible para Seed.
 
 ### Ventana de timing — 12-18 meses
 
-- Stack Capacitor + Supabase + Flow.cl: MVP con costos <USD $100/mes (imposible hace 5 anos).
-- IA colaborativa (Claude): founder solo construye producto Series-A-grade con presupuesto angel.
-- **QVET** (espanol, 8.000 clientes) sin comercial local todavia.
-- **Petsy** overlap B2C pero sin directorio SEO ni B2B.
+- Stack Capacitor + Supabase + Flow.cl: costo operativo actual ~USD $2k/mes (Supabase Pro + APIs IA + dominios; verificable con facturas).
+- IA colaborativa (Claude): founder solo construye producto con presupuesto angel.
+- **QVET** (Espana) sin comercial local todavia. *La cifra "8.000 clientes" aparece en su sitio publico — verificar al pitch.*
+- **Petsy** overlap B2C pero sin directorio SEO ni B2B (verificable en su sitio).
 - **Comportamiento post-pandemia**: dueno busca online antes de ir al vet (resenas, precios, especialidad) + quiere apoyar causas locales con trazabilidad.
 
 ---
@@ -331,20 +343,20 @@ producto, solo reorientando quien paga.
 
 ---
 
-## 9. Apalancamiento fundador + IA
+## 9. Apalancamiento fundador + IA (estimación propia)
 
-> **En 2 meses un founder + Claude entrego lo que un equipo de 5 expertos coordinados tardaria 6 meses — o un unico experto top-tier 2,5 anos.**
+> **En 2 meses un founder solo + Claude Code entrego lo que estimamos que un equipo de 5 expertos coordinados tardaria ~6 meses — o un unico experto top-tier ~2,5 años.** Los ratios son nuestra observación en este proyecto, no benchmarks externos validados.
 
-### Numeros gruesos
+### Numeros gruesos (estimación)
 
-| | Tu realidad | Equipo de expertos sin IA |
+| | Realidad medida | Estimación equipo de expertos sin IA |
 |---|---|---|
-| **Horas humanas** | ~320 hrs | ~4.800 hrs |
-| **Tiempo calendario** | 2 meses (solo) | 6 meses (5 expertos coordinados) |
-| **Costo tarifa CL** (USD 150/hr) | USD 22.400 | **USD 720.000** |
-| **Costo tarifa US top-tier** (USD 300/hr) | USD 22.400 | **USD 1.440.000** |
-| **Apalancamiento tiempo** | — | **15×** |
-| **Apalancamiento costo** | — | **32× a 65×** |
+| **Horas humanas** | ~320 hrs (estimadas) | ~4.800 hrs (estimadas) |
+| **Tiempo calendario** | 2 meses (1 founder solo) | ~6 meses (5 expertos coordinados estimados) |
+| **Costo tarifa CL** (USD 150/hr) | ~USD 22.400 | ~USD 720.000 |
+| **Costo tarifa US top-tier** (USD 300/hr) | ~USD 22.400 | ~USD 1.440.000 |
+| **Apalancamiento tiempo (estimado)** | — | ~15× |
+| **Apalancamiento costo (estimado)** | — | ~32× a 65× |
 
 ### Detalle por area
 
@@ -461,21 +473,29 @@ Claude escribe el **que** (boilerplate, migraciones, tests). El founder puso el 
 - Pre-seed angel LATAM cerrado (USD $150-300K).
 - Roadmap Seed mes 18-24.
 
-### Fase 4 — Mes 13-18: Seguros consolidado + piloto Retail
+### Fase 4 — Mes 13-18: Seguros consolidado + piloto Retail (PROYECCION)
 
-- **50.000 MAU + 500 vets activos + 15-20 Paw Companys**.
-- 2 aseguradoras activas = USD $200-500K ARR.
+- **MAU target: 20.000 (cons.) / 50.000 (opt.) · Vets activos: 350 · Paw Companys: 12-20**.
+- 1-2 aseguradoras activas = USD $80-300K ARR aseguradoras.
 - Primer contacto **Master Dog (Agrosuper)** + **Falabella Pet** → MVP afiliado retail.
 - Long-tail: primer deal data agregada con academia (UACh/UNAB).
 
-### Hitos cuantitativos (modelo v2)
+### Hitos cuantitativos (PROYECCION · modelo v2 · 2 escenarios)
 
-| Mes | MAU | Vets activos | Pharma deals | Seguros conv | ARR (USD) | Paw Companys | Paw Support (CLP) |
-|---|---|---|---|---|---|---|---|
-| 3 | 1.000 | 50 | 0 | 0 | $0 | 3 | $500K |
-| 6 | 5.000 | 150 | 1 piloto | 0 | $20-50K | 5 | $2M |
-| 12 | 15.000 | 300 | 2-3 | 1 piloto | $300-500K | 10 | $5M |
-| 18 | 50.000 | 500 | 3 | 2 | $940K-2.1M | 20 | $10M+ |
+> **Pre-launch (hoy)**: 0 usuarios publicos · 0 deals firmados · 0 MRR.
+> Toda la tabla es modelado conservador (col Cons.) y optimista (col Opt.).
+
+| Mes | MAU Cons. | MAU Opt. | Vets activos | Pharma deals | Seguros conv | ARR Cons. (USD) | ARR Opt. (USD) | Paw Companys |
+|---|---|---|---|---|---|---|---|---|
+| 3 | 500 | 1.500 | 30 | 0 | 0 | $0 | $0 | 1-3 |
+| 6 | 2.000 | 5.000 | 80 | 0-1 piloto | 0 | $0-20K | $20-50K | 3-5 |
+| 12 | 8.000 | 15.000 | 200 | 1-2 | 0-1 piloto | **$120K** | **$420K** | 6-10 |
+| 18 | 20.000 | 50.000 | 350 | 2-3 | 1-2 | $300-500K | $940K-2.1M | 12-20 |
+
+> **Y1 ARR realista** (mes 12) en banda **$120K conservador / $420K optimista** modelado.
+> El rango asume 1 deal pharma piloto + 1 aseguradora afiliado + 1-2 retail affiliate firmados.
+> Si ningun B2B firma Y1, el revenue cae a freemium B2C (Paw Member / Manada) que requiere
+> volumen de MAU que no se garantiza founder-solo.
 
 ---
 
@@ -511,7 +531,7 @@ Claude escribe el **que** (boilerplate, migraciones, tests). El founder puso el 
 
 ### Pre-money defendible
 
-- Base: output de 2 meses = USD $720K-1,44M en valor de mercado (ver [APALANCAMIENTO_FUNDADOR_IA.md](../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md)).
+- Base: output de 2 meses ≈ USD $720K-1,44M en valor de mercado estimado (ver [APALANCAMIENTO_FUNDADOR_IA.md](../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md)).
 - Conservador: pre-money USD 600-900K.
 - Con traccion inicial (20 B2B + 100 Premium): techo USD 1M+ defendible frente a fondos US.
 
@@ -521,7 +541,7 @@ Claude escribe el **que** (boilerplate, migraciones, tests). El founder puso el 
 
 ### Principio operativo
 
-Paw Friend es un proyecto chico. Costos variables **<USD $100/mes**. Cualquier excedente de Paw Support y sponsorship se destina a refugios y campanas de callejeros → adopciones.
+Paw Friend es un proyecto chico. Costo operativo actual **~USD $2k/mes** (Supabase Pro + APIs IA). Cualquier excedente de Paw Support y sponsorship se destina a refugios y campanas de callejeros → adopciones.
 
 ### Flujo de trazabilidad
 

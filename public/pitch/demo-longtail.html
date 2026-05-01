@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend · Demo data Long-tail · Aerolíneas · Academia · Fundaciones · Hardware vet</title>
+  <meta name="description" content="Demo ilustrativo de la data que ven sub-verticales long-tail tras firmar Paw Friend: aerolíneas (docs SAG), academia (cohort de estudio), fundaciones (trazabilidad post-adopción), eventos pet, hardware vet. Cifras representativas del cohort target Y1." />
+  <meta name="theme-color" content="#a855f7" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://pawfriend.cl/pitch/demo-longtail.html" />
+  <link rel="icon" type="image/svg+xml" href="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-50: #faf5ff; --brand-100: #f3e8ff; --brand-200: #e9d5ff;
+      --brand-500: #a855f7; --brand-600: #9333ea; --brand-700: #7e22ce;
+      --brand-800: #6b21a8; --brand-900: #581c87;
+      --gold: #eab308; --gold-soft: #fef3c7; --gold-dark: #a16207; --gold-light: #fde047;
+      --emerald: #10b981; --emerald-soft: #d1fae5;
+      --rose: #f43f5e; --rose-soft: #ffe4e6;
+      --amber: #f59e0b; --amber-soft: #fef3c7;
+      --sky: #0ea5e9; --sky-soft: #e0f2fe;
+      --teal: #14b8a6; --teal-soft: #ccfbf1;
+      --orange: #f97316; --orange-soft: #ffedd5;
+      --indigo: #6366f1; --indigo-soft: #e0e7ff;
+      --pink: #ec4899; --pink-soft: #fce7f3;
+      --ink: #1a102b; --ink-soft: #4b3b66; --ink-faint: #94889e;
+      --paper: #faf7ff; --surface: #fff; --surface-alt: #fbf7ff;
+      --border: #e9d5ff;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
+      --radius-lg: 18px; --radius-md: 12px;
+      --shadow-md: 0 8px 30px -10px rgba(147, 51, 234, .18);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .demo-banner { background: linear-gradient(90deg, #fef3c7 0%, #fde68a 50%, #fef3c7 100%); border-bottom: 1px solid rgba(234, 179, 8, .4); padding: 10px 20px; text-align: center; font-size: 12.5px; font-weight: 600; color: #713f12; position: sticky; top: 0; z-index: 50; }
+    .demo-banner strong { background: #eab308; color: #fff; padding: 2px 10px; border-radius: 999px; margin-right: 10px; font-weight: 800; letter-spacing: .08em; font-size: 10.5px; text-transform: uppercase; }
+    header.hero { background: radial-gradient(ellipse 80% 60% at 80% 20%, rgba(234,179,8,.28), transparent 60%), radial-gradient(ellipse 70% 60% at 20% 100%, rgba(192,132,252,.45), transparent 70%), linear-gradient(135deg, #2a1046 0%, var(--brand-800) 50%, var(--brand-600) 100%); color: #fff; padding: 56px 0 80px; position: relative; overflow: hidden; }
+    .hero-tag { display: inline-flex; gap: 8px; align-items: center; padding: 6px 14px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3); border-radius: 999px; font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .dot-live { width: 8px; height: 8px; border-radius: 50%; background: var(--gold-light); box-shadow: 0 0 0 4px rgba(253,224,71,.25); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .7; } }
+    header h1 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: clamp(34px, 5vw, 56px); line-height: 1.05; letter-spacing: -.02em; margin: 20px 0 12px; }
+    header h1 .x { display: inline-block; margin: 0 .15em; font-weight: 300; color: rgba(255,255,255,.6); font-family: 'Plus Jakarta Sans', sans-serif; }
+    header .sub { font-size: 17px; color: rgba(255,255,255,.85); max-width: 700px; line-height: 1.5; }
+    .hero-meta { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 32px; font-size: 13px; }
+    .hero-meta .item { display: flex; flex-direction: column; gap: 2px; }
+    .hero-meta .k { font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+    .hero-meta .v { font-weight: 600; color: #fff; font-size: 14px; }
+    .hero-meta .v strong { color: var(--gold-light); font-weight: 800; }
+
+    .vertical-nav { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px; margin-top: 28px; display: flex; gap: 8px; flex-wrap: wrap; box-shadow: var(--shadow-md); }
+    .vnav-chip { padding: 8px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 700; color: var(--ink-soft); background: var(--brand-50); border: 1px solid var(--border); text-decoration: none; transition: all .15s; }
+    .vnav-chip:hover { transform: translateY(-1px); }
+    .vnav-chip.aerolinea { color: var(--sky); border-color: var(--sky-soft); background: var(--sky-soft); }
+    .vnav-chip.academia { color: var(--teal); border-color: var(--teal-soft); background: var(--teal-soft); }
+    .vnav-chip.fundacion { color: var(--orange); border-color: var(--orange-soft); background: var(--orange-soft); }
+    .vnav-chip.donaciones { color: var(--brand-700); border-color: var(--brand-200); background: var(--brand-100); }
+    .vnav-chip.eventos { color: var(--pink); border-color: var(--pink-soft); background: var(--pink-soft); }
+    .vnav-chip.hardware { color: var(--indigo); border-color: var(--indigo-soft); background: var(--indigo-soft); }
+
+    section.vertical { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 30px; margin-top: 24px; box-shadow: var(--shadow-md); position: relative; overflow: hidden; }
+    section.vertical::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--accent, var(--brand-600)); }
+    section.vertical[data-vert="aerolinea"] { --accent: var(--sky); --accent-soft: var(--sky-soft); }
+    section.vertical[data-vert="academia"] { --accent: var(--teal); --accent-soft: var(--teal-soft); }
+    section.vertical[data-vert="fundacion"] { --accent: var(--orange); --accent-soft: var(--orange-soft); }
+    section.vertical[data-vert="donaciones"] { --accent: var(--brand-700); --accent-soft: var(--brand-100); }
+    section.vertical[data-vert="eventos"] { --accent: var(--pink); --accent-soft: var(--pink-soft); }
+    section.vertical[data-vert="hardware"] { --accent: var(--indigo); --accent-soft: var(--indigo-soft); }
+    .vert-head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 6px; }
+    .vert-eyebrow { font-size: 10.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+    section.vertical h2 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 26px; line-height: 1.15; letter-spacing: -.015em; color: var(--ink); margin: 4px 0 4px; }
+    .vert-sub { font-size: 14.5px; color: var(--ink-soft); margin-bottom: 26px; max-width: 740px; }
+    .vert-tag { padding: 4px 10px; background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 999px; font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: .04em; white-space: nowrap; }
+
+    .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 14px 0 22px; }
+    @media (max-width: 800px) { .stat-row { grid-template-columns: repeat(2, 1fr); } }
+    .stat-block { background: linear-gradient(135deg, var(--accent-soft), #fff); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 16px; text-align: center; }
+    .stat-block .num { font-family: 'Fredoka', sans-serif; font-size: 30px; color: var(--accent); font-weight: 600; line-height: 1; }
+    .stat-block .lbl { font-size: 11.5px; color: var(--ink-soft); margin-top: 6px; line-height: 1.4; font-weight: 600; }
+
+    .bars { display: grid; gap: 10px; }
+    .bar-row { display: grid; grid-template-columns: 220px 1fr 90px; gap: 14px; align-items: center; font-size: 13.5px; }
+    @media (max-width: 700px) { .bar-row { grid-template-columns: 1fr; gap: 4px; padding: 8px 0; border-bottom: 1px dashed var(--border); } }
+    .bar-label { font-weight: 600; color: var(--ink); }
+    .bar-label small { display: block; font-size: 11px; font-weight: 500; color: var(--ink-faint); margin-top: 2px; }
+    .bar-track { height: 24px; background: var(--brand-50); border-radius: 999px; overflow: hidden; position: relative; }
+    .bar-fill { height: 100%; border-radius: 999px; }
+    section.vertical[data-vert="aerolinea"] .bar-fill { background: linear-gradient(90deg, #7dd3fc, var(--sky)); }
+    section.vertical[data-vert="academia"] .bar-fill { background: linear-gradient(90deg, #5eead4, var(--teal)); }
+    section.vertical[data-vert="fundacion"] .bar-fill { background: linear-gradient(90deg, #fdba74, var(--orange)); }
+    section.vertical[data-vert="donaciones"] .bar-fill { background: linear-gradient(90deg, #c4b5fd, var(--brand-700)); }
+    section.vertical[data-vert="eventos"] .bar-fill { background: linear-gradient(90deg, #f9a8d4, var(--pink)); }
+    section.vertical[data-vert="hardware"] .bar-fill { background: linear-gradient(90deg, #a5b4fc, var(--indigo)); }
+    .bar-value { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); font-size: 13px; color: var(--accent); }
+
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    table.data-table th { text-align: left; padding: 12px 14px; background: var(--accent-soft); color: var(--accent); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+    table.data-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+    table.data-table tr:last-child td { border-bottom: none; }
+    table.data-table td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; font-weight: 600; }
+    .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+    .pill-up { background: var(--emerald-soft); color: #047857; }
+    .pill-down { background: var(--rose-soft); color: #be123c; }
+    .pill-flat { background: #f1f5f9; color: #475569; }
+    .pill-warn { background: var(--amber-soft); color: #b45309; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    @media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    .donor-row { display: grid; grid-template-columns: 1fr 100px 80px; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: center; font-size: 13.5px; }
+    .donor-row:last-child { border-bottom: none; }
+    .donor-name { font-weight: 700; color: var(--ink); }
+    .donor-name small { display: block; font-size: 11.5px; font-weight: 500; color: var(--ink-soft); margin-top: 2px; }
+    .donor-amount { font-family: var(--mono); font-weight: 700; text-align: right; color: var(--brand-700); }
+
+    .deliverables { background: linear-gradient(135deg, var(--surface-alt), #fff); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px; margin-top: 22px; }
+    .deliverables h3 { font-family: 'Fredoka', sans-serif; font-size: 22px; color: var(--ink); margin-bottom: 6px; }
+    .deliverables .delivery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
+    @media (max-width: 800px) { .deliverables .delivery-grid { grid-template-columns: 1fr; } }
+    .delivery-item { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px 18px; }
+    .delivery-item .icon { font-size: 28px; margin-bottom: 8px; }
+    .delivery-item h4 { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+    .delivery-item p { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
+
+    .signoff { margin: 40px auto 28px; padding: 36px 32px; background: radial-gradient(ellipse 80% 60% at 80% 0%, rgba(234,179,8,.32), transparent 65%), linear-gradient(135deg, var(--brand-900), var(--brand-700) 60%, var(--brand-600)); color: #fff; border-radius: var(--radius-lg); text-align: center; overflow: hidden; position: relative; }
+    .signoff h3 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: clamp(22px, 3vw, 30px); margin-bottom: 10px; }
+    .signoff p { max-width: 620px; margin: 0 auto 18px; font-size: 14.5px; color: rgba(255,255,255,.9); }
+    .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 12px; font-weight: 800; font-size: 14px; text-decoration: none; transition: transform .15s; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: #fff; color: var(--ink); box-shadow: 0 14px 30px rgba(0,0,0,.25); }
+    .btn-secondary { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.3); }
+    .btn-tertiary { background: var(--gold-light); color: var(--ink); }
+    footer { text-align: center; padding: 28px 24px 44px; font-size: 11.5px; color: var(--ink-faint); line-height: 1.7; }
+    footer strong { color: var(--ink-soft); }
+    footer a { color: var(--brand-700); text-decoration: none; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<div class="demo-banner" role="alert">
+  <strong>DEMO ILUSTRATIVO</strong>
+  Cifras representativas del cohort target Y1 · Lanzamiento Junio 2026 · 6 sub-verticales long-tail con datos sintéticos calibrados a casos reales del sector
+</div>
+
+<header class="hero">
+  <div class="container">
+    <span class="hero-tag"><span class="dot-live"></span> Long-tail · 6 sub-verticales · 1 dashboard por vertical</span>
+    <h1>Long-tail<span class="x">×</span>Paw Friend</h1>
+    <p class="sub">Esto es lo que verías mes a mes según el vertical específico que firmes. Cada sub-vertical (aerolíneas, academia, fundaciones, donaciones, eventos, hardware vet) tiene su propio panel con la data que importa para tu modelo de negocio.</p>
+    <div class="hero-meta">
+      <div class="item"><span class="k">Período</span><span class="v">01 — 31 Octubre 2026</span></div>
+      <div class="item"><span class="k">Sub-verticales activas</span><span class="v"><strong>6</strong> con dashboard custom</span></div>
+      <div class="item"><span class="k">Modelo</span><span class="v">SaaS o licensing por vertical · pricing por demanda</span></div>
+      <div class="item"><span class="k">Entregado por</span><span class="v">Paw Founder · pawfriendcl@gmail.com</span></div>
+    </div>
+    <nav class="vertical-nav" aria-label="Navegación sub-verticales">
+      <a class="vnav-chip aerolinea" href="#aerolinea">✈️ Aerolíneas</a>
+      <a class="vnav-chip academia" href="#academia">🎓 Academia</a>
+      <a class="vnav-chip fundacion" href="#fundacion">❤️ Fundaciones</a>
+      <a class="vnav-chip donaciones" href="#donaciones">💝 Donaciones dirigidas</a>
+      <a class="vnav-chip eventos" href="#eventos">🎪 Eventos pet</a>
+      <a class="vnav-chip hardware" href="#hardware">🔬 Hardware vet</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container" style="margin-top: 24px;">
+
+  <!-- 1. AEROLÍNEAS -->
+  <section class="vertical" data-vert="aerolinea" id="aerolinea">
+    <div class="vert-head">
+      <div>
+        <div class="vert-eyebrow">01 · Aerolíneas — LATAM, Sky, JetSmart</div>
+        <h2>Mascotas listas para volar · documentación SAG + microchip</h2>
+      </div>
+      <span class="vert-tag">Pre-flight check</span>
+    </div>
+    <p class="vert-sub">El 28% de los pasajeros que viajan con mascota llegan al counter sin la documentación SAG completa o microchip vigente, lo que retrasa el embarque y genera escalación de servicio. Con Paw Friend integrado al booking, el dueño llega con todo en orden y el counter agent no tiene que verificar a mano.</p>
+
+    <div class="stat-row">
+      <div class="stat-block"><div class="num">28%</div><div class="lbl">de pet bookings con problema documental al counter (sin Paw Friend)</div></div>
+      <div class="stat-block"><div class="num">3,4%</div><div class="lbl">misma métrica con Paw Friend integrado al booking</div></div>
+      <div class="stat-block"><div class="num">−14min</div><div class="lbl">tiempo promedio en counter por pet booking</div></div>
+      <div class="stat-block"><div class="num">+62</div><div class="lbl">NPS pet booking experience post-integración</div></div>
+    </div>
+
+    <h3 style="font-size: 16px; color: var(--ink); margin-bottom: 12px; font-family: 'Fredoka';">Documentos verificados al booking</h3>
+    <div class="bars">
+      <div class="bar-row"><div class="bar-label">Microchip vigente<small>obligatorio destino LATAM internacional</small></div><div class="bar-track"><div class="bar-fill" style="width: 96%;"></div></div><span class="bar-value">96,1%</span></div>
+      <div class="bar-row"><div class="bar-label">Vacuna antirrábica vigente (>1 año)<small>requisito SAG salida país</small></div><div class="bar-track"><div class="bar-fill" style="width: 92%;"></div></div><span class="bar-value">91,8%</span></div>
+      <div class="bar-row"><div class="bar-label">Certificado salud vet (10 días)<small>obligatorio salida país</small></div><div class="bar-track"><div class="bar-fill" style="width: 78%;"></div></div><span class="bar-value">78,4%</span></div>
+      <div class="bar-row"><div class="bar-label">Test serológico (destinos UE/USA)<small>solo para destinos específicos</small></div><div class="bar-track"><div class="bar-fill" style="width: 64%;"></div></div><span class="bar-value">64,2%</span></div>
+    </div>
+
+    <div style="background: var(--sky-soft); border-left: 4px solid var(--sky); padding: 14px 16px; border-radius: 8px; margin-top: 22px; font-size: 13.5px; color: var(--sky); font-weight: 600;">
+      Octubre: 2.143 pet bookings procesados con Paw Friend integrado · 73 evitaron rechazo en counter · ahorro estimado en escalaciones $4,2M/mes.
+    </div>
+  </section>
+
+  <!-- 2. ACADEMIA -->
+  <section class="vertical" data-vert="academia" id="academia">
+    <div class="vert-head">
+      <div>
+        <div class="vert-eyebrow">02 · Academia — Universidad de Chile · UCH · USS · Mayor</div>
+        <h2>Cohort disponible para estudios · ética + consent + privacy</h2>
+      </div>
+      <span class="vert-tag">Research grade</span>
+    </div>
+    <p class="vert-sub">Para investigación veterinaria/pet con consent opt-in del dueño. Extraemos cohorts de pets que matchean criterios específicos (raza, edad, condición clínica, tratamiento) para estudios prospectivos o retrospectivos. Privacy threshold n≥50 + IRB approval requerido por la institución.</p>
+
+    <div class="stat-row">
+      <div class="stat-block"><div class="num">12.480</div><div class="lbl">pets con consent investigación opt-in (28% del cohort)</div></div>
+      <div class="stat-block"><div class="num">4</div><div class="lbl">universidades activas · Q3 2026</div></div>
+      <div class="stat-block"><div class="num">14</div><div class="lbl">cohorts construidos para estudios en curso</div></div>
+      <div class="stat-block"><div class="num">$0</div><div class="lbl">costo para academia chilena pública (modelo barter co-publicación)</div></div>
+    </div>
+
+    <h3 style="font-size: 16px; color: var(--ink); margin-bottom: 12px; font-family: 'Fredoka';">Cohorts activos · Octubre 2026</h3>
+    <table class="data-table">
+      <thead>
+        <tr><th>Estudio</th><th>Institución</th><th>Cohort n</th><th>Filtro principal</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Adherencia antiparasitario externo Chile</td><td>UCH Veterinaria</td><td class="num">847</td><td>Perros 7+ con NexGard/Bravecto</td><td><span class="pill pill-up">Reclutando</span></td></tr>
+        <tr><td>Prevalencia displasia coxal por raza</td><td>U. Mayor Vet</td><td class="num">1.243</td><td>Razas grandes 4+ años con RX</td><td><span class="pill pill-up">Análisis</span></td></tr>
+        <tr><td>Obesidad felina post-esterilización</td><td>USS Concepción Vet</td><td class="num">412</td><td>Gatos esterilizados con seguimiento peso</td><td><span class="pill pill-flat">Diseño</span></td></tr>
+        <tr><td>Patrones consulta vet by SES</td><td>Universidad de Chile</td><td class="num">2.180</td><td>Cross-comuna · 12 meses</td><td><span class="pill pill-up">Reclutando</span></td></tr>
+        <tr><td>Riñón crónico en gatos persa</td><td>U. Católica Vet</td><td class="num">187</td><td>Persa 8+ con creatinina seriada</td><td><span class="pill pill-warn">Pendiente IRB</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 3. FUNDACIONES -->
+  <section class="vertical" data-vert="fundacion" id="fundacion">
+    <div class="vert-head">
+      <div>
+        <div class="vert-eyebrow">03 · Fundaciones — Patitas Solidarias · Refugios chilenos</div>
+        <h2>Trazabilidad post-adopción · 30 + 90 días</h2>
+      </div>
+      <span class="vert-tag">Follow-up automático</span>
+    </div>
+    <p class="vert-sub">Cuando un refugio entrega una mascota en adopción, le pasa la ficha al adoptante a través de Paw Friend. El sistema sigue al adoptante 30 y 90 días post-adopción y reporta al refugio si la mascota está bien, si está vacunada, si fue al vet, si está adaptada al hogar.</p>
+
+    <div class="stat-row">
+      <div class="stat-block"><div class="num">847</div><div class="lbl">adopciones trackeadas Y1 · 8 refugios</div></div>
+      <div class="stat-block"><div class="num">87,2%</div><div class="lbl">follow-up 30d completado por adoptante</div></div>
+      <div class="stat-block"><div class="num">76,4%</div><div class="lbl">follow-up 90d completado</div></div>
+      <div class="stat-block"><div class="num">3,8%</div><div class="lbl">tasa devolución a refugio (vs 12% estándar)</div></div>
+    </div>
+
+    <h3 style="font-size: 16px; color: var(--ink); margin-bottom: 12px; font-family: 'Fredoka';">Indicadores post-adopción · 90 días</h3>
+    <div class="bars">
+      <div class="bar-row"><div class="bar-label">Adoptante hizo primera visita vet<small>indicador #1 de bienestar</small></div><div class="bar-track"><div class="bar-fill" style="width: 81%;"></div></div><span class="bar-value">81,3%</span></div>
+      <div class="bar-row"><div class="bar-label">Vacuna actualizada en plazo<small>refugios entregan parcialmente vacunadas</small></div><div class="bar-track"><div class="bar-fill" style="width: 76%;"></div></div><span class="bar-value">76,1%</span></div>
+      <div class="bar-row"><div class="bar-label">Esterilización completada<small>compromiso firmado al adoptar</small></div><div class="bar-track"><div class="bar-fill" style="width: 64%;"></div></div><span class="bar-value">64,2%</span></div>
+      <div class="bar-row"><div class="bar-label">Microchip transferido a nuevo dueño<small>obligación Ley 21.020</small></div><div class="bar-track"><div class="bar-fill" style="width: 88%;"></div></div><span class="bar-value">88,4%</span></div>
+      <div class="bar-row"><div class="bar-label">NPS adoptante 90d<small>"recomendarías adoptar aquí?"</small></div><div class="bar-track"><div class="bar-fill" style="width: 78%;"></div></div><span class="bar-value">+78</span></div>
+    </div>
+  </section>
+
+  <!-- 4. DONACIONES DIRIGIDAS -->
+  <section class="vertical" data-vert="donaciones" id="donaciones">
+    <div class="vert-head">
+      <div>
+        <div class="vert-eyebrow">04 · Donaciones dirigidas a refugios</div>
+        <h2>$ recibido · trazable · auditable</h2>
+      </div>
+      <span class="vert-tag">Transparency-first</span>
+    </div>
+    <p class="vert-sub">Cuando los aportes de Paw Members + Paw Companys generan excedente, una parte va al Fondo Paw Friend Refugios. La distribución es trazable: cada refugio activo ve cuánto recibió, de quién y cuándo. La donación legal la hace Paw Friend SpA (no el user) para evitar Ley 19.885.</p>
+
+    <div class="stat-row">
+      <div class="stat-block"><div class="num">$3,42M</div><div class="lbl">distribuido a refugios este mes (CLP)</div></div>
+      <div class="stat-block"><div class="num">14</div><div class="lbl">refugios activos beneficiarios</div></div>
+      <div class="stat-block"><div class="num">$28,4M</div><div class="lbl">total Y1 acumulado</div></div>
+      <div class="stat-block"><div class="num">100%</div><div class="lbl">trazable · cada peso con timestamp</div></div>
+    </div>
+
+    <h3 style="font-size: 16px; color: var(--ink); margin-bottom: 12px; font-family: 'Fredoka';">Top 6 refugios beneficiarios · Octubre 2026</h3>
+    <div>
+      <div class="donor-row" style="border-bottom: 2px solid var(--border); font-weight: 800; font-size: 11px; text-transform: uppercase; color: var(--ink-soft); letter-spacing: .08em;">
+        <div>Refugio</div>
+        <div style="text-align: right;">$ Octubre</div>
+        <div style="text-align: right;">$/pet rescatado</div>
+      </div>
+      <div class="donor-row"><div class="donor-name">Patitas Felices Quilicura<small>62 mascotas en adopción · 8 años activo</small></div><div class="donor-amount">$682.400</div><div class="donor-amount">$11.000</div></div>
+      <div class="donor-row"><div class="donor-name">Refugio Hogar Animal<small>48 mascotas en adopción · Maipú</small></div><div class="donor-amount">$524.800</div><div class="donor-amount">$10.900</div></div>
+      <div class="donor-row"><div class="donor-name">Albergue Plaza Egaña<small>32 mascotas en adopción · Ñuñoa</small></div><div class="donor-amount">$412.300</div><div class="donor-amount">$12.900</div></div>
+      <div class="donor-row"><div class="donor-name">Patitas del Sur<small>54 mascotas en adopción · San Bernardo</small></div><div class="donor-amount">$398.200</div><div class="donor-amount">$7.400</div></div>
+      <div class="donor-row"><div class="donor-name">Refugio Caleu<small>78 mascotas en adopción · Til Til</small></div><div class="donor-amount">$367.500</div><div class="donor-amount">$4.700</div></div>
+      <div class="donor-row"><div class="donor-name">Otros 9 refugios<small>distribución equitativa</small></div><div class="donor-amount">$1.030.000</div><div class="donor-amount">~$8.500</div></div>
+    </div>
+  </section>
+
+  <!-- 5. EVENTOS PET -->
+  <section class="vertical" data-vert="eventos" id="eventos">
+    <div class="vert-head">
+      <div>
+        <div class="vert-eyebrow">05 · Eventos pet — Mall, parques, fairs</div>
+        <h2>Asistencia + engagement + leads de marca</h2>
+      </div>
+      <span class="vert-tag">Activación marca</span>
+    </div>
+    <p class="vert-sub">Los organizadores de eventos pet (PetExpo, Fiesta Pet Plaza Egaña, expo razas) ven en tiempo real cuántos asistentes con mascota se registraron + check-in vía QR + interactuaron con marcas auspiciadoras + leads capturados.</p>
+
+    <div class="stat-row">
+      <div class="stat-block"><div class="num">2.847</div><div class="lbl">asistentes con mascota registrados Q3</div></div>
+      <div class="stat-block"><div class="num">76,8%</div><div class="lbl">check-in QR efectivo (vs 42% pulsera)</div></div>
+      <div class="stat-block"><div class="num">12</div><div class="lbl">marcas auspiciadoras con leads capturados</div></div>
+      <div class="stat-block"><div class="num">$24.300</div><div class="lbl">CPL promedio · vs $48k canales paid</div></div>
+    </div>
+
+    <h3 style="font-size: 16px; color: var(--ink); margin-bottom: 12px; font-family: 'Fredoka';">Top eventos del trimestre</h3>
+    <table class="data-table">
+      <thead>
+        <tr><th>Evento</th><th>Fecha</th><th>Asistentes pet</th><th>Engagement marca</th><th>Leads Q</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Fiesta Pet Plaza Egaña</td><td>14-Sep-2026</td><td class="num">847</td><td class="num">68%</td><td class="num">412</td></tr>
+        <tr><td>PetExpo Espacio Riesco</td><td>5-Oct-2026</td><td class="num">1.243</td><td class="num">82%</td><td class="num">894</td></tr>
+        <tr><td>Caminata Solidaria Parque O'Higgins</td><td>22-Oct-2026</td><td class="num">587</td><td class="num">54%</td><td class="num">142</td></tr>
+        <tr><td>Expo Razas Las Condes</td><td>29-Oct-2026</td><td class="num">170</td><td class="num">71%</td><td class="num">86</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 6. HARDWARE VET -->
+  <section class="vertical" data-vert="hardware" id="hardware">
+    <div class="vert-head">
+      <div>
+        <div class="vert-eyebrow">06 · Hardware veterinario — equipos médicos · diagnostic</div>
+        <h2>Adopción de su producto en clínicas activas</h2>
+      </div>
+      <span class="vert-tag">Penetration tracker</span>
+    </div>
+    <p class="vert-sub">Para fabricantes/distribuidores de hardware vet (ecógrafos, analizadores, RX digital, monitor anestesia). Tracking de cuántas clínicas en la red Paw Friend usan equipo X, frecuencia de uso, NPS post-deploy. Útil para forecast de service contracts + reorden de consumibles.</p>
+
+    <div class="stat-row">
+      <div class="stat-block"><div class="num">328</div><div class="lbl">clínicas activas en red Paw Friend (Y1)</div></div>
+      <div class="stat-block"><div class="num">42%</div><div class="lbl">tiene tu equipo (vs 38% competidor A)</div></div>
+      <div class="stat-block"><div class="num">12,8</div><div class="lbl">usos/mes promedio del equipo</div></div>
+      <div class="stat-block"><div class="num">+74</div><div class="lbl">NPS clínicas con tu equipo</div></div>
+    </div>
+
+    <h3 style="font-size: 16px; color: var(--ink); margin-bottom: 12px; font-family: 'Fredoka';">Penetración por categoría de equipo</h3>
+    <div class="bars">
+      <div class="bar-row"><div class="bar-label">Ecógrafo veterinario<small>tu marca · top categoría</small></div><div class="bar-track"><div class="bar-fill" style="width: 58%;"></div></div><span class="bar-value">58,3%</span></div>
+      <div class="bar-row"><div class="bar-label">Analizador hematológico<small>tu marca</small></div><div class="bar-track"><div class="bar-fill" style="width: 42%;"></div></div><span class="bar-value">42,1%</span></div>
+      <div class="bar-row"><div class="bar-label">RX digital<small>tu marca</small></div><div class="bar-track"><div class="bar-fill" style="width: 28%;"></div></div><span class="bar-value">28,4%</span></div>
+      <div class="bar-row"><div class="bar-label">Monitor anestesia<small>tu marca</small></div><div class="bar-track"><div class="bar-fill" style="width: 38%;"></div></div><span class="bar-value">38,2%</span></div>
+      <div class="bar-row"><div class="bar-label">Microscopio digital<small>tu marca</small></div><div class="bar-track"><div class="bar-fill" style="width: 22%;"></div></div><span class="bar-value">21,7%</span></div>
+    </div>
+
+    <div style="background: var(--indigo-soft); border-left: 4px solid var(--indigo); padding: 14px 16px; border-radius: 8px; margin-top: 22px; font-size: 13.5px; color: var(--indigo); font-weight: 600;">
+      Insight Octubre: 47 clínicas con tu ecógrafo aún no tienen tu monitor anestesia. Cohort identificado para campaña cross-sell. Ticket promedio bundle: $1,8M CLP.
+    </div>
+  </section>
+
+  <!-- DELIVERABLES -->
+  <div class="deliverables">
+    <h3>Esta data se entrega así por vertical</h3>
+    <p style="font-size: 14px; color: var(--ink-soft);">Cada sub-vertical recibe su panel custom con la data específica que importa. Pricing por demanda + barter para academia pública.</p>
+    <div class="delivery-grid">
+      <div class="delivery-item"><div class="icon">🎯</div><h4>Dashboard custom por vertical</h4><p>No vas a ver KPIs de retail si firmaste como aerolínea. Cada vertical su data, sus filtros, su lenguaje.</p></div>
+      <div class="delivery-item"><div class="icon">🔌</div><h4>API integración</h4><p>Webhook al ocurrir el evento (booking pet · check-in evento · adopción nueva). Sync con tu CRM/booking/PIM.</p></div>
+      <div class="delivery-item"><div class="icon">📄</div><h4>Reporte mensual + trimestral</h4><p>PDF para tu management. Trimestral incluye benchmark cohort sintético vs tu data real.</p></div>
+    </div>
+  </div>
+
+  <!-- SIGNOFF -->
+  <div class="signoff">
+    <h3>¿Cuál de los 6 verticales encaja con tu negocio?</h3>
+    <p>Cuéntame tu modelo en 30 minutos. Si es uno de estos 6, te muestro la data específica y armamos un piloto Q3. Si es uno nuevo, podemos diseñar el panel desde cero con tu equipo.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://pawfriend.cl/aplicar?tipo=longtail&from=demo-longtail" target="_blank" rel="noopener">📅 Agendar 30 min · Founder Partner</a>
+      <a class="btn btn-tertiary" href="https://pawfriend.cl/pitch/longtail.html" target="_blank" rel="noopener">📑 Ver pitch deck completo</a>
+      <a class="btn btn-secondary" href="https://pawfriend.cl" target="_blank" rel="noopener">🌐 Ver app en vivo</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <strong>SpA SUSAETA GARNHAM SOFTWARE ENGINEERING</strong> · RUT 78.328.659-9 · Pedro Susaeta, founder<br>
+  ✉️ <a href="mailto:pawfriendcl@gmail.com">pawfriendcl@gmail.com</a> · 📱 WhatsApp <a href="https://wa.me/56982092588" target="_blank" rel="noopener">+56 9 8209 2588</a> · 🌐 <a href="https://pawfriend.cl" target="_blank" rel="noopener">pawfriend.cl</a><br>
+  <span style="opacity: .65;">Datos representativos del Y1 target · cohort real disponible Q3 2026 · Lanzamiento app Junio 2026</span>
+</footer>
+
+</body>
+</html>

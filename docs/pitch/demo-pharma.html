@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend · Demo data Pharma · Targeting + adherencia + share</title>
+  <meta name="description" content="Demo ilustrativo de la data que ve un partner pharma tras firmar Paw Friend. Targeting raza/edad/comuna, market share por categoría, adherencia mensual y switch entre marcas. Cifras representativas del cohort target Y1 (50.000 pets)." />
+  <meta name="theme-color" content="#ec4899" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://pawfriend.cl/pitch/demo-pharma.html" />
+  <link rel="icon" type="image/svg+xml" href="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-50: #faf5ff; --brand-100: #f3e8ff; --brand-200: #e9d5ff; --brand-500: #a855f7;
+      --brand-600: #9333ea; --brand-700: #7e22ce; --brand-800: #6b21a8; --brand-900: #581c87;
+      --pharma: #ec4899; --pharma-soft: #fce7f3; --pharma-dark: #be185d;
+      --gold: #eab308; --gold-soft: #fef3c7; --gold-dark: #a16207;
+      --emerald: #10b981; --emerald-soft: #d1fae5;
+      --rose: #f43f5e; --rose-soft: #ffe4e6;
+      --ink: #1a102b; --ink-soft: #4b3b66; --ink-faint: #94889e;
+      --paper: #fdf6fb; --surface: #fff; --surface-alt: #fdf2f8;
+      --border: #f5d0e3;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
+      --radius-lg: 18px; --radius-md: 12px;
+      --shadow-sm: 0 2px 8px -2px rgba(236, 72, 153, .12);
+      --shadow-md: 0 8px 30px -10px rgba(236, 72, 153, .18);
+      --shadow-lg: 0 24px 60px -12px rgba(236, 72, 153, .22);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .demo-banner { background: linear-gradient(90deg, #fef3c7 0%, #fde68a 50%, #fef3c7 100%); border-bottom: 1px solid rgba(234, 179, 8, .4); padding: 10px 20px; text-align: center; font-size: 12.5px; font-weight: 600; color: #713f12; position: sticky; top: 0; z-index: 50; }
+    .demo-banner strong { background: #eab308; color: #fff; padding: 2px 10px; border-radius: 999px; margin-right: 10px; font-weight: 800; letter-spacing: .08em; font-size: 10.5px; text-transform: uppercase; }
+    header.hero { background: radial-gradient(ellipse 80% 60% at 80% 20%, rgba(234,179,8,.28), transparent 60%), radial-gradient(ellipse 70% 60% at 20% 100%, rgba(244,114,182,.45), transparent 70%), linear-gradient(135deg, #4a0e2c 0%, #831843 45%, #ec4899 100%); color: #fff; padding: 56px 0 80px; position: relative; overflow: hidden; }
+    .hero-tag { display: inline-flex; gap: 8px; align-items: center; padding: 6px 14px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3); border-radius: 999px; font-size: 11.5px; font-weight: 700; backdrop-filter: blur(8px); letter-spacing: .1em; text-transform: uppercase; }
+    .dot-live { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 4px rgba(234,179,8,.25); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .7; transform: scale(.85); } }
+    header h1 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: clamp(34px, 5vw, 56px); line-height: 1.05; letter-spacing: -.02em; margin: 20px 0 12px; }
+    header h1 .x { display: inline-block; margin: 0 .15em; font-weight: 300; color: rgba(255,255,255,.6); font-family: 'Plus Jakarta Sans', sans-serif; }
+    header .sub { font-size: 17px; color: rgba(255,255,255,.85); max-width: 660px; line-height: 1.5; }
+    .hero-meta { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 32px; font-size: 13px; }
+    .hero-meta .item { display: flex; flex-direction: column; gap: 2px; }
+    .hero-meta .k { font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+    .hero-meta .v { font-weight: 600; color: #fff; font-size: 14px; }
+    .hero-meta .v strong { color: var(--gold); font-weight: 800; }
+
+    .kpis-wrap { padding-bottom: 36px; }
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: -48px; position: relative; z-index: 3; }
+    @media (max-width: 820px) { .kpis { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+    .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 20px 20px; box-shadow: var(--shadow-md); position: relative; overflow: hidden; }
+    .kpi::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--accent, var(--pharma)); }
+    .kpi-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .kpi-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+    .kpi-spark { width: 52px; height: 18px; }
+    .kpi-value { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 32px; line-height: 1.05; color: var(--ink); margin: 4px 0 2px; font-variant-numeric: tabular-nums; }
+    .kpi-delta { font-size: 12px; font-weight: 700; }
+    .delta-up { color: #059669; }
+    .delta-flat { color: var(--ink-soft); }
+    .kpi:nth-child(1) { --accent: var(--pharma); }
+    .kpi:nth-child(2) { --accent: var(--gold); }
+    .kpi:nth-child(3) { --accent: var(--emerald); }
+    .kpi:nth-child(4) { --accent: var(--brand-600); }
+
+    section.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 30px; margin-top: 24px; box-shadow: var(--shadow-md); }
+    .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 6px; }
+    .panel-eyebrow { font-size: 10.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--pharma); }
+    section.panel h2 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 26px; line-height: 1.15; letter-spacing: -.015em; color: var(--ink); margin: 4px 0 4px; }
+    .panel-sub { font-size: 14.5px; color: var(--ink-soft); margin-bottom: 26px; max-width: 720px; }
+    .panel-tag { align-self: center; padding: 4px 10px; background: var(--pharma-soft); border: 1px solid var(--border); border-radius: 999px; font-size: 11px; font-weight: 700; color: var(--pharma); letter-spacing: .04em; white-space: nowrap; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    @media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    @media (max-width: 800px) { .grid-3 { grid-template-columns: 1fr; } }
+
+    .bars { display: grid; gap: 10px; }
+    .bar-row { display: grid; grid-template-columns: 180px 1fr 90px; gap: 14px; align-items: center; font-size: 13.5px; }
+    @media (max-width: 700px) { .bar-row { grid-template-columns: 1fr; gap: 4px; padding: 8px 0; border-bottom: 1px dashed var(--border); } }
+    .bar-label { font-weight: 600; color: var(--ink); }
+    .bar-label small { display: block; font-size: 11px; font-weight: 500; color: var(--ink-faint); margin-top: 2px; }
+    .bar-track { height: 26px; background: linear-gradient(90deg, rgba(236,72,153,.06), rgba(236,72,153,.12)); border-radius: 999px; overflow: hidden; position: relative; }
+    .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #f472b6, var(--pharma)); position: relative; overflow: hidden; }
+    .bar-fill::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.18) 50%, transparent 100%); }
+    .bar-value { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); font-size: 13px; color: var(--pharma-dark); }
+    .bar-row[data-tone="emerald"] .bar-fill { background: linear-gradient(90deg, #34d399, #059669); }
+    .bar-row[data-tone="emerald"] .bar-value { color: #047857; }
+    .bar-row[data-tone="gold"] .bar-fill { background: linear-gradient(90deg, #fbbf24, #ea580c); }
+    .bar-row[data-tone="gold"] .bar-value { color: var(--gold-dark); }
+    .bar-row[data-tone="brand"] .bar-fill { background: linear-gradient(90deg, var(--brand-500), var(--brand-700)); }
+    .bar-row[data-tone="brand"] .bar-value { color: var(--brand-800); }
+
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    table.data-table th { text-align: left; padding: 12px 14px; background: var(--pharma-soft); color: var(--pharma-dark); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+    table.data-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+    table.data-table tr:last-child td { border-bottom: none; }
+    table.data-table td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; font-weight: 600; }
+    .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+    .pill-up { background: var(--emerald-soft); color: #047857; }
+    .pill-down { background: var(--rose-soft); color: #be123c; }
+    .pill-flat { background: #f1f5f9; color: #475569; }
+
+    .targeting-card { background: linear-gradient(135deg, var(--pharma-soft), #fff); border: 2px dashed var(--pharma); border-radius: var(--radius-lg); padding: 24px; }
+    .targeting-card h3 { font-family: 'Fredoka', sans-serif; font-size: 18px; color: var(--pharma-dark); margin-bottom: 14px; }
+    .targeting-card .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .filter-chip { background: #fff; border: 1px solid var(--pharma); color: var(--pharma-dark); font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 999px; }
+    .targeting-card .match { font-family: 'Fredoka', sans-serif; font-size: 38px; font-weight: 600; color: var(--pharma); line-height: 1.1; }
+    .targeting-card .match small { display: block; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; color: var(--ink-soft); font-weight: 500; margin-top: 4px; }
+
+    .donut-wrap { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+    .donut { width: 200px; height: 200px; flex-shrink: 0; }
+    .donut-legend { flex: 1; min-width: 200px; }
+    .legend-row { display: flex; align-items: center; gap: 10px; font-size: 13.5px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+    .legend-row:last-child { border-bottom: none; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 4px; flex-shrink: 0; }
+    .legend-name { flex: 1; font-weight: 600; }
+    .legend-value { font-family: var(--mono); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+    .switch-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px 18px; }
+    .switch-card .arrow { font-size: 22px; color: var(--pharma); margin: 0 6px; }
+    .switch-card .from { color: var(--ink-soft); font-weight: 600; font-size: 14px; }
+    .switch-card .to { color: var(--ink); font-weight: 800; font-size: 14px; }
+    .switch-card .num { font-family: 'Fredoka', sans-serif; font-size: 28px; font-weight: 600; color: var(--pharma); line-height: 1; margin-top: 6px; }
+    .switch-card .delta { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+
+    .deliverables { background: linear-gradient(135deg, var(--surface-alt), #fff); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px; margin-top: 22px; }
+    .deliverables h3 { font-family: 'Fredoka', sans-serif; font-size: 22px; color: var(--ink); margin-bottom: 6px; }
+    .deliverables .delivery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
+    @media (max-width: 800px) { .deliverables .delivery-grid { grid-template-columns: 1fr; } }
+    .delivery-item { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px 18px; }
+    .delivery-item .icon { font-size: 28px; margin-bottom: 8px; }
+    .delivery-item h4 { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+    .delivery-item p { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
+
+    .signoff { margin: 40px auto 28px; padding: 36px 32px; background: radial-gradient(ellipse 80% 60% at 80% 0%, rgba(234,179,8,.32), transparent 65%), linear-gradient(135deg, #4a0e2c, #831843 60%, var(--pharma)); color: #fff; border-radius: var(--radius-lg); text-align: center; overflow: hidden; position: relative; }
+    .signoff::before { content: ""; position: absolute; top: -60px; right: -40px; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,.08); }
+    .signoff h3 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: clamp(22px, 3vw, 30px); margin-bottom: 10px; position: relative; z-index: 1; }
+    .signoff p { max-width: 620px; margin: 0 auto 18px; font-size: 14.5px; color: rgba(255,255,255,.9); position: relative; z-index: 1; }
+    .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; position: relative; z-index: 1; margin-top: 18px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 12px; font-weight: 800; font-size: 14px; text-decoration: none; transition: transform .15s; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: #fff; color: var(--ink); box-shadow: 0 14px 30px rgba(0,0,0,.25); }
+    .btn-secondary { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.3); backdrop-filter: blur(8px); }
+    .btn-tertiary { background: var(--gold); color: var(--ink); }
+    footer { text-align: center; padding: 28px 24px 44px; font-size: 11.5px; color: var(--ink-faint); line-height: 1.7; }
+    footer strong { color: var(--ink-soft); }
+    footer a { color: var(--pharma); text-decoration: none; font-weight: 700; }
+    @media print { .demo-banner { position: static; } section.panel, .kpi { box-shadow: none; page-break-inside: avoid; } }
+  </style>
+</head>
+<body>
+
+<div class="demo-banner" role="alert">
+  <strong>DEMO · PRE-LAUNCH</strong>
+  Hoy 0 usuarios públicos · Cifras representativas del cohort target (Y1: 8.000-15.000 pets · 50.000 = goal Y2-Y3) · Lanzamiento Junio 2026 · Modelado con datos sintéticos basados en literatura veterinaria chilena
+</div>
+
+<header class="hero">
+  <div class="container">
+    <span class="hero-tag"><span class="dot-live"></span> Pharma · Dashboard mensual</span>
+    <h1>Centrovet<span class="x">×</span>Paw Friend</h1>
+    <p class="sub">Esto es lo que verías mes a mes en tu cuenta partner. Targeting por raza/edad/comuna, market share por categoría, adherencia del ciclo y switch entre marcas — para que tu campaña digital deje de adivinar.</p>
+    <div class="hero-meta">
+      <div class="item"><span class="k">Período</span><span class="v">01 — 31 Octubre 2026</span></div>
+      <div class="item"><span class="k">Cohort activo</span><span class="v"><strong>32.480</strong> pets con consent pharma opt-in</span></div>
+      <div class="item"><span class="k">Categorías que rastreas</span><span class="v">Antiparasitario externo · Antiparasitario interno · Antibiótico</span></div>
+      <div class="item"><span class="k">Entregado por</span><span class="v">Paw Founder · pawfriendcl@gmail.com</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="container kpis-wrap">
+
+  <div class="kpis">
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">Pets matcheados</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,14 8,12 16,10 24,8 32,6 40,5 52,3" fill="none" stroke="#ec4899" stroke-width="2"/><circle cx="52" cy="3" r="2" fill="#ec4899"/></svg>
+      </div>
+      <div class="kpi-value">2.347</div>
+      <div class="kpi-delta delta-up">▲ campaña Pastor Alemán adulto</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">Sponsored CTR</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,12 10,13 20,11 30,9 40,8 52,5" fill="none" stroke="#eab308" stroke-width="2"/><circle cx="52" cy="5" r="2" fill="#eab308"/></svg>
+      </div>
+      <div class="kpi-value">8,4%</div>
+      <div class="kpi-delta delta-up">vs benchmark display 0,5% · 16x</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">Adherencia ciclo</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,15 10,13 20,10 30,8 40,6 52,3" fill="none" stroke="#10b981" stroke-width="2"/><circle cx="52" cy="3" r="2" fill="#10b981"/></svg>
+      </div>
+      <div class="kpi-value">73,2%</div>
+      <div class="kpi-delta delta-up">▲ 4,1pp vs mes anterior</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">Brand switches</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,16 10,14 20,12 30,9 40,6 52,3" fill="none" stroke="#9333ea" stroke-width="2"/><circle cx="52" cy="3" r="2" fill="#9333ea"/></svg>
+      </div>
+      <div class="kpi-value">487</div>
+      <div class="kpi-delta delta-up">netos hacia tu marca</div>
+    </div>
+  </div>
+
+  <!-- 1. TARGETING -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">01 · Targeting de campaña</div>
+        <h2>A cuántos llegas exactamente, sin adivinar</h2>
+      </div>
+      <span class="panel-tag">Filtros activos · 5</span>
+    </div>
+    <p class="panel-sub">Construye el perfil de tu campaña combinando raza, edad, comuna, peso y condiciones. Antes de gastar un peso, sabes a cuántos pets cumplen el criterio. La data está validada vet en la ficha clínica longitudinal.</p>
+
+    <div class="targeting-card">
+      <h3>Tu campaña activa: NexGard L · perros 7+ años con problemas dérmicos</h3>
+      <div class="filters">
+        <span class="filter-chip">Especie: perro</span>
+        <span class="filter-chip">Edad: 7+ años</span>
+        <span class="filter-chip">Peso: 25–50kg</span>
+        <span class="filter-chip">Condición: dermatitis recurrente (≥2 episodios año)</span>
+        <span class="filter-chip">Comuna: RM Oriente</span>
+      </div>
+      <div class="match">2.347 pets <small>matchean tu perfil exacto · 7,2% del cohort consent pharma</small></div>
+    </div>
+
+    <table class="data-table" style="margin-top: 22px;">
+      <thead>
+        <tr><th>Sub-segmento</th><th>Pets</th><th>% del match</th><th>CTR esperado</th><th>Tipo</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Pastor Alemán 7–10 años</td><td class="num">412</td><td class="num">17,6%</td><td class="num">9,1%</td><td>High value</td></tr>
+        <tr><td>Labrador 7–9 años</td><td class="num">534</td><td class="num">22,8%</td><td class="num">7,8%</td><td>High volume</td></tr>
+        <tr><td>Golden Retriever 8+ años</td><td class="num">298</td><td class="num">12,7%</td><td class="num">8,4%</td><td>High value</td></tr>
+        <tr><td>Mestizo grande 7+ años</td><td class="num">756</td><td class="num">32,2%</td><td class="num">6,9%</td><td>High volume</td></tr>
+        <tr><td>Otros (Boxer, Rottweiler, etc.)</td><td class="num">347</td><td class="num">14,7%</td><td class="num">7,3%</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 2. MARKET SHARE -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">02 · Market share por categoría</div>
+        <h2>Quién manda en antiparasitario externo este mes</h2>
+      </div>
+      <span class="panel-tag">n=18.420 perros con registro último ciclo</span>
+    </div>
+    <p class="panel-sub">Captado de la ficha clínica + carga manual del dueño + registro de la receta vet. Refresh quincenal. Tendencia 6 meses disponible en el panel vivo.</p>
+
+    <div class="donut-wrap">
+      <svg class="donut" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="72" fill="none" stroke="#f5d0e3" stroke-width="40"/>
+        <!-- NexGard 32% -->
+        <circle cx="100" cy="100" r="72" fill="none" stroke="#ec4899" stroke-width="40" stroke-dasharray="144.8 308.5" transform="rotate(-90 100 100)"/>
+        <!-- Bravecto 28% (cumulative 60%) -->
+        <circle cx="100" cy="100" r="72" fill="none" stroke="#9333ea" stroke-width="40" stroke-dasharray="126.7 326.6" stroke-dashoffset="-144.8" transform="rotate(-90 100 100)"/>
+        <!-- Frontline 18% (cumulative 78%) -->
+        <circle cx="100" cy="100" r="72" fill="none" stroke="#eab308" stroke-width="40" stroke-dasharray="81.5 371.8" stroke-dashoffset="-271.5" transform="rotate(-90 100 100)"/>
+        <!-- Simparica 12% (cumulative 90%) -->
+        <circle cx="100" cy="100" r="72" fill="none" stroke="#10b981" stroke-width="40" stroke-dasharray="54.3 399.0" stroke-dashoffset="-353.0" transform="rotate(-90 100 100)"/>
+        <!-- Otros 10% -->
+        <circle cx="100" cy="100" r="72" fill="none" stroke="#94a3b8" stroke-width="40" stroke-dasharray="45.3 408.0" stroke-dashoffset="-407.3" transform="rotate(-90 100 100)"/>
+        <text x="100" y="96" text-anchor="middle" font-family="Fredoka" font-size="26" font-weight="600" fill="#1a102b">18.420</text>
+        <text x="100" y="115" text-anchor="middle" font-family="Plus Jakarta Sans" font-size="11" fill="#4b3b66">perros</text>
+      </svg>
+      <div class="donut-legend">
+        <div class="legend-row"><span class="legend-dot" style="background: #ec4899;"></span><span class="legend-name">NexGard <small style="color:var(--ink-faint);font-weight:500">(tu marca)</small></span><span class="legend-value">32%</span></div>
+        <div class="legend-row"><span class="legend-dot" style="background: #9333ea;"></span><span class="legend-name">Bravecto</span><span class="legend-value">28%</span></div>
+        <div class="legend-row"><span class="legend-dot" style="background: #eab308;"></span><span class="legend-name">Frontline</span><span class="legend-value">18%</span></div>
+        <div class="legend-row"><span class="legend-dot" style="background: #10b981;"></span><span class="legend-name">Simparica</span><span class="legend-value">12%</span></div>
+        <div class="legend-row"><span class="legend-dot" style="background: #94a3b8;"></span><span class="legend-name">Otros (Advantix, NexGard genéricos)</span><span class="legend-value">10%</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. ADHERENCIA -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">03 · Adherencia mensual al ciclo</div>
+        <h2>Quién renueva a tiempo · quién se cae</h2>
+      </div>
+      <span class="panel-tag">Cohort NexGard · n=5.894</span>
+    </div>
+    <p class="panel-sub">% de dueños que renuevan la dosis dentro de la ventana óptima (28–32 días). Sub-30% = riesgo de churn. Detectamos cuándo se cae la rutina antes de que el dueño cambie de marca o abandone tratamiento.</p>
+
+    <div class="bars">
+      <div class="bar-row" data-tone="emerald"><div class="bar-label">Dueños premium (Paw Member)<small>n=2.103 · alta retención</small></div><div class="bar-track"><div class="bar-fill" style="width: 87%;"></div></div><span class="bar-value">87,3%</span></div>
+      <div class="bar-row" data-tone="emerald"><div class="bar-label">Dueños recurrentes 6+ meses<small>n=1.654 · estables</small></div><div class="bar-track"><div class="bar-fill" style="width: 81%;"></div></div><span class="bar-value">81,1%</span></div>
+      <div class="bar-row"><div class="bar-label">Dueños 1–6 meses<small>n=1.387 · onboarding</small></div><div class="bar-track"><div class="bar-fill" style="width: 64%;"></div></div><span class="bar-value">64,2%</span></div>
+      <div class="bar-row" data-tone="gold"><div class="bar-label">Dueños primer ciclo<small>n=750 · validan o se van</small></div><div class="bar-track"><div class="bar-fill" style="width: 48%;"></div></div><span class="bar-value">48,4%</span></div>
+    </div>
+
+    <div style="background: var(--pharma-soft); border-left: 4px solid var(--pharma); padding: 14px 16px; border-radius: 8px; margin-top: 22px; font-size: 13.5px; color: var(--pharma-dark);">
+      <strong>Insight pharma del mes:</strong> 1.602 dueños del cohort se cayeron del ciclo en su 1° o 2° dosis. Sponsored reminder a ese subset → ROI proyectado 4,2x el costo del push.
+    </div>
+  </section>
+
+  <!-- 4. SWITCH -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">04 · Switch entre marcas</div>
+        <h2>Quién migró hacia ti · quién se fue · neto del mes</h2>
+      </div>
+      <span class="panel-tag">Octubre vs Septiembre</span>
+    </div>
+    <p class="panel-sub">Detectado por cambio de SKU registrado en la receta vet o carga del dueño. Solo cuenta cuando hay 2 dosis consecutivas confirmadas con la nueva marca (no errores puntuales).</p>
+
+    <div class="grid-3">
+      <div class="switch-card">
+        <div><span class="from">Bravecto</span> <span class="arrow">→</span> <span class="to">NexGard</span></div>
+        <div class="num">+184</div>
+        <div class="delta">switch ganado · <span class="pill pill-up">▲ 12% MoM</span></div>
+      </div>
+      <div class="switch-card">
+        <div><span class="from">Simparica</span> <span class="arrow">→</span> <span class="to">NexGard</span></div>
+        <div class="num">+96</div>
+        <div class="delta">switch ganado · <span class="pill pill-up">▲ 8%</span></div>
+      </div>
+      <div class="switch-card">
+        <div><span class="from">Frontline</span> <span class="arrow">→</span> <span class="to">NexGard</span></div>
+        <div class="num">+312</div>
+        <div class="delta">switch ganado · <span class="pill pill-up">▲ 22%</span></div>
+      </div>
+      <div class="switch-card" style="background: #fef2f2; border-color: #fecaca;">
+        <div><span class="from" style="color: var(--pharma-dark)">NexGard</span> <span class="arrow" style="color:#dc2626">→</span> <span class="to" style="color:#7f1d1d">Bravecto</span></div>
+        <div class="num" style="color: #dc2626;">−72</div>
+        <div class="delta">switch perdido · <span class="pill pill-down">▼ 4%</span></div>
+      </div>
+      <div class="switch-card" style="background: #fef2f2; border-color: #fecaca;">
+        <div><span class="from" style="color: var(--pharma-dark)">NexGard</span> <span class="arrow" style="color:#dc2626">→</span> <span class="to" style="color:#7f1d1d">Simparica</span></div>
+        <div class="num" style="color: #dc2626;">−33</div>
+        <div class="delta">switch perdido · <span class="pill pill-flat">flat</span></div>
+      </div>
+      <div class="switch-card" style="background: linear-gradient(135deg, var(--emerald-soft), #fff); border-color: #6ee7b7;">
+        <div style="font-size: 11px; font-weight: 800; color: #047857; letter-spacing: .1em; text-transform: uppercase;">Neto del mes</div>
+        <div class="num" style="color: #059669;">+487</div>
+        <div class="delta">a favor de NexGard · <strong>+5,8% share</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. SUB-POBLACIONES -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">05 · Sub-poblaciones con condición</div>
+        <h2>Cohort para campañas hiper-específicas</h2>
+      </div>
+      <span class="panel-tag">Privacy threshold n≥50</span>
+    </div>
+    <p class="panel-sub">Cruzamos raza × edad × condición clínica registrada. Mínimo 50 pets para que aparezca en el dashboard (k-anonimato). Tres ejemplos del mes:</p>
+
+    <div class="grid-3">
+      <div style="background: linear-gradient(135deg, var(--pharma-soft), #fff); border: 1px solid var(--border); border-radius: 14px; padding: 20px;">
+        <div style="font-size: 11px; font-weight: 800; color: var(--pharma-dark); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px;">Cohort #1</div>
+        <div style="font-family: 'Fredoka', sans-serif; font-size: 30px; color: var(--pharma); font-weight: 600; line-height: 1;">847</div>
+        <div style="font-size: 13px; font-weight: 700; margin-top: 6px; color: var(--ink);">Perros 7+ años con dermatitis recurrente</div>
+        <div style="font-size: 12px; color: var(--ink-soft); margin-top: 8px; line-height: 1.5;">≥2 episodios dermatitis en 12 meses · target shampoo medicado + antihistamínico longterm</div>
+      </div>
+      <div style="background: linear-gradient(135deg, var(--brand-100), #fff); border: 1px solid var(--brand-200); border-radius: 14px; padding: 20px;">
+        <div style="font-size: 11px; font-weight: 800; color: var(--brand-700); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px;">Cohort #2</div>
+        <div style="font-family: 'Fredoka', sans-serif; font-size: 30px; color: var(--brand-700); font-weight: 600; line-height: 1;">592</div>
+        <div style="font-size: 13px; font-weight: 700; margin-top: 6px; color: var(--ink);">Gatos 10+ años con función renal alterada</div>
+        <div style="font-size: 12px; color: var(--ink-soft); margin-top: 8px; line-height: 1.5;">creatinina elevada en última analítica vet · target alimento renal + suplemento</div>
+      </div>
+      <div style="background: linear-gradient(135deg, var(--emerald-soft), #fff); border: 1px solid #6ee7b7; border-radius: 14px; padding: 20px;">
+        <div style="font-size: 11px; font-weight: 800; color: #047857; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px;">Cohort #3</div>
+        <div style="font-family: 'Fredoka', sans-serif; font-size: 30px; color: #059669; font-weight: 600; line-height: 1;">1.243</div>
+        <div style="font-size: 13px; font-weight: 700; margin-top: 6px; color: var(--ink);">Cachorros 0–6 meses primera vacuna</div>
+        <div style="font-size: 12px; color: var(--ink-soft); margin-top: 8px; line-height: 1.5;">window crítico para fidelizar marca antiparasitario · primera elección dura años</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. CONVERSION -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">06 · Conversion potencial sponsored reminder</div>
+        <h2>Lo que pasaría si lanzas la campaña hoy</h2>
+      </div>
+      <span class="panel-tag">Modelado · histórico Y1</span>
+    </div>
+    <p class="panel-sub">Proyección basada en CTR observado en pilotos (8–12%) y conversion-to-purchase observada en categoría antiparasitario (24–30%). Modelo conservador.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Sub-cohort</th><th>Pets</th><th>CTR esperado</th><th>Clicks</th><th>Conv → compra</th><th>Compras netas</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Pastor Alemán 7+ con dermatitis</td><td class="num">412</td><td class="num">9,1%</td><td class="num">37</td><td class="num">28%</td><td class="num">10</td><td><span class="pill pill-up">Listo</span></td></tr>
+        <tr><td>Labrador 7+ con sobrepeso</td><td class="num">534</td><td class="num">7,8%</td><td class="num">42</td><td class="num">26%</td><td class="num">11</td><td><span class="pill pill-up">Listo</span></td></tr>
+        <tr><td>Mestizo grande 7+ con dolor articular</td><td class="num">756</td><td class="num">6,9%</td><td class="num">52</td><td class="num">22%</td><td class="num">11</td><td><span class="pill pill-up">Listo</span></td></tr>
+        <tr><td>Cachorros 0–6 meses (lock-in marca)</td><td class="num">1.243</td><td class="num">10,4%</td><td class="num">129</td><td class="num">34%</td><td class="num">44</td><td><span class="pill pill-up">Hot</span></td></tr>
+        <tr style="background: var(--surface-alt);"><td><strong>Total proyectado mes</strong></td><td class="num"><strong>2.945</strong></td><td class="num"><strong>~8,5%</strong></td><td class="num"><strong>260</strong></td><td class="num"><strong>~28%</strong></td><td class="num"><strong>76</strong></td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <div style="background: linear-gradient(135deg, #fef3c7, #fff); border: 1px solid #fbbf24; border-radius: 12px; padding: 18px 20px; margin-top: 22px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+      <div style="font-size: 32px;">💡</div>
+      <div style="flex: 1; min-width: 240px;">
+        <strong style="color: var(--gold-dark); font-size: 15px;">Tu próxima palanca:</strong>
+        <p style="font-size: 13.5px; color: var(--ink-soft); margin-top: 4px; line-height: 1.5;">El cohort cachorros 0–6 meses tiene el mejor ROI proyectado del mes. Lock-in de marca antiparasitario en cachorros = 4,2 años promedio de retención según literatura (Kahn et al., 2019). Recomendamos campaña dedicada noviembre.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DELIVERABLES -->
+  <div class="deliverables">
+    <h3>Esta data se entrega así</h3>
+    <p style="font-size: 14px; color: var(--ink-soft);">Tres canales, todos auditables, con SLA mensual.</p>
+    <div class="delivery-grid">
+      <div class="delivery-item"><div class="icon">🔌</div><h4>API REST</h4><p>4 endpoints + paginación + webhooks. Auth con header <code style="font-family: var(--mono); font-size: 11px;">X-Pawfriend-Api-Key</code>.</p></div>
+      <div class="delivery-item"><div class="icon">📊</div><h4>Dashboard mensual</h4><p>Esto que estás viendo, en vivo, con tu marca y cohort. Refresh diario. Filtros guardables.</p></div>
+      <div class="delivery-item"><div class="icon">📄</div><h4>Reporte PDF</h4><p>Resumen ejecutivo el 1° hábil del mes a tu bandeja, listo para presentar a tu BU/medical affairs.</p></div>
+    </div>
+  </div>
+
+  <!-- SIGNOFF -->
+  <div class="signoff">
+    <h3>¿Vale la pena que lo veamos juntos 30 minutos?</h3>
+    <p>Te muestro el dashboard live de un cohort real anonimizado y discutimos si tiene sentido un piloto Q3 para tu categoría. Si después de la demo no sentís el fit, nos despedimos en buen plan.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://pawfriend.cl/aplicar?tipo=b2b_api&from=demo-pharma" target="_blank" rel="noopener">📅 Agendar 30 min · Founder Partner</a>
+      <a class="btn btn-tertiary" href="https://pawfriend.cl/pitch/pharma.html" target="_blank" rel="noopener">📑 Ver pitch deck completo</a>
+      <a class="btn btn-secondary" href="https://pawfriend.cl" target="_blank" rel="noopener">🌐 Ver app en vivo</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <strong>SpA SUSAETA GARNHAM SOFTWARE ENGINEERING</strong> · RUT 78.328.659-9 · Pedro Susaeta, founder<br>
+  ✉️ <a href="mailto:pawfriendcl@gmail.com">pawfriendcl@gmail.com</a> · 📱 WhatsApp <a href="https://wa.me/56982092588" target="_blank" rel="noopener">+56 9 8209 2588</a> · 🌐 <a href="https://pawfriend.cl" target="_blank" rel="noopener">pawfriend.cl</a><br>
+  <span style="opacity: .65;">Datos representativos del Y1 target · cohort real disponible Q3 2026 · Lanzamiento app Junio 2026</span>
+</footer>
+
+</body>
+</html>

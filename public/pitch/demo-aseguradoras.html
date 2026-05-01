@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend · Demo data Aseguradoras · Risk score + actuarial + selección adversa</title>
+  <meta name="description" content="Demo ilustrativo de la data que ve una aseguradora pet tras firmar Paw Friend. Risk score distribution, claims modelados por raza, loss ratio con vs sin Paw Friend, pipeline de leads. Cifras representativas del cohort target Y1." />
+  <meta name="theme-color" content="#0ea5e9" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://pawfriend.cl/pitch/demo-aseguradoras.html" />
+  <link rel="icon" type="image/svg+xml" href="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --insure-50: #ecfeff; --insure-100: #cffafe; --insure-200: #a5f3fc;
+      --insure-500: #06b6d4; --insure-600: #0891b2; --insure-700: #0e7490;
+      --insure-800: #155e75; --insure-900: #164e63;
+      --navy: #0c4a6e; --navy-deep: #082f49;
+      --gold: #eab308; --gold-soft: #fef3c7; --gold-dark: #a16207;
+      --emerald: #10b981; --emerald-soft: #d1fae5;
+      --rose: #f43f5e; --rose-soft: #ffe4e6;
+      --amber: #f59e0b; --amber-soft: #fef3c7;
+      --ink: #0f172a; --ink-soft: #475569; --ink-faint: #94a3b8;
+      --paper: #f0f9ff; --surface: #fff; --surface-alt: #ecfeff;
+      --border: #bae6fd;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
+      --radius-lg: 18px; --radius-md: 12px;
+      --shadow-md: 0 8px 30px -10px rgba(8, 145, 178, .18);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .demo-banner { background: linear-gradient(90deg, #fef3c7 0%, #fde68a 50%, #fef3c7 100%); border-bottom: 1px solid rgba(234, 179, 8, .4); padding: 10px 20px; text-align: center; font-size: 12.5px; font-weight: 600; color: #713f12; position: sticky; top: 0; z-index: 50; }
+    .demo-banner strong { background: #eab308; color: #fff; padding: 2px 10px; border-radius: 999px; margin-right: 10px; font-weight: 800; letter-spacing: .08em; font-size: 10.5px; text-transform: uppercase; }
+    header.hero { background: radial-gradient(ellipse 80% 60% at 80% 20%, rgba(234,179,8,.22), transparent 60%), radial-gradient(ellipse 70% 60% at 20% 100%, rgba(6,182,212,.4), transparent 70%), linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 50%, var(--insure-600) 100%); color: #fff; padding: 56px 0 80px; position: relative; overflow: hidden; }
+    .hero-tag { display: inline-flex; gap: 8px; align-items: center; padding: 6px 14px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3); border-radius: 999px; font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .dot-live { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 4px rgba(234,179,8,.25); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .7; } }
+    header h1 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: clamp(34px, 5vw, 56px); line-height: 1.05; letter-spacing: -.02em; margin: 20px 0 12px; }
+    header h1 .x { display: inline-block; margin: 0 .15em; font-weight: 300; color: rgba(255,255,255,.6); font-family: 'Plus Jakarta Sans', sans-serif; }
+    header .sub { font-size: 17px; color: rgba(255,255,255,.85); max-width: 660px; line-height: 1.5; }
+    .hero-meta { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 32px; font-size: 13px; }
+    .hero-meta .item { display: flex; flex-direction: column; gap: 2px; }
+    .hero-meta .k { font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+    .hero-meta .v { font-weight: 600; color: #fff; font-size: 14px; }
+    .hero-meta .v strong { color: var(--gold); font-weight: 800; }
+
+    .kpis-wrap { padding-bottom: 36px; }
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: -48px; position: relative; z-index: 3; }
+    @media (max-width: 820px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+    .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 20px 20px; box-shadow: var(--shadow-md); position: relative; overflow: hidden; }
+    .kpi::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--accent, var(--insure-600)); }
+    .kpi-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .kpi-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+    .kpi-spark { width: 52px; height: 18px; }
+    .kpi-value { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 32px; color: var(--ink); margin: 4px 0 2px; font-variant-numeric: tabular-nums; }
+    .kpi-delta { font-size: 12px; font-weight: 700; }
+    .delta-up { color: #059669; }
+    .delta-down { color: #dc2626; }
+    .kpi:nth-child(1) { --accent: var(--insure-600); }
+    .kpi:nth-child(2) { --accent: var(--gold); }
+    .kpi:nth-child(3) { --accent: var(--emerald); }
+    .kpi:nth-child(4) { --accent: var(--amber); }
+
+    section.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 30px; margin-top: 24px; box-shadow: var(--shadow-md); }
+    .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 6px; }
+    .panel-eyebrow { font-size: 10.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--insure-700); }
+    section.panel h2 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 26px; line-height: 1.15; letter-spacing: -.015em; color: var(--ink); margin: 4px 0 4px; }
+    .panel-sub { font-size: 14.5px; color: var(--ink-soft); margin-bottom: 26px; max-width: 720px; }
+    .panel-tag { align-self: center; padding: 4px 10px; background: var(--insure-100); border: 1px solid var(--border); border-radius: 999px; font-size: 11px; font-weight: 700; color: var(--insure-700); letter-spacing: .04em; white-space: nowrap; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    @media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    @media (max-width: 800px) { .grid-3 { grid-template-columns: 1fr; } }
+
+    /* Risk distribution histogram */
+    .histogram { display: flex; align-items: flex-end; gap: 6px; height: 220px; margin: 18px 0 8px; }
+    .histo-bar { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .histo-fill { width: 100%; border-radius: 6px 6px 0 0; transition: opacity .2s; }
+    .histo-fill.low { background: linear-gradient(180deg, #6ee7b7, #059669); }
+    .histo-fill.mid { background: linear-gradient(180deg, #fcd34d, #d97706); }
+    .histo-fill.high { background: linear-gradient(180deg, #fda4af, #dc2626); }
+    .histo-label { font-size: 10.5px; color: var(--ink-soft); font-weight: 600; }
+    .histo-value { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--ink); }
+    .histo-axis { display: flex; justify-content: space-between; font-size: 10px; color: var(--ink-faint); padding-top: 8px; border-top: 1px solid var(--border); margin-top: 8px; }
+
+    /* Side-by-side comparison */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 700px) { .compare-grid { grid-template-columns: 1fr; } }
+    .compare-card { padding: 22px; border-radius: var(--radius-lg); position: relative; overflow: hidden; }
+    .compare-card.before { background: linear-gradient(135deg, #fef2f2, #fff); border: 2px solid #fecaca; }
+    .compare-card.after { background: linear-gradient(135deg, var(--emerald-soft), #fff); border: 2px solid #6ee7b7; }
+    .compare-card .label { font-size: 10.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    .compare-card.before .label { color: #b91c1c; }
+    .compare-card.after .label { color: #047857; }
+    .compare-card .big { font-family: 'Fredoka', sans-serif; font-size: 56px; font-weight: 600; line-height: 1; margin: 8px 0 4px; font-variant-numeric: tabular-nums; }
+    .compare-card.before .big { color: #dc2626; }
+    .compare-card.after .big { color: #059669; }
+    .compare-card .desc { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+    .compare-arrow { font-size: 32px; color: var(--insure-600); align-self: center; text-align: center; }
+
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    table.data-table th { text-align: left; padding: 12px 14px; background: var(--insure-100); color: var(--insure-800); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+    table.data-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+    table.data-table tr:last-child td { border-bottom: none; }
+    table.data-table td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; font-weight: 600; }
+    .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+    .pill-low { background: var(--emerald-soft); color: #047857; }
+    .pill-mid { background: var(--amber-soft); color: #b45309; }
+    .pill-high { background: var(--rose-soft); color: #be123c; }
+
+    /* Pipeline funnel */
+    .funnel { display: grid; gap: 8px; max-width: 640px; margin: 0 auto; }
+    .funnel-step { display: grid; grid-template-columns: 200px 1fr 90px; gap: 14px; align-items: center; font-size: 13.5px; }
+    .funnel-label { font-weight: 700; color: var(--ink); }
+    .funnel-label small { display: block; font-size: 11px; font-weight: 500; color: var(--ink-soft); margin-top: 2px; }
+    .funnel-bar { height: 36px; background: linear-gradient(90deg, var(--insure-600), var(--insure-800)); border-radius: 6px; display: flex; align-items: center; padding: 0 14px; color: white; font-weight: 700; font-size: 13px; box-shadow: 0 4px 12px rgba(8,145,178,.2); }
+    .funnel-num { font-family: var(--mono); font-weight: 800; text-align: right; color: var(--ink); }
+
+    .biometric-box { background: linear-gradient(135deg, var(--navy-deep), var(--insure-700)); color: #fff; padding: 26px; border-radius: var(--radius-lg); display: flex; gap: 26px; align-items: center; flex-wrap: wrap; }
+    .biometric-box .icon-big { font-size: 56px; flex-shrink: 0; }
+    .biometric-box h3 { font-family: 'Fredoka', sans-serif; font-size: 22px; margin-bottom: 6px; }
+    .biometric-box p { font-size: 14px; opacity: .9; line-height: 1.5; max-width: 600px; }
+    .biometric-box .stat { font-family: 'Fredoka', sans-serif; font-size: 38px; font-weight: 600; color: var(--gold); margin-right: 16px; }
+
+    .deliverables { background: linear-gradient(135deg, var(--surface-alt), #fff); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px; margin-top: 22px; }
+    .deliverables h3 { font-family: 'Fredoka', sans-serif; font-size: 22px; color: var(--ink); margin-bottom: 6px; }
+    .deliverables .delivery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
+    @media (max-width: 800px) { .deliverables .delivery-grid { grid-template-columns: 1fr; } }
+    .delivery-item { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px 18px; }
+    .delivery-item .icon { font-size: 28px; margin-bottom: 8px; }
+    .delivery-item h4 { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+    .delivery-item p { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
+
+    .signoff { margin: 40px auto 28px; padding: 36px 32px; background: radial-gradient(ellipse 80% 60% at 80% 0%, rgba(234,179,8,.32), transparent 65%), linear-gradient(135deg, var(--navy-deep), var(--navy) 60%, var(--insure-600)); color: #fff; border-radius: var(--radius-lg); text-align: center; overflow: hidden; position: relative; }
+    .signoff h3 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: clamp(22px, 3vw, 30px); margin-bottom: 10px; }
+    .signoff p { max-width: 620px; margin: 0 auto 18px; font-size: 14.5px; color: rgba(255,255,255,.9); }
+    .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 12px; font-weight: 800; font-size: 14px; text-decoration: none; transition: transform .15s; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: #fff; color: var(--ink); box-shadow: 0 14px 30px rgba(0,0,0,.25); }
+    .btn-secondary { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.3); }
+    .btn-tertiary { background: var(--gold); color: var(--ink); }
+    footer { text-align: center; padding: 28px 24px 44px; font-size: 11.5px; color: var(--ink-faint); line-height: 1.7; }
+    footer strong { color: var(--ink-soft); }
+    footer a { color: var(--insure-700); text-decoration: none; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<div class="demo-banner" role="alert">
+  <strong>DEMO · PRE-LAUNCH</strong>
+  Hoy 0 usuarios públicos · Cifras representativas del cohort target (Y1: 8.000-15.000 pets · 50.000 = goal Y2-Y3) · Lanzamiento Junio 2026 · Modelado con datos sintéticos basados en literatura actuarial pet (Nationwide claims report 2023, ABI UK pet insurance data 2024)
+</div>
+
+<header class="hero">
+  <div class="container">
+    <span class="hero-tag"><span class="dot-live"></span> Aseguradoras · Dashboard mensual</span>
+    <h1>Sura<span class="x">×</span>Paw Friend</h1>
+    <p class="sub">Esto es lo que verías mes a mes en tu cuenta partner. Risk score por mascota, distribución de tu cartera, claims modelados por raza, loss ratio proyectado con vs sin Paw Friend, y pipeline de leads.</p>
+    <div class="hero-meta">
+      <div class="item"><span class="k">Período</span><span class="v">01 — 31 Octubre 2026</span></div>
+      <div class="item"><span class="k">Cartera activa</span><span class="v"><strong>4.214</strong> pólizas pet · ramp-up Y1</span></div>
+      <div class="item"><span class="k">Producto</span><span class="v">Sura Mascota Total · 3 planes</span></div>
+      <div class="item"><span class="k">Entregado por</span><span class="v">Paw Founder · pawfriendcl@gmail.com</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="container kpis-wrap">
+
+  <div class="kpis">
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">Pólizas activas</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,16 10,13 20,10 30,7 40,5 52,3" fill="none" stroke="#0891b2" stroke-width="2"/><circle cx="52" cy="3" r="2" fill="#0891b2"/></svg>
+      </div>
+      <div class="kpi-value">4.214</div>
+      <div class="kpi-delta delta-up">▲ +18% MoM · ramp-up</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">Risk score promedio</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,8 10,9 20,8 30,7 40,7 52,6" fill="none" stroke="#eab308" stroke-width="2"/><circle cx="52" cy="6" r="2" fill="#eab308"/></svg>
+      </div>
+      <div class="kpi-value">42 / 100</div>
+      <div class="kpi-delta delta-up">▼ riesgo bajo · ▼ 2pts vs Q3</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">Loss ratio modelado</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,5 10,7 20,9 30,10 40,12 52,13" fill="none" stroke="#10b981" stroke-width="2"/><circle cx="52" cy="13" r="2" fill="#10b981"/></svg>
+      </div>
+      <div class="kpi-value">58%</div>
+      <div class="kpi-delta delta-up">vs 72% benchmark sin data</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-row"><span class="kpi-label">Leads cotizados</span>
+        <svg class="kpi-spark" viewBox="0 0 52 18"><polyline points="0,16 10,13 20,11 30,8 40,5 52,3" fill="none" stroke="#f59e0b" stroke-width="2"/><circle cx="52" cy="3" r="2" fill="#f59e0b"/></svg>
+      </div>
+      <div class="kpi-value">847</div>
+      <div class="kpi-delta delta-up">conv → póliza 14,2%</div>
+    </div>
+  </div>
+
+  <!-- 1. RISK DISTRIBUTION -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">01 · Distribución de risk score</div>
+        <h2>Tu cartera, agrupada por riesgo modelado</h2>
+      </div>
+      <span class="panel-tag">n=4.214 pólizas activas</span>
+    </div>
+    <p class="panel-sub">Cada póliza tiene un risk score 0–100 calculado con la RPC <code style="font-family: var(--mono); font-size: 12px; background: var(--insure-100); padding: 2px 8px; border-radius: 6px; color: var(--insure-700);">calculate_pet_risk_score(pet_id)</code> sobre la ficha clínica longitudinal: edad, raza, condiciones preexistentes registradas vet, antecedentes quirúrgicos, esterilización, vacunación al día. Histograma del mes:</p>
+
+    <div class="histogram">
+      <div class="histo-bar"><div class="histo-value">312</div><div class="histo-fill low" style="height: 26%;"></div><div class="histo-label">0–10</div></div>
+      <div class="histo-bar"><div class="histo-value">487</div><div class="histo-fill low" style="height: 41%;"></div><div class="histo-label">11–20</div></div>
+      <div class="histo-bar"><div class="histo-value">623</div><div class="histo-fill low" style="height: 53%;"></div><div class="histo-label">21–30</div></div>
+      <div class="histo-bar"><div class="histo-value">812</div><div class="histo-fill low" style="height: 69%;"></div><div class="histo-label">31–40</div></div>
+      <div class="histo-bar"><div class="histo-value">734</div><div class="histo-fill mid" style="height: 62%;"></div><div class="histo-label">41–50</div></div>
+      <div class="histo-bar"><div class="histo-value">521</div><div class="histo-fill mid" style="height: 44%;"></div><div class="histo-label">51–60</div></div>
+      <div class="histo-bar"><div class="histo-value">358</div><div class="histo-fill mid" style="height: 30%;"></div><div class="histo-label">61–70</div></div>
+      <div class="histo-bar"><div class="histo-value">209</div><div class="histo-fill high" style="height: 18%;"></div><div class="histo-label">71–80</div></div>
+      <div class="histo-bar"><div class="histo-value">112</div><div class="histo-fill high" style="height: 9%;"></div><div class="histo-label">81–90</div></div>
+      <div class="histo-bar"><div class="histo-value">46</div><div class="histo-fill high" style="height: 4%;"></div><div class="histo-label">91–100</div></div>
+    </div>
+    <div class="histo-axis"><span>← Bajo riesgo (verde)</span><span>Riesgo medio (ámbar)</span><span>Alto riesgo (rojo) →</span></div>
+
+    <div class="grid-3" style="margin-top: 22px;">
+      <div style="background: linear-gradient(135deg, var(--emerald-soft), #fff); border: 1px solid #6ee7b7; border-radius: 14px; padding: 20px;">
+        <div style="font-size: 11px; font-weight: 800; color: #047857; letter-spacing: .1em; text-transform: uppercase;">Bajo riesgo (0–40)</div>
+        <div style="font-family: 'Fredoka', sans-serif; font-size: 30px; color: #059669; font-weight: 600; margin-top: 4px;">2.234 <span style="font-size: 14px; opacity: .7;">(53%)</span></div>
+        <div style="font-size: 12.5px; color: var(--ink-soft); margin-top: 6px; line-height: 1.5;">Premium estándar · loss ratio esperado 38–48%. Candidatos a producto bundled con descuento.</div>
+      </div>
+      <div style="background: linear-gradient(135deg, var(--amber-soft), #fff); border: 1px solid #fcd34d; border-radius: 14px; padding: 20px;">
+        <div style="font-size: 11px; font-weight: 800; color: #b45309; letter-spacing: .1em; text-transform: uppercase;">Medio (41–70)</div>
+        <div style="font-family: 'Fredoka', sans-serif; font-size: 30px; color: #d97706; font-weight: 600; margin-top: 4px;">1.613 <span style="font-size: 14px; opacity: .7;">(38%)</span></div>
+        <div style="font-size: 12.5px; color: var(--ink-soft); margin-top: 6px; line-height: 1.5;">Premium ajustado +12–18%. Mayor adherencia a chequeos preventivos vía nudges Paw Friend.</div>
+      </div>
+      <div style="background: linear-gradient(135deg, var(--rose-soft), #fff); border: 1px solid #fda4af; border-radius: 14px; padding: 20px;">
+        <div style="font-size: 11px; font-weight: 800; color: #be123c; letter-spacing: .1em; text-transform: uppercase;">Alto (71–100)</div>
+        <div style="font-family: 'Fredoka', sans-serif; font-size: 30px; color: #dc2626; font-weight: 600; margin-top: 4px;">367 <span style="font-size: 14px; opacity: .7;">(9%)</span></div>
+        <div style="font-size: 12.5px; color: var(--ink-soft); margin-top: 6px; line-height: 1.5;">Premium con recargo o exclusiones. Decisión de underwriting informada por data real, no auto-declaración.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. ADVERSE SELECTION -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">02 · Selección adversa preview</div>
+        <h2>Tu mix de riesgo · sin Paw Friend vs con Paw Friend</h2>
+      </div>
+      <span class="panel-tag">Cohort comparativo Y1</span>
+    </div>
+    <p class="panel-sub">Sin data verificada vet, el seguro pet en Chile contrata mayoritariamente a dueños conscientes de un problema preexistente (selección adversa = high risk se sobre-representa). Con la ficha clínica longitudinal de Paw Friend, el mix se balancea hacia la media real de la población.</p>
+
+    <div class="compare-grid">
+      <div class="compare-card before">
+        <div class="label">Sin Paw Friend</div>
+        <div class="big">68 / 100</div>
+        <div class="desc"><strong>Risk score promedio del pool</strong><br>El dueño que busca seguro hoy ya intuye que algo va mal. Resultado: tu cartera concentra alto riesgo.</div>
+        <table style="margin-top: 14px; width: 100%; font-size: 12px;">
+          <tr><td>Bajo (0–40)</td><td style="text-align:right; font-weight: 700;">22%</td></tr>
+          <tr><td>Medio (41–70)</td><td style="text-align:right; font-weight: 700;">42%</td></tr>
+          <tr><td>Alto (71–100)</td><td style="text-align:right; font-weight: 700;">36%</td></tr>
+        </table>
+      </div>
+      <div class="compare-card after">
+        <div class="label">Con Paw Friend</div>
+        <div class="big">42 / 100</div>
+        <div class="desc"><strong>Risk score promedio del pool</strong><br>Captamos el dueño antes de que aparezca el problema. Mix balanceado hacia la población real.</div>
+        <table style="margin-top: 14px; width: 100%; font-size: 12px;">
+          <tr><td>Bajo (0–40)</td><td style="text-align:right; font-weight: 700;">53%</td></tr>
+          <tr><td>Medio (41–70)</td><td style="text-align:right; font-weight: 700;">38%</td></tr>
+          <tr><td>Alto (71–100)</td><td style="text-align:right; font-weight: 700;">9%</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. CLAIMS BY BREED -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">03 · Claims modelados por raza</div>
+        <h2>Costo esperado anual por póliza · base actuarial pricing</h2>
+      </div>
+      <span class="panel-tag">Modelo USD · refresh trimestral</span>
+    </div>
+    <p class="panel-sub">Modelo basado en literatura veterinaria internacional (Nationwide claims data 2023, Royal Canin breed health monitor) calibrado al cohort chileno. Te entregamos el detalle completo por SKU de raza más detallado disponible.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Raza</th><th>Pets en cohort</th><th>Claim esperado/año (CLP)</th><th>Top 3 condiciones</th><th>Risk band</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Bulldog Francés</td><td class="num">412</td><td class="num">$890.000</td><td>BOAS · alergia atópica · displasia coxal</td><td><span class="pill pill-high">Alto</span></td></tr>
+        <tr><td>Pastor Alemán</td><td class="num">623</td><td class="num">$640.000</td><td>Displasia · piometra · gastroenteritis hemorrágica</td><td><span class="pill pill-mid">Medio-alto</span></td></tr>
+        <tr><td>Golden Retriever</td><td class="num">487</td><td class="num">$520.000</td><td>Cáncer · otitis recurrente · displasia</td><td><span class="pill pill-mid">Medio-alto</span></td></tr>
+        <tr><td>Labrador</td><td class="num">734</td><td class="num">$340.000</td><td>Sobrepeso · otitis · ruptura ligamento cruzado</td><td><span class="pill pill-mid">Medio</span></td></tr>
+        <tr><td>Beagle</td><td class="num">298</td><td class="num">$280.000</td><td>Otitis · obesidad · luxación rotuliana</td><td><span class="pill pill-mid">Medio</span></td></tr>
+        <tr><td>Mestizo grande</td><td class="num">854</td><td class="num">$220.000</td><td>Trauma · gastroenteritis · dermatitis</td><td><span class="pill pill-low">Bajo-medio</span></td></tr>
+        <tr><td>Mestizo pequeño</td><td class="num">412</td><td class="num">$160.000</td><td>Cálculos urinarios · dental · trauma menor</td><td><span class="pill pill-low">Bajo</span></td></tr>
+        <tr><td>Gato Persa</td><td class="num">187</td><td class="num">$310.000</td><td>Riñón poliquístico · dermatitis · respiratorio</td><td><span class="pill pill-mid">Medio</span></td></tr>
+        <tr><td>Gato común europeo</td><td class="num">207</td><td class="num">$140.000</td><td>FLUTD · hipertiroidismo · trauma</td><td><span class="pill pill-low">Bajo</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 4. LOSS RATIO -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">04 · Loss ratio modelado</div>
+        <h2>Tu unit economics · con vs sin nuestra data</h2>
+      </div>
+      <span class="panel-tag">−14pp · piloto Y1</span>
+    </div>
+    <p class="panel-sub">El loss ratio proyectado mejora porque (a) el mix de riesgo se balancea, (b) los claims son mejor predichos por raza/condición preexistente, (c) los nudges Paw Friend mejoran la adherencia preventiva (vacunas + chequeos al día reducen claims agudos).</p>
+
+    <div class="compare-grid" style="grid-template-columns: 1fr auto 1fr; max-width: 880px; margin: 0 auto;">
+      <div class="compare-card before">
+        <div class="label">Cartera promedio sin Paw Friend</div>
+        <div class="big">72%</div>
+        <div class="desc">Loss ratio observado en pilotos chilenos sin verificación vet (auto-declaración del dueño). Margen técnico ajustado.</div>
+      </div>
+      <div class="compare-arrow">→</div>
+      <div class="compare-card after">
+        <div class="label">Cartera Paw Friend Y1</div>
+        <div class="big">58%</div>
+        <div class="desc">Loss ratio modelado con risk score validado vet + adherencia preventiva mejorada. <strong>+14pp de margen técnico.</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. PIPELINE -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">05 · Pipeline de leads</div>
+        <h2>De /cotizar-seguro a póliza emitida</h2>
+      </div>
+      <span class="panel-tag">Octubre 2026</span>
+    </div>
+    <p class="panel-sub">Captura de leads vía <code style="font-family: var(--mono); font-size: 12px; background: var(--insure-100); padding: 2px 8px; border-radius: 6px; color: var(--insure-700);">/cotizar-seguro/:petId</code> embebido en la app. El dueño ya autenticó su mascota y aceptó compartir el risk score con tu equipo de underwriting. Edge fn <code style="font-family: var(--mono); font-size: 12px; background: var(--insure-100); padding: 2px 8px; border-radius: 6px; color: var(--insure-700);">request-insurance-quote</code> envía el lead automáticamente.</p>
+
+    <div class="funnel">
+      <div class="funnel-step">
+        <div class="funnel-label">Vio /cotizar-seguro<small>impresión + opt-in</small></div>
+        <div class="funnel-bar" style="width: 100%;">5.964 dueños</div>
+        <div class="funnel-num">5.964</div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-label">Solicitó cotización<small>completó formulario</small></div>
+        <div class="funnel-bar" style="width: 70%;">2.341 (39,2%)</div>
+        <div class="funnel-num">2.341</div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-label">Cotización enviada<small>email partner + admin</small></div>
+        <div class="funnel-bar" style="width: 56%;">1.876 (80,1%)</div>
+        <div class="funnel-num">1.876</div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-label">Cotización aceptada<small>cliente Sura activó</small></div>
+        <div class="funnel-bar" style="width: 28%;">847 (45,1%)</div>
+        <div class="funnel-num">847</div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-label">Póliza emitida<small>contrato firmado</small></div>
+        <div class="funnel-bar" style="width: 12%; background: linear-gradient(90deg, #059669, #047857);">120 (14,2%)</div>
+        <div class="funnel-num">120</div>
+      </div>
+    </div>
+
+    <div style="background: var(--insure-100); border-left: 4px solid var(--insure-600); padding: 14px 16px; border-radius: 8px; margin-top: 22px; font-size: 13.5px; color: var(--insure-800);">
+      <strong>Ticket promedio:</strong> $24.800/mes · <strong>ARPU anual modelado:</strong> $297.600/póliza · <strong>Comisión Paw Friend:</strong> 12% afiliado primer año (acordable). <strong>120 pólizas × $297.6k × 12% = $4.28M en comisión Y1 modelada</strong>.
+    </div>
+  </section>
+
+  <!-- 6. ANTI-FRAUDE (FUTURO) -->
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-eyebrow">06 · Anti-fraude biométrico · roadmap (no incluido en piloto Y1)</div>
+        <h2>Verificación 1:N de la mascota asegurada · feature futura</h2>
+      </div>
+      <span class="panel-tag" style="background: #fef3c7; color: #b45309; border-color: #fcd34d;">Pausada · activable B2B-funded</span>
+    </div>
+    <p class="panel-sub"><strong>Paw Shield (identidad biométrica por hocico) está hoy en pausa.</strong> El piloto técnico interno (n=8) mostró feasibility, pero no está operativo en producción. El piloto Y1 con tu cartera Sura <strong>NO incluye</strong> este módulo. Lo mostramos acá solo como visión de roadmap: si Sura quiere financiar su activación específica para anti-fraude por sustitución de individuo, conversamos un addendum. La cartera estándar opera con microchip + QR + ficha clínica longitudinal, que ya entrega trazabilidad suficiente para suscripción.</p>
+
+    <div class="biometric-box" style="opacity: .85;">
+      <div class="icon-big">🔮</div>
+      <div style="flex: 1; min-width: 240px;">
+        <h3>Roadmap · pendiente firma de partner que financie COGS</h3>
+        <p style="font-size: 13.5px; line-height: 1.55;">Caso de uso futuro: prevenir fraude por sustitución de individuo (declarar siniestro de una mascota distinta a la asegurada). Stack técnico evaluado: identificación 1:N con DINOv2-large 1024 dims + pgvector HNSW, o integración con proveedor externo (Petify) a USD 0.75/pet/mes. Decisión de activación condicionada a partner que financie el COGS lineal. <strong>No formar parte del scope de tu piloto base.</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DELIVERABLES -->
+  <div class="deliverables">
+    <h3>Esta data se entrega así</h3>
+    <p style="font-size: 14px; color: var(--ink-soft);">Tres canales auditables, SLA mensual, integrable con tu LOS/PAS.</p>
+    <div class="delivery-grid">
+      <div class="delivery-item"><div class="icon">🔌</div><h4>API REST</h4><p>Endpoint <code style="font-family: var(--mono); font-size: 11px;">/risk-score?pet_id=...</code> + webhooks de eventos. Integrable con tu motor de cotización en tiempo real.</p></div>
+      <div class="delivery-item"><div class="icon">📊</div><h4>Dashboard mensual</h4><p>Esto que estás viendo, en vivo, con tu cartera. Filtros guardables. Acceso para equipo de pricing + suscripción.</p></div>
+      <div class="delivery-item"><div class="icon">📄</div><h4>Reporte actuarial PDF</h4><p>Resumen ejecutivo el 1° hábil del mes. Apto para presentar a IFRS17 / capital management committee.</p></div>
+    </div>
+  </div>
+
+  <!-- SIGNOFF -->
+  <div class="signoff">
+    <h3>¿Vale la pena que lo veamos juntos 30 minutos?</h3>
+    <p>Te muestro live el dashboard de un cohort real (anonimizado), corremos un risk score sobre una mascota de muestra, y discutimos si el piloto Q3 tiene sentido para tu cartera.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://pawfriend.cl/aplicar?tipo=b2b_api&from=demo-aseguradoras" target="_blank" rel="noopener">📅 Agendar 30 min · Founder Partner</a>
+      <a class="btn btn-tertiary" href="https://pawfriend.cl/pitch/aseguradoras.html" target="_blank" rel="noopener">📑 Ver pitch deck completo</a>
+      <a class="btn btn-secondary" href="https://pawfriend.cl" target="_blank" rel="noopener">🌐 Ver app en vivo</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <strong>SpA SUSAETA GARNHAM SOFTWARE ENGINEERING</strong> · RUT 78.328.659-9 · Pedro Susaeta, founder<br>
+  ✉️ <a href="mailto:pawfriendcl@gmail.com">pawfriendcl@gmail.com</a> · 📱 WhatsApp <a href="https://wa.me/56982092588" target="_blank" rel="noopener">+56 9 8209 2588</a> · 🌐 <a href="https://pawfriend.cl" target="_blank" rel="noopener">pawfriend.cl</a><br>
+  <span style="opacity: .65;">Datos representativos del Y1 target · cohort real disponible Q3 2026 · Lanzamiento app Junio 2026</span>
+</footer>
+
+</body>
+</html>

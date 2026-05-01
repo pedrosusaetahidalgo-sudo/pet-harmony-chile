@@ -200,8 +200,8 @@ INTROS = {
         "a llevar registro digital de mascotas con microchip, vacunas y tenedor "
         "responsable. Hoy ningún municipio chileno lo tiene digital y centralizado "
         "— se sigue llevando en Excel o cuadernos.\n\n"
-        "Construí en 8 meses esa infraestructura. Está en producción end-to-end. "
-        "Próximos a lanzar al público.\n\n"
+        "Construí esa infraestructura en 2 meses, solo apalancado con IA. "
+        "Está en producción end-to-end pre-launch (0 usuarios públicos hoy). Próximos a lanzar.\n\n"
         "Para tu municipio eso puede abrir dos cosas:\n\n"
         "1. Cumplimiento Ley 21.020 sin construir nada — los ciudadanos se "
         "inscriben gratis vía pawfriend.cl, registran su mascota, geolocalización "
@@ -233,7 +233,7 @@ INTROS = {
         "chileno tiene benefit pet white-label todavía. El primero gana.\n\n"
         "Antes de lanzar al público busco 1 banco founder para construirlo juntos. "
         "Founder Partner pre-launch significa exclusividad por segmento 12 meses + "
-        "cuota por cliente activo blindada por 36 meses + tarjeta co-branded."
+        "cuota por cliente activo blindada durante el lock de 12 meses + tarjeta co-branded."
     ),
     "edificios": (
         "Soy Pedro Susaeta. Estoy próximo a lanzar Paw Friend (https://pawfriend.cl), "

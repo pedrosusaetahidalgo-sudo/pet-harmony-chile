@@ -124,7 +124,7 @@ const AUDIENCE_CONFIG: Record<
     headline:
       'Construí la infraestructura digital de mascotas chilenas. Lanzamiento próximo. Antes de eso, ¿les sirve a ustedes?',
     pitch:
-      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena, RUT 78.328.659-9). Construí en 8 meses la ficha clínica longitudinal del 100% del mercado pet chileno. Estamos próximos a lanzar (cohorte beta cerrada en marcha). Antes de abrir al público, busco 1-2 partners pharma early para validar el motor #1: API B2B con datos agregados anonimizados + consent ARCO.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena, RUT 78.328.659-9). Construí en 2 meses, solo apalancado con IA, la ficha clínica longitudinal del 100% del mercado pet chileno end-to-end. Estamos próximos a lanzar (cohorte beta cerrada en marcha). Antes de abrir al público, busco 1-2 partners pharma early para validar el motor #1: API B2B con datos agregados anonimizados + consent ARCO.',
     bullets: [
       'Qué ganan ustedes: targeting de campañas con segmentación raza/edad/comuna real (no panel autoseleccionado), validación de eficacia con cohort longitudinal, detección temprana de sub-poblaciones con condiciones específicas.',
       'Qué ganamos nosotros: validar pricing pharma + 1 case study para abrir conversación con Sura/Centrovet adicionales + tener un partner que crezca con nosotros desde mes 0.',
@@ -147,7 +147,7 @@ const AUDIENCE_CONFIG: Record<
     headline:
       'Construí un cotizador pet insurance con risk score real. Lanzamiento próximo. Antes, ¿les sirve a ustedes?',
     pitch:
-      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). En 8 meses construí la primera distribución B2B2C de seguros pet en Chile: el dueño abre la ficha de su mascota, ve cotizaciones en tiempo real de aseguradoras partner, pide contacto, ustedes reciben lead transaccional. Estamos próximos a lanzar (cohorte beta cerrada en marcha). Antes busco 1 partner aseguradora early.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). En 2 meses, solo apalancado con IA, construí la primera distribución B2B2C de seguros pet en Chile: el dueño abre la ficha de su mascota, ve cotizaciones en tiempo real de aseguradoras partner, pide contacto, ustedes reciben lead transaccional. Estamos próximos a lanzar (cohorte beta cerrada en marcha). Antes busco 1 partner aseguradora early.',
     bullets: [
       'Qué ganan ustedes: distribución B2B2C en contexto (el owner ya tiene la mascota cargada con peso/raza/condiciones, no autoreporte). Risk score precomputado por raza/edad/comuna. Lead transaccional vía email automático.',
       'Qué ganamos nosotros: validar la mecánica con un partner real + tener case study para abrir conversación con BCI/Mapfre/Consorcio + revenue share de la primera póliza vendida.',
@@ -170,7 +170,7 @@ const AUDIENCE_CONFIG: Record<
     headline:
       'Construí un canal de adquisición contextual para retail pet. Lanzamiento próximo. ¿Les sirve a ustedes?',
     pitch:
-      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). En 8 meses construí el catálogo retail más contextual del mercado pet chileno: cada producto se filtra automáticamente por especie + raza + edad + peso de la mascota del dueño. Estamos próximos a lanzar (cohorte beta cerrada en marcha). Antes busco 1-2 retailers early para validar la mecánica.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). En 2 meses, solo apalancado con IA, construí el catálogo retail más contextual del mercado pet chileno: cada producto se filtra automáticamente por especie + raza + edad + peso de la mascota del dueño. Estamos próximos a lanzar (cohorte beta cerrada en marcha). Antes busco 1-2 retailers early para validar la mecánica.',
     bullets: [
       'Qué ganan ustedes: leads atribuibles con tracking real (no Google Analytics — RPC track_retail_click con SECURITY DEFINER), descuento contextual a Paw Members (tier que paga $3.990/mes), reporte mensual de attribution.',
       'Qué ganamos nosotros: validar el modelo de revenue share con un retailer real + tener un partner que aporta inventario + tener case study para abrir conversación con cadenas más grandes.',
@@ -238,7 +238,7 @@ const AUDIENCE_CONFIG: Record<
     headline:
       'Construí el SaaS para edificios pet-friendly que falta. ¿Les sirve a sus comunidades?',
     pitch:
-      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). Edificios pet-friendly hoy llevan el registro en Excel o WhatsApp. Hay 50.000+ unidades pet-friendly en Chile y crece 10% anual. Construí el SaaS dedicado en 8 meses. Estoy próximo a lanzar. Antes busco 1-2 administradoras o inmobiliarias early.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). Edificios pet-friendly hoy llevan el registro en Excel o WhatsApp. Hay 50.000+ unidades pet-friendly en Chile y crece 10% anual. Construí el SaaS dedicado en 2 meses, solo apalancado con IA. Estoy próximo a lanzar. Antes busco 1-2 administradoras o inmobiliarias early.',
     bullets: [
       'Qué ganan ustedes: cobertura compliance vacunas/esterilización por comunidad, reglamento digital con firma electrónica, reducción de conflictos vecinales (data en lugar de "el perro que ladra"), branding propio.',
       'Qué ganamos nosotros: validar el modelo SaaS B2B con 1-2 partners early + tener case study para escalar a Manquehue/PAZ/Actual + ingreso recurrente predecible (cuota mensual por unidad).',
@@ -261,7 +261,7 @@ const AUDIENCE_CONFIG: Record<
     headline:
       'Si tu empresa toca el ecosistema mascota sin ser pharma/seguro/retail tradicional, hablemos.',
     pitch:
-      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). Hay un long-tail de empresas que tocan el ecosistema mascota: aerolíneas (Latam Cargo), academias veterinarias (UAutónoma, USS), fundaciones privadas, ferias pet, agroindustria, hardware vet. Construí Paw Friend en 8 meses con código modular. Estoy próximo a lanzar. Antes busco alianzas verticales rápidas.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). Hay un long-tail de empresas que tocan el ecosistema mascota: aerolíneas (Latam Cargo), academias veterinarias (UAutónoma, USS), fundaciones privadas, ferias pet, agroindustria, hardware vet. Construí Paw Friend en 2 meses, solo apalancado con IA, con código modular. Estoy próximo a lanzar. Antes busco alianzas verticales rápidas.',
     bullets: [
       'Qué ganan ustedes: acceso a la audiencia pet chilena vía la app, co-marketing en feed/newsletter, métricas agregadas de tu vertical, integración técnica modular.',
       'Qué ganamos nosotros: distribución, contenido educativo, eventos físicos, expansión de uso casos. No buscamos cheque.',

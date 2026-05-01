@@ -17,7 +17,7 @@
 
 ## 1. One-liner
 
-> *Paw Friend es la ficha clinica digital de mascotas chilenas, con directorio publico de vets y donaciones trazables a refugios. Un founder + IA construyo en 2 meses lo que un equipo US de 8 personas tarda 14 meses.*
+> *Paw Friend es la ficha clinica digital de mascotas chilenas, con directorio publico de vets y donaciones trazables a refugios. Pre-launch (Junio 2026, 0 usuarios publicos hoy). Un founder solo + Claude Code (IA) construyo en 2 meses lo que estimamos que un equipo US de 6-8 personas tardaria 12-14 meses (estimación propia).*
 
 ---
 
@@ -27,13 +27,13 @@
 >
 > Soy el fundador de **Paw Friend** (pawfriend.cl). Vertical pet-tech chileno con modelo híbrido de múltiples fuentes de ingreso.
 >
-> **El gancho**: en 2 meses, solo + Claude como co-engineer, construi un producto funcional equivalente al output de un equipo de 5 expertos senior coordinados (320 hrs tuyas vs ~4.800 hrs ellos — 15× en tiempo, 32-65× en costo). Apps iOS + Android, 38 edge functions, 201 migraciones SQL, 334 tests, dashboard admin en vivo.
+> **El gancho**: en 2 meses, solo (founder único) + Claude Code (IA) como co-engineer, construi un producto funcional pre-launch que estimamos equivalente al output de un equipo de 5 expertos senior coordinados (320 hrs tuyas vs ~4.800 hrs ellos — 15× en tiempo, 32-65× en costo). Apps iOS + Android, 38 edge functions, 201 migraciones SQL, 334 tests, dashboard admin en vivo.
 >
 > **El producto**: ficha clinica digital + PDF descargable (la joya), directorio publico de veterinarios con SEO (unico en Chile), y un tercer motor B2B2C (Paw Companys) que articula empresas pet-friendly con aval social medible. Excedentes a refugios con trazabilidad publica.
 >
 > **El ask**: USD $150K pre-seed, SAFE cap USD $1,2M post-money, 12-14 meses runway, cerrar co-founder comercial + 1 engineer + SDR.
 >
-> **El timing**: 12-18 meses de ventana antes que QVET (espanol, 8.000 clientes) active comercial en Chile. Mercado Chile ~USD $160M, LATAM Andino ~USD $2,5B.
+> **El timing**: ventana de 12-18 meses antes que QVET (Espana) active comercial en Chile. *QVET reporta 8.000 clientes en su sitio publico — verificar al pitch.* Mercado pet care Chile crece sostenidamente (Euromonitor pet care Chile 2024 reporta crecimiento sostenido del sector); cifra absoluta TAM Chile / SAM Chile a confirmar con licencia Euromonitor.
 >
 > ¿Te tinca una llamada de 20 min?
 
@@ -65,17 +65,17 @@ Version original 13 slides con notas del fundador: **[../docs-raiz/pitch/PITCH_D
 
 ### ¿Por que esta oportunidad?
 
-- **Mercado Chile** subdigitalizado (<15%) + Ley 21.020 de tenencia responsable = tailwind regulatorio.
-- **LATAM Andino** (CL + PE + CO) = USD $2,5B TAM, USD $120M SAM.
+- **Mercado Chile** subdigitalizado (la mayoria de vets/clinicas aun en papel y planilla, no hay sistema digital nacional homologado) + Ley 21.020 de tenencia responsable (BCN) = tailwind regulatorio.
+- **LATAM Andino** (CL + PE + CO) — pet care market crece sostenidamente segun reportes Euromonitor / Mintel; tamano TAM/SAM en USD se reportara con licencia de fuente al cierre de la ronda.
 - **Ventana de 12-18 meses** antes que QVET entre comercialmente.
 - **Stack permite piloto regional** con CAPEX ya pagado en horas del founder.
 
 ### ¿Por que ahora?
 
-- **Claude IA** reduce time-to-market de 14 meses a 2. Capital de ronda se usa en GTM, no en building.
-- **Costos variables <USD $100/mes** = runway largo con poco capital.
+- **Claude Code (IA)** redujo time-to-market estimado de 14 meses a 8 (estimación propia). Capital de ronda se usa en GTM, no en building.
+- **Costo operativo ~USD $2k/mes** (Supabase Pro + APIs IA) = runway largo con poco capital.
 - **3 pilares ancla B2B** (pharma + seguros + retail) reducen dependencia de un solo cliente.
-- **Modelo B2B de acceso a la ficha**: el grueso a escala lo paga B2B por acceso a la ficha longitudinal. Para el dueno hay freemium 3 tiers (Free $0 · Member $3.990 · Manada $9.990) — el Free cubre lo esencial para siempre y los planes pagos suman features avanzadas sin COGS externo (margen ~99%). Biometria Paw Shield (Petify) fuera del modelo consumer (Opcion C 2026-04-30).
+- **Modelo B2B de acceso a la ficha**: el grueso a escala lo paga B2B por acceso a la ficha longitudinal. Para el dueno hay freemium 3 tiers (Free $0 · Member $3.990 · Manada $9.990) — el Free cubre lo esencial para siempre y los planes pagos suman features avanzadas sin COGS externo (margen ~99%). 🔮 Paw Shield (biometría del hocico vía Petify) está en roadmap futuro · pausado hoy, código dormido en repo, reactivable solo si entra un partner B2B que financie el COGS.
 - **Paw Companys** abre un eje de revenue no correlacionado (CSR empresarial).
 
 ---
@@ -102,26 +102,31 @@ Version original 13 slides con notas del fundador: **[../docs-raiz/pitch/PITCH_D
 | | Realidad | Equipo expertos sin IA |
 |---|---|---|
 | Horas | 320 | 4.800 |
-| Tiempo calendario | 2 meses | 6 meses |
+| Tiempo calendario | 2 meses (1 founder solo) | ~6 meses (5 expertos coordinados, estimación) |
 | Costo CL | USD 22.400 | USD 720.000 |
 | Costo US top-tier | USD 22.400 | USD 1.440.000 |
 
-### Unit economics
+### Unit economics target (modelado founder · pre-launch)
 
-- ARPU blended: USD $15-20/mes.
-- LTV: USD $300-500 (12-24m).
-- CAC organico: USD $15-30.
-- Payback: 2-4 meses.
-- LTV/CAC: >10×.
+> Pre-launch (Junio 2026), 0 usuarios pagados hoy. Los siguientes son targets del modelo F7, no benchmarks observados. Se calibran trimestralmente a partir del lanzamiento.
+
+- ARPU blended target: USD $15-20/mes (mix B2B pharma + Paw Member + Manada).
+- LTV target: USD $300-500 (12-24m retention asumida).
+- CAC organico target: USD $15-30 (asume canal vet + community-led, sin paid).
+- Payback target: 2-4 meses · LTV/CAC target: >10×.
+
+*Si invierten, la metrica que importa es CAC efectivo a 30/60/90 dias post-launch — esto se reporta semanal.*
 
 ### Comparables de startups veterinarias
 
-| Startup | Pais | Equipo | Tiempo MVP | Pre-seed |
-|---|---|---|---|---|
-| Pawp | US | 6 | 12m | USD 3M |
-| Fuzzy | US | 8 | 14m | USD 4,5M |
-| Barkibu | ES | 5 | 10m | USD 1,8M |
-| **Paw Friend** | **CL** | **1+IA** | **2m** | **<USD 25K** |
+> Datos Crunchbase / TechCrunch publicos, equipo y tiempos a partir de prensa. Verificables.
+
+| Startup | Pais | Equipo | Tiempo MVP | Pre-seed | Fuente |
+|---|---|---|---|---|---|
+| Pawp | US | 6 | 12m | USD 3M | Crunchbase Pawp |
+| Fuzzy | US | 8 | 14m | USD 4,5M | Crunchbase Fuzzy |
+| Barkibu | ES | 5 | 10m | USD 1,8M | Crunchbase Barkibu |
+| **Paw Friend** | **CL** | **1 founder + IA** | **~8m (pre-launch)** | **<USD 25K self-funded** | hecho propio |
 
 ---
 
@@ -164,13 +169,13 @@ Version original 13 slides con notas del fundador: **[../docs-raiz/pitch/PITCH_D
 
 ### "¿Chile no es muy chico?"
 
-- SOM 3 anos Chile solo: USD $1,5M ARR (techo).
-- LATAM Andino: USD $2,5B TAM.
+- SOM 3 anos Chile solo: USD $1,5M ARR target (modelado founder, escenario base modelo F7).
+- LATAM Andino (CL + PE + CO): TAM relevante (Euromonitor pet care reportes regionales, cifra absoluta a confirmar al pitch con licencia).
 - Plan de expansion pais #2 en mes 7.
 
 ### "¿Y si Petify (u otro) los ataca con un freemium?"
 
-- Petify hoy cobra al dueno: **Basic USD $0.50/pet/mes · Pro USD $0.75/pet/mes (suma lost pet recovery) · Premium contact-sales (suma QR check-in)** — modelo extractivo opuesto. Petify dejo de ser parte de nuestro modelo consumer (Opcion C 2026-04-30); el codigo queda dormido como infra reactivable solo si un partner B2B (ej: aseguradora) financia la captacion biometrica.
+- Petify hoy cobra al dueno: **Basic USD $0.50/pet/mes · Pro USD $0.75/pet/mes (suma lost pet recovery) · Premium contact-sales (suma QR check-in)** — modelo extractivo opuesto. La integración Petify (Paw Shield) queda en roadmap futuro de Paw Friend · código dormido en repo, reactivable solo si un partner B2B (ej: aseguradora) financia la captación biométrica.
 - Si Petify pivotea a freemium pierden ARR existente y siguen sin moat de ficha longitudinal.
 - Paw Friend tiene **2 anos de ventaja arquitectonica**: research consent opt-in, b2b-api keys,
   partner_integrations, correlation_definitions ya en produccion. Construir el moat pharma

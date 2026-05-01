@@ -12,7 +12,7 @@
 
 ## Resumen ejecutivo (1 parrafo)
 
-Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas, conecta a duenos con veterinarios a traves de un directorio publico con pricing transparente, y canaliza aportes trazables hacia refugios. Construida en 2 meses por un ingeniero chileno con asistencia de IA (Claude), alcanza alcance funcional equivalente a USD $720K-$1,44M de desarrollo tradicional. **Modelo v2.1 (Plan v5 Opcion 3, 2026-04-29)**: freemium B2C 3 tiers para dueños (Free $0 / Paw Member $3.990/mes / Manada $9.990/mes con aporte refugios), vet como canal de adquisicion gratuito, y el grueso del revenue a escala viene de **3 pilares ancla B2B** (pharma + seguros + retail) + **2 soporte** (Paw Companys empresas + Paw Support voluntario). Meta ARR USD $300-500K en 12 meses, USD $940K-$2.1M en 18 meses, piloto LATAM en mes 12+.
+Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas, conecta a duenos con veterinarios a traves de un directorio publico con pricing transparente, y canaliza aportes trazables hacia refugios. Construida en 2 meses por un founder chileno solo con asistencia de IA (Claude Code) — alcance funcional con valor de mercado estimado USD $720K-$1,44M (estimación propia, no facturado). **Hoy en pre-launch (Junio 2026 = lanzamiento, 0 usuarios publicos)**. **Modelo v2.1 (Plan v5 Opcion 3, 2026-04-29)**: freemium B2C 3 tiers para dueños (Free $0 / Paw Member $3.990/mes / Manada $9.990/mes con aporte refugios), vet como canal de adquisicion gratuito, y el grueso del revenue a escala viene de **3 pilares ancla B2B** (pharma + seguros + retail) + **2 soporte** (Paw Companys empresas + Paw Support voluntario). Meta ARR Y1 (12 meses post-launch) **conservador USD $120K / optimista USD $420K** (modelo v2.1 — calibrado con ramp-up realista founder-solo), USD $300K-$1M en 18 meses si arranca traccion B2B. Piloto LATAM mes 18+.
 
 ---
 
@@ -48,7 +48,7 @@ Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas,
 
 ### 2.2. Componente metodologico innovador
 
-- **Desarrollo asistido por IA como metodologia productiva**: un founder unico + Claude como co-engineer produjo en 2 meses lo que un equipo de 5 expertos senior tarda 6 meses (apalancamiento 15× en tiempo, 32-65× en costo). Ver [APALANCAMIENTO_FUNDADOR_IA.md](../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md).
+- **Desarrollo asistido por IA como metodologia productiva** (estimación propia): un founder unico + Claude Code (IA) como co-engineer produjo en 2 meses lo que estimamos que un equipo de 5 expertos senior tardaria ~6 meses (apalancamiento ~15× en tiempo, ~32-65× en costo, según nuestra estimación). Ver [APALANCAMIENTO_FUNDADOR_IA.md](../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md). Hoy en pre-launch (Junio 2026, 0 usuarios publicos).
 - **Monetizacion hibrida con impacto social integrado**: Paw Companys (empresas sponsors con badge publico) + donaciones voluntarias con dashboard de transparencia. El excedente financia refugios.
 
 ### 2.3. Grado de novedad (nacional / regional / mundial)
@@ -96,13 +96,15 @@ Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas,
 
 ### 4.1. Tres pilares ancla + dos soporte
 
-| # | Pilar | Quien paga | Modelo | Ticket anual | Activacion |
+| # | Pilar | Quien paga | Modelo | Ticket anual (target modelado) | Activacion |
 |---|---|---|---|---|---|
-| 1 | **Pharma animal** | Centrovet (Agrosuper), Virbac, Zoetis Chile | Sponsored reminders + data deals + contenido | USD $20-500K / brand | Mes 4-6 |
-| 2 | **Seguros pet** | Sura, BCI, Mapfre, Consorcio | Afiliado 10-20% + white-label ficha | USD $500K-1M a escala | Mes 6-9 |
-| 3 | **Retail pet** | Master Dog (Agrosuper), Falabella Pet, Puppis | Afiliado 3-10% + suscripcion alimento | USD $50-200 / usuario activo-ano | Mes 8-12 |
-| 4 | **Paw Companys** | Empresas pet-friendly + corporates | Sponsorship badge + SaaS bienestar animal | USD $600-1.8K/mes/corporate | Vivo |
+| 1 | **Pharma animal** | Centrovet (Agrosuper), Virbac, Zoetis Chile | Sponsored reminders + data deals + contenido | rango propuesto USD $20-500K / brand · negociable por brand y cohort | Mes 4-6 |
+| 2 | **Seguros pet** | Sura, BCI, Mapfre, Consorcio | Afiliado sobre prima + white-label ficha | a escala USD $500K-1M target · % se negocia con cada aseguradora | Mes 6-9 |
+| 3 | **Retail pet** | Master Dog (Agrosuper), Falabella Pet, Puppis | Afiliado + suscripcion alimento | rango propuesto USD $50-200 / usuario activo-ano · target modelado | Mes 8-12 |
+| 4 | **Paw Companys** | Empresas pet-friendly + corporates | Sponsorship badge + SaaS bienestar animal | tiers $49.900 / $99.900 / $199.900 CLP/mes (publicos) | Vivo |
 | 5 | **Paw Support** | Duenos voluntariamente | Pago voluntario (reframe legal Ley 19.885) | Residual, alto NPS | Reframe en curso |
+
+> *Tickets pharma/seguros/retail son rangos del founder bajo modelo F7. Ningun deal pagador firmado todavia (pre-launch Junio 2026).*
 
 ### 4.2. B2C dueno — freemium 3 tiers (Plan v5 Opcion 3, 2026-04-29)
 
@@ -110,8 +112,9 @@ Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas,
   calendario, OCR, asistente IA, directorio de vets — lo esencial gratis para siempre.
 - **Paw Member ($3.990/mes, 4 mascotas)**: + Paw Passport PDF + Insights Pro + audio
   notes IA + reportes >30d + descuentos Paw Partners + badge 💛. Sin COGS externo
-  (margen ~99%). Conversion target 13%. Biometria Paw Shield queda fuera del modelo
-  consumer (Opcion C 2026-04-30, codigo dormido reactivable B2B-funded).
+  (margen ~99%). Conversion target 13%. 🔮 Roadmap futuro: Paw Shield (biometría del
+  hocico vía Petify) — pausado hoy, código dormido en repo, reactivable solo si entra
+  un partner B2B que financie el COGS USD 0,75/pet/mes.
 - **Manada ($9.990/mes, 5 mascotas)**: + descuentos exclusivos + soporte prioritario +
   early access + badge 👑 + **$2.000/mes a Fondo Paw Friend Refugios** (Paw Friend SpA
   es quien dona, evita Ley 19.885). Conversion target 1-2%.
@@ -122,33 +125,41 @@ Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas,
 - Plan Clinica/Pro Max **escondidos** del pricing publico ("Empresarial — contactanos").
 - *El vet no paga porque su valor esta en construir la ficha. El activo es la ficha.*
 
-### 4.4. Unit economics v2 a escala (50k MAU, mes 18 post-seed)
+### 4.4. Unit economics v2 a escala — TARGET MODELADO (50k MAU, mes 18 post-seed)
 
-| Motor | Conversion / deals | ARR estimado |
+> Tabla de proyeccion del founder · escenarios base/optimista del modelo F7. Numeros se calibran trimestralmente con traccion real post-launch.
+
+| Motor | Conversion / deals (asumidos) | ARR target |
 |---|---|---|
-| Pharma (3 brands) | 3 deals activos | USD $300-600K |
-| Seguros (2 aseguradoras) | 5% conv = 2.500 polizas | USD $200-500K |
-| Retail (2 retailers) | 10% conv activos | USD $250-500K |
-| Paw Companys | 20 empresas | USD $120-240K |
+| Pharma (3 brands) | 3 deals activos asumidos | USD $300-600K |
+| Seguros (2 aseguradoras) | 5% conv = 2.500 polizas asumidas | USD $200-500K |
+| Retail (2 retailers) | 10% conv activos asumido | USD $250-500K |
+| Paw Companys | 20 empresas asumidas | USD $120-240K |
 | Paw Support | Voluntario | USD $20-50K |
-| Long-tail (data/gobierno) | 1-2 deals | USD $50-200K |
-| **Total ARR proyectado** | | **USD $940K - $2.1M** |
+| Long-tail (data/gobierno) | 1-2 deals asumidos | USD $50-200K |
+| **Total ARR target** | | **USD $940K - $2.1M** |
+
+*Pre-launch hoy (Junio 2026, 0 usuarios publicos). Ningun deal pagador firmado todavia.*
 
 ---
 
 ## 5. Mercado y escalabilidad
 
-### 5.1. Mercado Chile
+> Las cifras absolutas TAM/SAM en USD requieren licencia Euromonitor / Mintel / IBISWorld. Las que siguen son **estimaciones del founder bajo modelo F7 (modelado interno)**, basadas en supuestos publicos: ~74% hogares con mascota (CADEM Plaza Pública 2023-2024), ~5M mascotas estimadas en Chile (SUBDERE / SAG), Euromonitor pet care Chile reporta crecimiento sostenido del sector. Cifras exactas de TAM/SAM se confirman al cierre de la postulacion con licencia de la fuente.
 
-- **TAM Chile**: ~USD $160M/ano (4M hogares × USD $40/ano digital).
-- **SAM Chile**: ~USD $25-35M/ano (1.500 clinicas chicas + 500K duenos digital-native).
-- **SOM 3 anos Chile**: **~USD $1,5M ARR**.
+### 5.1. Mercado Chile (target modelado, no oficial)
+
+- **TAM Chile estimado**: USD ~$160M/ano (modelado: ~4M hogares con mascota × USD ~$40/ano digital pet spend asumido — ambos supuestos del founder).
+- **SAM Chile estimado**: USD ~$25-35M/ano (modelado: 1.500 clinicas chicas + 500K duenos digital-native — supuestos founder).
+- **SOM 3 anos Chile**: **~USD $1,5M ARR target** (escenario base modelo F7).
 
 ### 5.2. Mercado LATAM Andino (escalabilidad)
 
-- **TAM LATAM Andino**: ~USD $2,5B/ano (20M hogares × USD $125/ano digital).
-- **SAM**: ~USD $120M/ano.
-- **SOM 3 anos**: **USD $3-4M ARR** (5-6% SAM Chile + piloto regional).
+- **TAM LATAM Andino estimado**: USD ~$2,5B/ano (modelado: ~20M hogares × USD ~$125/ano digital pet spend asumido).
+- **SAM estimado**: USD ~$120M/ano.
+- **SOM 3 anos**: **USD $3-4M ARR target** (5-6% SAM Chile + piloto regional, modelado founder).
+
+> Fuentes a consultar antes de pitch presencial: Euromonitor *Pet Care in Chile* / *Pet Care in Latin America* (paywall), Mintel pet sector reports, INE censo hogares.
 
 ### 5.3. Potencial exportador (eje CORFO)
 
@@ -278,13 +289,13 @@ Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas,
 
 ## 12. Por que invertir en Paw Friend (closing CORFO)
 
-1. **Velocidad comprobada**: 2 meses de producto + infraestructura que normalmente toma 6-12 meses con equipos de 5-8 personas y capital USD $1-4M.
-2. **Eficiencia de capital**: ratio 32-65× en costo vs equipo tradicional. USD $28K de CORFO rinden como USD $1M en manos tradicionales.
-3. **Traccion medible**: 334 tests verdes, 504 commits, 2 beta testers reales con feedback iterativo.
+1. **Velocidad medida (estimación propia)**: 2 meses de producto + infraestructura end-to-end que estimamos requeriria 12-18 meses con equipos de 5-8 personas y capital USD $1-4M.
+2. **Eficiencia de capital (estimada)**: ratio ~32-65× en costo vs equipo tradicional segun nuestra estimación. USD $28K de CORFO rinden bastante mas en manos tradicionales (estimación propia, no validada externamente).
+3. **Traccion tecnica medible**: 587 tests verdes, 504+ commits, 2 beta testers reales con feedback iterativo. **0 usuarios publicos hoy** (pre-launch Junio 2026).
 4. **Impacto social concreto**: modelo explicito de excedente a refugios con trazabilidad publica.
-5. **Exportable**: stack portable + idioma comun = piloto LATAM en mes 7.
-6. **Founder committed**: SpA constituida, inicio SII, dominio registrado, tiempo completo sin salario hace 2 meses.
-7. **Sin competencia directa**: unicos en Chile en la interseccion B2C + B2B + directorio + comunidad.
+5. **Exportable**: stack portable + idioma comun = piloto LATAM en mes 7-12 (depende de tracción Y1).
+6. **Founder committed**: SpA constituida, inicio SII, dominio registrado, tiempo completo sin salario hace 2 meses. **Founder solo** (sin co-founder firmado todavía).
+7. **Posicion competitiva en Chile**: no conocemos competidor local con ficha clinica longitudinal + directorio publico + comunidad integrados (mapping competitivo formal pendiente).
 
 ---
 

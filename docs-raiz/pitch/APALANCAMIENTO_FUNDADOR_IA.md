@@ -182,7 +182,7 @@ Referencias publicas a la fecha:
 *Fuentes: Crunchbase, TechCrunch, notas de prensa 2020-2024.*
 
 Paw Friend no es comparable en equipo ni en capital, pero **si en alcance funcional** a
-un producto de 6-8 meses de equipos de 5-8 personas. Esto es lo que justifica una ronda
+un producto de 6-12 meses de equipos de 5-8 personas. Esto es lo que justifica una ronda
 pre-seed agresiva con valoracion defendible.
 
 ---

@@ -102,8 +102,8 @@ Otros tokens compartidos:
 | Headline grad | `#fde047 → #38bdf8 → white` |
 
 **Assets a generar:**
-- Hero: escudo + huella nasal estilizada en azul
-- Mockup: "Tu poliza para Kai · validacion biometrica ✓"
+- Hero: escudo + ficha clínica vet validada en azul
+- Mockup: "Tu poliza para Kai · ficha clínica longitudinal ✓ · validación biométrica (roadmap futuro)"
 - Diagrama loss ratio antes/después (72% → 58%)
 - Iconos: shield, magnifier, contract check
 
@@ -315,7 +315,7 @@ en color accent. Realista pero limpio. SVG o PNG 720x1280.
 
 Mockups clave:
 - PHARMA: reminder sponsored
-- ASEGURADORAS: scan biometrico anti-fraude
+- ASEGURADORAS: ficha clínica longitudinal + scan biométrico anti-fraude (roadmap futuro)
 - RETAIL: bundle alimento auto-replenish
 - GOBIERNO: registro ciudadano + QR
 - BANCOS: credito vet activable
@@ -350,28 +350,34 @@ Cualquier divergencia es un bug y hay que corregir.
 
 | Concepto | Valor canonico | Etiqueta |
 |---|---|---|
-| Pets en plataforma | **50.000+** | PROYECCION Q3 2026 |
-| Paw Shield accuracy | **100% top-1 con 3 fotos** (test interno con 8 mascotas) | REAL |
-| Paw Shield 1 foto | **75% top-1** | REAL |
-| Hogares Chile con mascota | **74%** | Estimado dominio publico |
-| Mascotas totales Chile | **5M** (perros + gatos) | Estimado dominio publico |
-| Gasto medio anual / mascota | **~$1.2M CLP** | Estimado |
+| Pets en plataforma · estado actual | **0 publicos · pre-launch** | REAL (Junio 2026 = lanzamiento) |
+| Pets cohort target Y1 | **8.000 - 15.000** | TARGET realista (modelado conservador-optimista) |
+| Pets cohort goal Y2-Y3 | **50.000+** | GOAL aspiracional · sujeto a tracción y financiamiento |
+| Paw Shield estado actual | **🔮 Roadmap futuro · pausado hoy** (Petify integration dormida, reactivable B2B-funded) | ROADMAP |
+| Paw Shield accuracy (piloto técnico interno, n=8) | **100% top-1 con 3 fotos** (no validación científica) | PILOTO TECNICO |
+| Paw Shield 1 foto (piloto técnico interno, n=8) | **75% top-1** | PILOTO TECNICO |
+| Hogares Chile con mascota | **74%** | Estimado dominio publico (CADEM) |
+| Mascotas totales Chile | **~5M** (perros + gatos) | Estimado dominio publico |
+| Gasto medio anual / mascota | **~$1.2M CLP** | Estimado · referencia mercado |
 | Penetracion seguros pet Chile | **~3% (vs 25% UK)** | Estimado |
-| Municipios obligados Ley 21.020 | **345** | Real |
+| Municipios obligados Ley 21.020 | **345** | Real (BCN) |
 | Edificios RM pet-friendly | **~8.000** | Estimado |
 | Refugios chilenos activos | **~250** | Estimado |
 | Empresa | **SUSAETA GARNHAM SOFTWARE ENGINEERING SpA** (RUT 78.328.659-9) | Real |
 | Email contacto | **pawfriendcl@gmail.com** | Real |
 | Web | **pawfriend.cl** | Real |
-| Lanzamiento producto | **Junio 2026** | Real |
-| Edge functions activas | **36+** | Real |
+| Lanzamiento producto | **Junio 2026** | Real (cero usuarios publicos hoy) |
+| Edge functions activas | **36+** | Real (pre-launch, sin trafico real) |
 | Migraciones SQL | **189+** | Real |
 | Tests verdes | **587/587** | Real |
-| ARR Y1 conservador | **$120k USD** | PROYECCION |
-| ARR Y1 optimista | **$420k USD** | PROYECCION |
-| ARR Y3 base | **$1.82M USD** | PROYECCION |
+| Equipo | **1 founder solo + Claude Code (IA)** | Real (sin advisors ni co-founders contratados) |
+| ARR Y1 conservador | **USD $100-150k** (modelado: 1 deal pharma piloto + 1 retail affiliate) | PROYECCION |
+| ARR Y1 optimista | **USD $300-450k** (modelado: 2-3 deals B2B firmados) | PROYECCION |
+| ARR Y1 si nada arranca | **USD $0-30k** (solo Paw Member B2C residual) | DOWNSIDE |
+| ARR Y3 base | **USD $1.5-2M** | PROYECCION (sujeta a tracción Y1-Y2) |
 | Ronda inicial seed | **USD $150k cap $1.2M USD SAFE** | Real (en busqueda) |
-| Apalancamiento founder + IA | **320 hrs vs 4.800 hrs · 15x · 32-65x menor costo** | Real |
+| Apalancamiento founder + IA | **~320 hrs vs ~4.800 hrs equipo · 15x tiempo · 32-65x costo** | Estimacion propia |
+| Costo operativo actual | **~USD $2k/mes** (Supabase Pro + APIs IA) | Real |
 
 Cualquier numero adicional no listado aqui es solo para ese pitch (cohort
 modeling especifico, ROI estimate de la industria, etc.) y no requiere
