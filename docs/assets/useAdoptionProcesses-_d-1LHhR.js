@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:docs/assets/useAdoptionProcesses-C8rYcYj0.js
-import{u as a,a as p,b as u}from"./query-vendor-BaTf7QyW.js";import{u as l,s}from"./index-i7ChkfIQ.js";const d="id, name, species, photo_url, breed",n="id, legal_name, slug, commune, logo_url";function g(){const{user:e}=l();return a({queryKey:["adoption-processes","adopter",e==null?void 0:e.id],queryFn:async()=>{if(!(e!=null&&e.id))return[];const{data:r,error:t}=await s.from("adoption_processes").select(`*,
-========
 import{u as a,a as p,b as u}from"./query-vendor-BaTf7QyW.js";import{u as l,s}from"./index-CztV0_za.js";const d="id, name, species, photo_url, breed",n="id, legal_name, slug, commune, logo_url";function g(){const{user:e}=l();return a({queryKey:["adoption-processes","adopter",e==null?void 0:e.id],queryFn:async()=>{if(!(e!=null&&e.id))return[];const{data:r,error:t}=await s.from("adoption_processes").select(`*,
->>>>>>>> 4dbc5168 (fix(build): rebuild docs/ con env vars VITE_SUPABASE_* — app en blanco):docs/assets/useAdoptionProcesses-_d-1LHhR.js
           pet:pets!pet_id (${d}),
           shelter:adoption_centers!shelter_id (${n})`).eq("adopter_user_id",e.id).order("updated_at",{ascending:!1});if(t)throw t;return r??[]},enabled:!!(e!=null&&e.id)})}function f(e){return a({queryKey:["adoption-processes","shelter",e],queryFn:async()=>{if(!e)return[];const{data:r,error:t}=await s.from("adoption_processes").select(`*,
           pet:pets!pet_id (${d}),

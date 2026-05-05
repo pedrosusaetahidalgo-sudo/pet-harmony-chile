@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:docs/assets/AdminB2BOutreach-D2Aar7d_.js
-import{r as l,j as e}from"./ui-vendor-HPwniia5.js";import{a as T,u as V,b as q}from"./query-vendor-BaTf7QyW.js";import{d as p,s as $,S as H,i as h,M as O,N as U,O as Q,Q as G,R as K,I as W,T as B,B as x,f,D as J,F as Z,G as X,J as Y,K as ee}from"./index-i7ChkfIQ.js";import{C,a as N}from"./card-DPYt5Vrd.js";import{aI as ae,be as se,B as ie,aM as F,t as te,al as oe,s as ce}from"./icons-vendor-BS7vfmyN.js";import"./recharts-vendor-ewQCLwVj.js";import"./react-vendor-CdRuZFg3.js";import"./supabase-vendor-Bmzy1EPV.js";import"./date-vendor-nnwtbrAR.js";import"./leaflet-vendor-4_-FHbyx.js";const z=$,ne={pharma:`# Multinacionales pharma animal (sales cycle 6-12m)
-========
 import{r as l,j as e}from"./ui-vendor-HPwniia5.js";import{a as T,u as V,b as q}from"./query-vendor-BaTf7QyW.js";import{d as p,s as $,S as H,i as h,M as O,N as U,O as Q,Q as G,R as K,I as W,T as B,B as x,f,D as J,F as Z,G as X,J as Y,K as ee}from"./index-CztV0_za.js";import{C,a as N}from"./card-BngfaliR.js";import{aI as ae,be as se,B as ie,aM as F,t as te,al as oe,s as ce}from"./icons-vendor-BS7vfmyN.js";import"./recharts-vendor-ewQCLwVj.js";import"./react-vendor-CdRuZFg3.js";import"./supabase-vendor-Bmzy1EPV.js";import"./date-vendor-nnwtbrAR.js";import"./leaflet-vendor-4_-FHbyx.js";const z=$,ne={pharma:`# Multinacionales pharma animal (sales cycle 6-12m)
->>>>>>>> 4dbc5168 (fix(build): rebuild docs/ con env vars VITE_SUPABASE_* — app en blanco):docs/assets/AdminB2BOutreach-CcvS9XUE.js
 zoetis.chile@zoetis.com, , Zoetis Chile
 info@virbac.cl, , Virbac Chile
 contacto@msd-salud-animal.cl, , MSD Salud Animal Chile

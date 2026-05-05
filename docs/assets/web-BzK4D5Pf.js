@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:docs/assets/web-BfLEXi9X.js
-import{ak as j}from"./index-i7ChkfIQ.js";import"./ui-vendor-HPwniia5.js";import"./recharts-vendor-ewQCLwVj.js";import"./query-vendor-BaTf7QyW.js";import"./react-vendor-CdRuZFg3.js";import"./icons-vendor-BS7vfmyN.js";import"./supabase-vendor-Bmzy1EPV.js";import"./date-vendor-nnwtbrAR.js";import"./leaflet-vendor-4_-FHbyx.js";var w={exports:{}};/*!
-========
 import{ak as j}from"./index-CztV0_za.js";import"./ui-vendor-HPwniia5.js";import"./recharts-vendor-ewQCLwVj.js";import"./query-vendor-BaTf7QyW.js";import"./react-vendor-CdRuZFg3.js";import"./icons-vendor-BS7vfmyN.js";import"./supabase-vendor-Bmzy1EPV.js";import"./date-vendor-nnwtbrAR.js";import"./leaflet-vendor-4_-FHbyx.js";var w={exports:{}};/*!
->>>>>>>> 4dbc5168 (fix(build): rebuild docs/ con env vars VITE_SUPABASE_* — app en blanco):docs/assets/web-BzK4D5Pf.js
   * $script.js JS loader & dependency manager
   * https://github.com/ded/script.js
   * (c) Dustin Diaz 2014 | License MIT
