@@ -36,6 +36,7 @@ import { VaccineRenewalNudge } from '@/components/home/VaccineRenewalNudge';
 import { BirthdayCouponsCard } from '@/components/birthday/BirthdayCouponsCard';
 import { RetailRecommendationsCard } from '@/components/retail/RetailRecommendationsCard';
 import { QuickActionsHub } from '@/components/home/QuickActionsHub';
+import { WalkTimerCard } from '@/components/home/WalkTimerCard';
 import { OwnerAudioNoteRecorder } from '@/components/medical/OwnerAudioNoteRecorder';
 import { PremiumGate } from '@/components/PremiumGate';
 import { InsuranceBanner } from '@/components/insurance/InsuranceBanner';
@@ -441,6 +442,11 @@ export function HomePetFocusV2() {
             })}
           </div>
         </Card>
+      )}
+
+      {/* Walk timer — boton GPS para registrar paseo en vivo */}
+      {selectedPet && isFeatureEnabled('WALK_TIMER') && (
+        <WalkTimerCard petId={selectedPet.id} petName={selectedPet.name} />
       )}
 
       {/* Audio note recorder (refactor maestro §2.6.2) — Paw Member only */}

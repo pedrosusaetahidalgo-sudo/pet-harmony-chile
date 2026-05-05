@@ -295,6 +295,14 @@ export const FEATURE_FLAGS = {
   OWNER_AUDIO_NOTES: true,
 
   /**
+   * Walk Timer — boton "Empezar paseo" en home pet card con GPS tracking.
+   * Hook useWalkSession + WalkTimerCard. Mig 20261005000003_pet_walks_timer
+   * crea tabla pet_walks + RLS estricta (owner-only) + trigger que inserta
+   * evento en pet_timeline_events al cerrar el walk.
+   */
+  WALK_TIMER: true,
+
+  /**
    * Quick Actions Hub — widget one-tap en Home (refactor maestro §2.7).
    * 6 acciones mas usadas con captura automatica de metadata.
    */
