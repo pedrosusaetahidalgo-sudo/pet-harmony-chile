@@ -24,6 +24,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { withTelemetry } from '../_shared/telemetry.ts';
+import { requireCronAuth } from '../_shared/cron-auth.ts';
 import {
   filterUserIdsByPrefs,
   logAttempt,
@@ -147,6 +148,13 @@ async function handle(req: Request): Promise<Response> {
   if (req.method !== 'POST') {
     return errorResponse('Method not allowed', 405);
   }
+
+  // SEC pre-beta 2026-05-05: la fn era invocable sin auth → cualquiera podia
+  // mandar push spam/phishing a user_ids guesseados. Ahora exige
+  // X-Cron-Secret o Bearer SUPABASE_SERVICE_ROLE_KEY (que es lo que ya envian
+  // send_reminder_pushes() SQL fn + crons + edge fns server-side).
+  const authError = requireCronAuth(req);
+  if (authError) return authError;
 
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
   const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');

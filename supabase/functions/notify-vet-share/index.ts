@@ -103,6 +103,26 @@ async function handle(req: Request): Promise<Response> {
     return errorResponse('Method not allowed', 405);
   }
 
+  // SEC pre-beta 2026-05-05: la fn declaraba "Auth: usuario autenticado" pero
+  // no validaba ningun header → cualquiera con un share_token_id valido (UUID
+  // adivinable) podia triggear emails al vet. Ahora exige JWT del dueno.
+  const SUPABASE_URL_FOR_AUTH = Deno.env.get('SUPABASE_URL');
+  const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader || !authHeader.toLowerCase().startsWith('bearer ')) {
+    return errorResponse('Authorization required', 401);
+  }
+  if (SUPABASE_URL_FOR_AUTH && SUPABASE_ANON_KEY) {
+    const userClient = createClient(SUPABASE_URL_FOR_AUTH, SUPABASE_ANON_KEY, {
+      auth: { persistSession: false },
+    });
+    const token = authHeader.slice(7).trim();
+    const { data: userData, error: userError } = await userClient.auth.getUser(token);
+    if (userError || !userData?.user) {
+      return errorResponse('Invalid auth token', 401);
+    }
+  }
+
   const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
   const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
