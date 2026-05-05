@@ -3,11 +3,14 @@
  *
  * Fuente unica de verdad para el frontend. La lista debe mantenerse en
  * sincronia con el CHECK constraint de `pet_reminders.type` en
- * supabase/migrations (ver mig 20260521000040 que unifico la
- * taxonomia y back-filleo valores legacy).
+ * supabase/migrations. Mig vigente: 20261005000001_recanonize_reminder_types
+ * (re-canonizo despues del hotfix de abril que retrocedio mig
+ * 20260521000040; tambien sumo `heat_cycle` post-feedback Antonia).
  *
- * Valores legacy ('antiparasitic', 'appointment') son mapeados al
- * valor canonico mediante `normalizeReminderType()` (idempotente).
+ * El CHECK acepta los 13 valores de abajo + `'followup'` (server-only,
+ * lo emite el trigger create_followup_from_clinical_note y no se expone
+ * en presets de UI). Valores legacy ('antiparasitic', 'appointment') se
+ * mapean al canonico mediante `normalizeReminderType()` (idempotente).
  */
 
 export const REMINDER_TYPES = [
