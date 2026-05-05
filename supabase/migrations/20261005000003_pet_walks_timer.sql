@@ -20,41 +20,64 @@
 
 -- ─────────────────────────────────────────────────────────────────────────
 -- 1. Tabla pet_walks
+--    Idempotente: si la tabla ya existe parcial (intento previo abortado),
+--    los ALTER TABLE ADD COLUMN IF NOT EXISTS agregan lo que falte.
 -- ─────────────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.pet_walks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   pet_id UUID NOT NULL REFERENCES public.pets(id) ON DELETE CASCADE,
   owner_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-
   started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  ended_at TIMESTAMPTZ,
-
-  duration_seconds INT,
-  distance_meters NUMERIC(10, 2),
-
-  start_lat NUMERIC(9, 6),
-  start_lng NUMERIC(9, 6),
-  end_lat NUMERIC(9, 6),
-  end_lng NUMERIC(9, 6),
-
-  -- Array de samples GPS [{lat, lng, t, accuracy?}, ...]
-  -- Sampling cada 10s en frontend; cap a 720 puntos (~2h max efectivo).
-  path JSONB DEFAULT '[]'::jsonb,
-
-  source TEXT NOT NULL DEFAULT 'manual'
-    CHECK (source IN ('manual', 'auto_detect', 'planned')),
-
-  -- Notas opcionales del dueno post-paseo
-  note TEXT,
-
-  -- Estado del walk: in_progress mientras no haya ended_at, completed despues.
-  -- Si ended_at es NULL >24h, un cron lo marca como abandoned (futuro).
-  status TEXT NOT NULL DEFAULT 'in_progress'
-    CHECK (status IN ('in_progress', 'completed', 'abandoned', 'cancelled')),
-
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Asegurar que TODAS las columnas existen (cubre tabla pre-existente parcial).
+ALTER TABLE public.pet_walks ADD COLUMN IF NOT EXISTS ended_at TIMESTAMPTZ;
+ALTER TABLE public.pet_walks ADD COLUMN IF NOT EXISTS duration_seconds INT;
+ALTER TABLE public.pet_walks ADD COLUMN IF NOT EXISTS distance_meters NUMERIC(10, 2);
+ALTER TABLE public.pet_walks ADD COLUMN IF NOT EXISTS start_lat NUMERIC(9, 6);
+ALTER TABLE public.pet_walks ADD COLUMN IF NOT EXISTS start_lng NUMERIC(9, 6);
+ALTER TABLE public.pet_walks ADD COLUMN IF NOT EXISTS end_lat NUMERIC(9, 6);
+ALTER TABLE public.pet_walks ADD COLUMN IF NOT EXISTS end_lng NUMERIC(9, 6);
+ALTER TABLE public.pet_walks ADD COLUMN IF NOT EXISTS path JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE public.pet_walks ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'manual';
+ALTER TABLE public.pet_walks ADD COLUMN IF NOT EXISTS note TEXT;
+ALTER TABLE public.pet_walks ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'in_progress';
+ALTER TABLE public.pet_walks ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+
+-- DEFAULTs idempotentes (cubre tabla pre-existente que pudo perder defaults).
+ALTER TABLE public.pet_walks ALTER COLUMN started_at SET DEFAULT NOW();
+ALTER TABLE public.pet_walks ALTER COLUMN created_at SET DEFAULT NOW();
+ALTER TABLE public.pet_walks ALTER COLUMN updated_at SET DEFAULT NOW();
+ALTER TABLE public.pet_walks ALTER COLUMN path SET DEFAULT '[]'::jsonb;
+ALTER TABLE public.pet_walks ALTER COLUMN source SET DEFAULT 'manual';
+ALTER TABLE public.pet_walks ALTER COLUMN status SET DEFAULT 'in_progress';
+
+-- NOT NULLs idempotentes (en caso que pre-existente tuviera columna nullable).
+DO $$
+BEGIN
+  -- Backfill nulls antes de aplicar NOT NULL.
+  UPDATE public.pet_walks SET started_at = COALESCE(started_at, NOW()) WHERE started_at IS NULL;
+  UPDATE public.pet_walks SET created_at = COALESCE(created_at, NOW()) WHERE created_at IS NULL;
+  UPDATE public.pet_walks SET updated_at = COALESCE(updated_at, NOW()) WHERE updated_at IS NULL;
+  UPDATE public.pet_walks SET source = COALESCE(source, 'manual') WHERE source IS NULL;
+  UPDATE public.pet_walks SET status = COALESCE(status, 'in_progress') WHERE status IS NULL;
+END $$;
+
+ALTER TABLE public.pet_walks ALTER COLUMN started_at SET NOT NULL;
+ALTER TABLE public.pet_walks ALTER COLUMN created_at SET NOT NULL;
+ALTER TABLE public.pet_walks ALTER COLUMN updated_at SET NOT NULL;
+ALTER TABLE public.pet_walks ALTER COLUMN source SET NOT NULL;
+ALTER TABLE public.pet_walks ALTER COLUMN status SET NOT NULL;
+
+-- CHECKs idempotentes (DROP + ADD para garantizar definicion correcta).
+ALTER TABLE public.pet_walks DROP CONSTRAINT IF EXISTS pet_walks_source_check;
+ALTER TABLE public.pet_walks ADD CONSTRAINT pet_walks_source_check
+  CHECK (source IN ('manual', 'auto_detect', 'planned'));
+
+ALTER TABLE public.pet_walks DROP CONSTRAINT IF EXISTS pet_walks_status_check;
+ALTER TABLE public.pet_walks ADD CONSTRAINT pet_walks_status_check
+  CHECK (status IN ('in_progress', 'completed', 'abandoned', 'cancelled'));
 
 -- Indices para queries comunes
 CREATE INDEX IF NOT EXISTS idx_pet_walks_pet_id_started
@@ -293,9 +316,9 @@ BEGIN
   END IF;
 
   BEGIN
-    -- Insert walk in_progress
-    INSERT INTO public.pet_walks (pet_id, owner_id, status)
-    VALUES (v_pet, v_owner, 'in_progress')
+    -- Insert walk in_progress (started_at explicito para no depender del default).
+    INSERT INTO public.pet_walks (pet_id, owner_id, status, started_at)
+    VALUES (v_pet, v_owner, 'in_progress', NOW())
     RETURNING id INTO v_walk;
 
     -- Cerrar walk
