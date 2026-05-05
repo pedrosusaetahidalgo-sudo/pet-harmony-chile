@@ -1007,6 +1007,18 @@
       --accent-text: #047857;
       --accent-shadow: rgba(16, 185, 129, .4);
     }
+    .deck-link.shelter {
+      --accent: linear-gradient(90deg, #b45309, #f59e0b);
+      --accent-ico: linear-gradient(135deg, #b45309, #f59e0b);
+      --accent-text: #b45309;
+      --accent-shadow: rgba(245, 158, 11, .4);
+    }
+    .deck-link.vets {
+      --accent: linear-gradient(90deg, #075985, #0ea5e9);
+      --accent-ico: linear-gradient(135deg, #075985, #0ea5e9);
+      --accent-text: #0369a1;
+      --accent-shadow: rgba(14, 165, 233, .4);
+    }
     .deck-link.voices {
       --accent: linear-gradient(90deg, #be185d, #ec4899);
       --accent-ico: linear-gradient(135deg, #be185d, #ec4899);
@@ -1317,14 +1329,14 @@
           <div class="how-point-n">1</div>
           <div class="how-point-body">
             <h4>Producto vivo en web, iPhone y Android</h4>
-            <p>Web en pawfriend.cl, app para iPhone y Android compiladas con Capacitor 7. El mismo código, los mismos datos.</p>
+            <p>Web en pawfriend.cl y apps nativas para iPhone y Android. La misma información acompaña al tutor en cualquier dispositivo.</p>
           </div>
         </li>
         <li class="how-point reveal d2">
           <div class="how-point-n">2</div>
           <div class="how-point-body">
             <h4>Infraestructura con seguridad por roles</h4>
-            <p>Supabase con RLS estricto, edge functions, Sentry, telemetría y panel interno de auditoría diaria.</p>
+            <p>Datos protegidos por permisos por usuario. Cada quien ve solo lo que le corresponde. Auditoría diaria automatizada.</p>
           </div>
         </li>
         <li class="how-point reveal d3">
@@ -1453,7 +1465,7 @@
     <div class="decks-picker">
       <span class="decks-picker-label">¿Vienes por algo específico? Entra directo</span>
 
-      <a class="deck-link vets reveal" href="vets.html" style="--accent:linear-gradient(90deg,#075985,#0ea5e9);--accent-ico:linear-gradient(135deg,#075985,#0ea5e9);--accent-text:#0369a1;--accent-shadow:rgba(14,165,233,.4)">
+      <a class="deck-link vets reveal" href="vets.html">
         <span class="deck-link-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 2v4"/>
@@ -1481,7 +1493,7 @@
         <span class="deck-link-cta">Ver propuesta</span>
       </a>
 
-      <a class="deck-link partners reveal d2" href="shelter.html" style="--accent:linear-gradient(90deg,#b45309,#f59e0b);--accent-ico:linear-gradient(135deg,#b45309,#f59e0b);--accent-text:#b45309;--accent-shadow:rgba(245,158,11,.4)">
+      <a class="deck-link shelter reveal d2" href="shelter.html">
         <span class="deck-link-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 12l9-9 9 9"/>
