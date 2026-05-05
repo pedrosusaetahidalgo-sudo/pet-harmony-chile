@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/check-env-vars.mjs",
     "build": "vite build && node scripts/post-build-spa-routes.mjs",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",

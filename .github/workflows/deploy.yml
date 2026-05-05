@@ -62,10 +62,25 @@ jobs:
       - name: Type check
         run: npx tsc -b
 
+      # SEC pre-beta 2026-05-05: si los Secrets no estan configurados, este
+      # step falla ruidosamente ANTES de generar un bundle roto. Vite inlinea
+      # VITE_* al build time; sin las vars, el bundle queda con `void 0` y la
+      # app entera explota en runtime con "supabaseUrl is required".
+      # Configurar en: Settings > Secrets and variables > Actions > New
+      # repository secret. Names exactos: VITE_SUPABASE_URL y
+      # VITE_SUPABASE_PUBLISHABLE_KEY.
+      - name: Validate required env vars
+        run: node scripts/check-env-vars.mjs
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+
       - name: Build production
         run: npm run build
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
 
       - name: Check if docs/ changed
         id: check_changes
