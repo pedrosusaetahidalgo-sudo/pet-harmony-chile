@@ -20,21 +20,16 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { withTelemetry } from '../_shared/telemetry.ts';
 import { buildInvitationEmail, sendInvitationViaResend } from '../_shared/invitation-email.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-
-function jsonResponse(data: unknown, status = 200) {
+function jsonResponse(corsHeaders: Record<string, string>, data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
 }
 
-function errorResponse(message: string, status = 500) {
+function errorResponse(corsHeaders: Record<string, string>, message: string, status = 500) {
   return new Response(JSON.stringify({ error: message }), {
     status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -49,6 +44,7 @@ const sendViaResend = sendInvitationViaResend;
 // ---------------------------------------------------------------------------
 serve(
   withTelemetry('send-pet-invitation', async (req) => {
+    const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') {
       return new Response('ok', { headers: corsHeaders });
     }
@@ -56,7 +52,7 @@ serve(
     try {
       // --- Auth ---
       const authHeader = req.headers.get('Authorization');
-      if (!authHeader) return errorResponse('Authorization required', 401);
+      if (!authHeader) return errorResponse(corsHeaders, 'Authorization required', 401);
 
       const supabase = createClient(
         Deno.env.get('SUPABASE_URL') ?? '',
@@ -65,14 +61,15 @@ serve(
 
       const token = authHeader.replace('Bearer ', '');
       const { data: userData, error: userError } = await supabase.auth.getUser(token);
-      if (userError || !userData.user) return errorResponse('User not authenticated', 401);
+      if (userError || !userData.user)
+        return errorResponse(corsHeaders, 'User not authenticated', 401);
 
       const callerId = userData.user.id;
 
       // --- Parse body ---
       const { pet_id } = await req.json();
       if (!pet_id || typeof pet_id !== 'string') {
-        return errorResponse('pet_id is required and must be a string', 400);
+        return errorResponse(corsHeaders, 'pet_id is required and must be a string', 400);
       }
 
       // --- Rate limit: max 5 invitations per user per day (combina vet + shelter) ---
@@ -115,7 +112,11 @@ serve(
 
       const totalRecent = (recentVetInvites ?? 0) + recentShelterInvites;
       if (totalRecent >= 5) {
-        return errorResponse('Límite de invitaciones alcanzado (5 por día). Intenta mañana.', 429);
+        return errorResponse(
+          corsHeaders,
+          'Límite de invitaciones alcanzado (5 por día). Intenta mañana.',
+          429
+        );
       }
 
       // --- Fetch pet con ambos FKs ---
@@ -127,7 +128,7 @@ serve(
         .eq('id', pet_id)
         .single();
 
-      if (petError || !pet) return errorResponse('Mascota no encontrada', 404);
+      if (petError || !pet) return errorResponse(corsHeaders, 'Mascota no encontrada', 404);
 
       // Determinar tipo de caller respecto a esta mascota.
       const callerIsVet = pet.created_by_vet_id === callerId;
@@ -135,13 +136,14 @@ serve(
 
       if (!callerIsVet && !callerIsShelter) {
         return errorResponse(
+          corsHeaders,
           'Solo el veterinario o refugio que cargo la ficha puede enviar la invitacion',
           403
         );
       }
 
       if (!pet.pending_owner_email) {
-        return errorResponse('Esta mascota no tiene un email de dueno pendiente', 400);
+        return errorResponse(corsHeaders, 'Esta mascota no tiene un email de dueno pendiente', 400);
       }
 
       const email = pet.pending_owner_email;
@@ -182,7 +184,7 @@ serve(
           .eq('id', pet_id);
         if (tokenError) {
           console.error('Error setting invitation token:', tokenError);
-          return errorResponse('Error al generar token de invitacion', 500);
+          return errorResponse(corsHeaders, 'Error al generar token de invitacion', 500);
         }
       }
 
@@ -270,6 +272,7 @@ serve(
         } else {
           console.error('[send-pet-invitation] Resend failed:', resendResult.error);
           return errorResponse(
+            corsHeaders,
             'No se pudo enviar el email. Verifica que Resend este configurado.',
             500
           );
@@ -284,7 +287,7 @@ serve(
           .eq('id', pet_id);
       }
 
-      return jsonResponse({
+      return jsonResponse(corsHeaders, corsHeaders, {
         success: true,
         method,
         pet_id,
@@ -297,7 +300,11 @@ serve(
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.error('[send-pet-invitation] error:', message);
-      return errorResponse('Error al enviar la invitacion. Intenta de nuevo mas tarde.', 500);
+      return errorResponse(
+        corsHeaders,
+        'Error al enviar la invitacion. Intenta de nuevo mas tarde.',
+        500
+      );
     }
   })
 );

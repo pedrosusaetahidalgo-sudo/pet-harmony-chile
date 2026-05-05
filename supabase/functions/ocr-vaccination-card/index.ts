@@ -1,15 +1,15 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { withTelemetry } from '../_shared/telemetry.ts';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 /** Helper: JSON error response */
-function errorResponse(message: string, status: number, extra?: Record<string, unknown>) {
+function errorResponse(
+  corsHeaders: Record<string, string>,
+  message: string,
+  status: number,
+  extra?: Record<string, unknown>
+) {
   return new Response(JSON.stringify({ error: message, ...extra }), {
     status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -18,6 +18,7 @@ function errorResponse(message: string, status: number, extra?: Record<string, u
 
 serve(
   withTelemetry('ocr-vaccination-card', async (req) => {
+    const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') {
       return new Response('ok', { headers: corsHeaders });
     }
@@ -26,7 +27,7 @@ serve(
       // ── Auth ─────────────────────────────────────────────────────────────
       const authHeader = req.headers.get('Authorization');
       if (!authHeader) {
-        return errorResponse('Authorization required', 401);
+        return errorResponse(corsHeaders, 'Authorization required', 401);
       }
 
       const supabase = createClient(
@@ -39,7 +40,7 @@ serve(
       const { data: userData, error: userError } = await supabase.auth.getUser(token);
 
       if (userError || !userData.user) {
-        return errorResponse('User not authenticated', 401);
+        return errorResponse(corsHeaders, 'User not authenticated', 401);
       }
 
       const userId = userData.user.id;
@@ -64,6 +65,7 @@ serve(
 
       if (callsToday >= DAILY_LIMIT) {
         return errorResponse(
+          corsHeaders,
           `Límite diario alcanzado (${DAILY_LIMIT} escaneos). Intenta de nuevo mañana.`,
           429,
           { rate_limited: true }
@@ -75,23 +77,24 @@ serve(
       const { image_base64, pet_id } = body;
 
       if (!image_base64 || typeof image_base64 !== 'string') {
-        return errorResponse('image_base64 is required', 400);
+        return errorResponse(corsHeaders, 'image_base64 is required', 400);
       }
 
       if (!pet_id || typeof pet_id !== 'string') {
-        return errorResponse('pet_id is required', 400);
+        return errorResponse(corsHeaders, 'pet_id is required', 400);
       }
 
       // Sanity check: base64 should look reasonable (at least 1 KB, max ~10 MB)
       const estimatedBytes = (image_base64.length * 3) / 4;
       if (estimatedBytes < 1024) {
         return errorResponse(
+          corsHeaders,
           'Image too small — provide a clear photo of the vaccination card',
           400
         );
       }
       if (estimatedBytes > 10 * 1024 * 1024) {
-        return errorResponse('Image too large (max 10 MB)', 400);
+        return errorResponse(corsHeaders, 'Image too large (max 10 MB)', 400);
       }
 
       // ── Verify pet ownership ─────────────────────────────────────────────
@@ -103,13 +106,13 @@ serve(
         .maybeSingle();
 
       if (petError || !pet) {
-        return errorResponse('Pet not found or access denied', 404);
+        return errorResponse(corsHeaders, 'Pet not found or access denied', 404);
       }
 
       // ── Call Claude Vision API ───────────────────────────────────────────
       const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
       if (!apiKey) {
-        return errorResponse('AI service not configured', 503);
+        return errorResponse(corsHeaders, 'AI service not configured', 503);
       }
 
       // Detect media type from base64 header or default to jpeg
@@ -189,12 +192,12 @@ Desparasitantes: Drontal, Milbemax, Endogard, Nexgard, Bravecto, Simparica
       }
 
       if (claudeResponse.status === 429) {
-        return errorResponse('AI service rate limited. Try again in a moment.', 429);
+        return errorResponse(corsHeaders, 'AI service rate limited. Try again in a moment.', 429);
       }
 
       if (!claudeResponse.ok) {
         console.error('Claude API error:', claudeResponse.status);
-        return errorResponse('AI service temporarily unavailable', 502);
+        return errorResponse(corsHeaders, 'AI service temporarily unavailable', 502);
       }
 
       const claudeData = await claudeResponse.json();
@@ -240,6 +243,7 @@ Desparasitantes: Drontal, Milbemax, Endogard, Nexgard, Bravecto, Simparica
       // Validate structure
       if (!parsed || !Array.isArray(parsed.vaccines) || !Array.isArray(parsed.deworming)) {
         return errorResponse(
+          corsHeaders,
           'No se pudo extraer información del carnet. Asegúrate de que la foto sea clara y muestre el carnet completo.',
           422
         );

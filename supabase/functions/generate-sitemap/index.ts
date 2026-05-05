@@ -163,7 +163,8 @@ ${urls.join('\n')}
         headers: {
           'Content-Type': 'application/xml; charset=utf-8',
           'Cache-Control': 'public, max-age=3600',
-          'Access-Control-Allow-Origin': 'https://pawfriend.cl',
+          // Sitemap es publico (Google bots, herramientas SEO). CORS abierto OK.
+          'Access-Control-Allow-Origin': '*',
         },
       });
     } catch (err) {

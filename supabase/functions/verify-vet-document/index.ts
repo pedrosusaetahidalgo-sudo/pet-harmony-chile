@@ -1,21 +1,16 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { withTelemetry } from '../_shared/telemetry.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-
-function jsonResp(data: unknown, status = 200) {
+function jsonResp(corsHeaders: Record<string, string>, data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
 }
 
-function errResp(msg: string, status: number) {
+function errResp(corsHeaders: Record<string, string>, msg: string, status: number) {
   return new Response(JSON.stringify({ error: msg }), {
     status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -24,6 +19,7 @@ function errResp(msg: string, status: number) {
 
 serve(
   withTelemetry('verify-vet-document', async (req) => {
+    const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') {
       return new Response('ok', { headers: corsHeaders });
     }
@@ -31,7 +27,7 @@ serve(
     try {
       // ── Auth: solo admins pueden invocar ─────────────────────────────────
       const authHeader = req.headers.get('Authorization');
-      if (!authHeader) return errResp('Authorization required', 401);
+      if (!authHeader) return errResp(corsHeaders, 'Authorization required', 401);
 
       const supabase = createClient(
         Deno.env.get('SUPABASE_URL') ?? '',
@@ -41,7 +37,7 @@ serve(
 
       const token = authHeader.replace('Bearer ', '');
       const { data: userData, error: userError } = await supabase.auth.getUser(token);
-      if (userError || !userData.user) return errResp('Not authenticated', 401);
+      if (userError || !userData.user) return errResp(corsHeaders, 'Not authenticated', 401);
 
       // Check admin access
       const { data: adminAccess } = await supabase
@@ -51,19 +47,20 @@ serve(
         .eq('is_active', true)
         .maybeSingle();
 
-      if (!adminAccess) return errResp('Admin access required', 403);
+      if (!adminAccess) return errResp(corsHeaders, 'Admin access required', 403);
 
       // ── Parse input ─────────────────────────────────────────────────────
       const body = await req.json();
       const { provider_id, image_base64 } = body;
 
-      if (!provider_id) return errResp('provider_id is required', 400);
-      if (!image_base64) return errResp('image_base64 is required', 400);
+      if (!provider_id) return errResp(corsHeaders, 'provider_id is required', 400);
+      if (!image_base64) return errResp(corsHeaders, 'image_base64 is required', 400);
 
       // Validate image size (1KB to 10MB)
       const estimatedBytes = (image_base64.length * 3) / 4;
-      if (estimatedBytes < 1024) return errResp('Imagen muy pequeña', 400);
-      if (estimatedBytes > 10 * 1024 * 1024) return errResp('Imagen muy grande (max 10MB)', 400);
+      if (estimatedBytes < 1024) return errResp(corsHeaders, 'Imagen muy pequeña', 400);
+      if (estimatedBytes > 10 * 1024 * 1024)
+        return errResp(corsHeaders, 'Imagen muy grande (max 10MB)', 400);
 
       // ── Fetch provider data ─────────────────────────────────────────────
       const { data: provider, error: provError } = await supabase
@@ -72,7 +69,7 @@ serve(
         .eq('id', provider_id)
         .maybeSingle();
 
-      if (provError || !provider) return errResp('Proveedor no encontrado', 404);
+      if (provError || !provider) return errResp(corsHeaders, 'Proveedor no encontrado', 404);
 
       // ── Detect media type ───────────────────────────────────────────────
       let mediaType = 'image/jpeg';
@@ -83,7 +80,7 @@ serve(
 
       // ── Call Claude Vision for document analysis ────────────────────────
       const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
-      if (!apiKey) return errResp('AI no configurada', 503);
+      if (!apiKey) return errResp(corsHeaders, 'AI no configurada', 503);
 
       const systemPrompt = `Eres un verificador de documentos veterinarios para Chile.
 
@@ -154,10 +151,10 @@ Responde SOLO con JSON sin markdown:
       }
 
       if (claudeResponse.status === 429)
-        return errResp('IA sobrecargada, intenta en un momento', 429);
+        return errResp(corsHeaders, 'IA sobrecargada, intenta en un momento', 429);
       if (!claudeResponse.ok) {
         console.error('Claude API error:', claudeResponse.status);
-        return errResp('Servicio de IA no disponible', 502);
+        return errResp(corsHeaders, 'Servicio de IA no disponible', 502);
       }
 
       const claudeData = await claudeResponse.json();
@@ -190,7 +187,11 @@ Responde SOLO con JSON sin markdown:
       }
 
       if (!parsed || typeof parsed.confidence_score !== 'number') {
-        return errResp('No se pudo analizar el documento. Intenta con una foto más clara.', 422);
+        return errResp(
+          corsHeaders,
+          'No se pudo analizar el documento. Intenta con una foto más clara.',
+          422
+        );
       }
 
       // Clamp score
@@ -252,7 +253,7 @@ Responde SOLO con JSON sin markdown:
         },
       });
 
-      return jsonResp({
+      return jsonResp(corsHeaders, {
         ...parsed,
         auto_approved: autoApproved,
         provider_id,
@@ -260,7 +261,7 @@ Responde SOLO con JSON sin markdown:
       });
     } catch (error: unknown) {
       console.error('verify-vet-document error:', error);
-      return errResp('Error interno. Intenta de nuevo.', 500);
+      return errResp(corsHeaders, 'Error interno. Intenta de nuevo.', 500);
     }
   })
 );

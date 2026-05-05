@@ -16,11 +16,7 @@
 import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.2';
 import { withTelemetry } from '../_shared/telemetry.ts';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 const FLOW_BASE_URL = Deno.env.get('FLOW_BASE_URL') ?? 'https://www.flow.cl/api';
 const SITE_URL = 'https://pawfriend.cl';
@@ -48,6 +44,7 @@ async function signFlowParams(params: Record<string, string>, secret: string): P
 
 serve(
   withTelemetry('flow-create-donation', async (req) => {
+    const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }

@@ -20,21 +20,16 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { withTelemetry } from '../_shared/telemetry.ts';
 import { buildCoOwnerInviteEmail, sendInvitationViaResend } from '../_shared/invitation-email.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-
-function jsonResponse(data: unknown, status = 200) {
+function jsonResponse(corsHeaders: Record<string, string>, data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
 }
 
-function errorResponse(message: string, status = 500) {
+function errorResponse(corsHeaders: Record<string, string>, message: string, status = 500) {
   return new Response(JSON.stringify({ error: message }), {
     status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -43,6 +38,7 @@ function errorResponse(message: string, status = 500) {
 
 serve(
   withTelemetry('send-co-owner-invitation', async (req) => {
+    const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') {
       return new Response('ok', { headers: corsHeaders });
     }
@@ -50,7 +46,7 @@ serve(
     try {
       // --- Auth ---
       const authHeader = req.headers.get('Authorization');
-      if (!authHeader) return errorResponse('Authorization required', 401);
+      if (!authHeader) return errorResponse(corsHeaders, 'Authorization required', 401);
 
       const supabase = createClient(
         Deno.env.get('SUPABASE_URL') ?? '',
@@ -59,7 +55,8 @@ serve(
 
       const token = authHeader.replace('Bearer ', '');
       const { data: userData, error: userError } = await supabase.auth.getUser(token);
-      if (userError || !userData.user) return errorResponse('User not authenticated', 401);
+      if (userError || !userData.user)
+        return errorResponse(corsHeaders, 'User not authenticated', 401);
 
       const callerId = userData.user.id;
 
@@ -67,7 +64,7 @@ serve(
       const body = await req.json();
       const petCoOwnerId: string | undefined = body?.pet_co_owner_id;
       if (!petCoOwnerId || typeof petCoOwnerId !== 'string') {
-        return errorResponse('pet_co_owner_id is required and must be a string', 400);
+        return errorResponse(corsHeaders, 'pet_co_owner_id is required and must be a string', 400);
       }
 
       // --- Rate limit: 10 invitaciones co_owner por user por dia ---
@@ -80,7 +77,7 @@ serve(
         .gte('invited_at', oneDayAgo);
 
       if ((recentInvites ?? 0) > 10) {
-        return errorResponse('Limite de invitaciones alcanzado (10 por dia).', 429);
+        return errorResponse(corsHeaders, 'Limite de invitaciones alcanzado (10 por dia).', 429);
       }
 
       // --- Fetch pet_co_owners row + joins ---
@@ -91,18 +88,19 @@ serve(
         .eq('id', petCoOwnerId)
         .maybeSingle();
 
-      if (inviteErr || !inviteRow) return errorResponse('Invitacion no encontrada', 404);
+      if (inviteErr || !inviteRow)
+        return errorResponse(corsHeaders, 'Invitacion no encontrada', 404);
 
       // Solo el inviter puede disparar el email (evita abuso).
       if (inviteRow.invited_by !== callerId) {
-        return errorResponse('Solo el que creo la invitacion puede enviarla', 403);
+        return errorResponse(corsHeaders, 'Solo el que creo la invitacion puede enviarla', 403);
       }
 
       if (!inviteRow.invited_email) {
-        return errorResponse('La invitacion no tiene email asociado', 400);
+        return errorResponse(corsHeaders, 'La invitacion no tiene email asociado', 400);
       }
       if (inviteRow.status !== 'pending') {
-        return errorResponse(`La invitacion ya esta ${inviteRow.status}`, 400);
+        return errorResponse(corsHeaders, `La invitacion ya esta ${inviteRow.status}`, 400);
       }
 
       // --- Fetch pet name + inviter name ---
@@ -155,14 +153,14 @@ serve(
 
       if (!sent.ok) {
         console.error('[send-co-owner-invitation] Resend error:', sent.error);
-        return errorResponse(`Email no enviado: ${sent.error}`, 502);
+        return errorResponse(corsHeaders, `Email no enviado: ${sent.error}`, 502);
       }
 
-      return jsonResponse({ ok: true });
+      return jsonResponse(corsHeaders, { ok: true });
     } catch (e) {
       console.error('[send-co-owner-invitation] unexpected error:', e);
       const msg = e instanceof Error ? e.message : String(e);
-      return errorResponse(`Internal error: ${msg}`, 500);
+      return errorResponse(corsHeaders, `Internal error: ${msg}`, 500);
     }
   })
 );

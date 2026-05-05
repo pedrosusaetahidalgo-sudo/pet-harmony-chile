@@ -2,20 +2,16 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { checkAiQuota, rateLimitResponse } from '../_shared/rate-limit.ts';
 import { withTelemetry } from '../_shared/telemetry.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-function jsonResponse(data: unknown, status = 200) {
+function jsonResponse(corsHeaders: Record<string, string>, data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
 }
 
-function errorResponse(message: string, status = 500) {
+function errorResponse(corsHeaders: Record<string, string>, message: string, status = 500) {
   return new Response(JSON.stringify({ error: message }), {
     status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -33,6 +29,7 @@ function errorResponse(message: string, status = 500) {
  */
 serve(
   withTelemetry('generate-vet-patient-summary', async (req) => {
+    const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
@@ -46,11 +43,12 @@ serve(
       );
 
       const authHeader = req.headers.get('Authorization');
-      if (!authHeader) return errorResponse('Authorization required', 401);
+      if (!authHeader) return errorResponse(corsHeaders, 'Authorization required', 401);
 
       const authToken = authHeader.replace('Bearer ', '');
       const { data: userData, error: userError } = await supabaseClient.auth.getUser(authToken);
-      if (userError || !userData.user) return errorResponse('User not authenticated', 401);
+      if (userError || !userData.user)
+        return errorResponse(corsHeaders, 'User not authenticated', 401);
 
       // ---------- Rate limit (10 consolidados por hora) ----------
       const quota = await checkAiQuota(userData.user.id, {
@@ -62,7 +60,7 @@ serve(
       // ---------- Input ----------
       const { petId } = await req.json();
       if (!petId || typeof petId !== 'string') {
-        return errorResponse('petId requerido', 400);
+        return errorResponse(corsHeaders, 'petId requerido', 400);
       }
 
       // ---------- Fetch data with admin client ----------
@@ -78,7 +76,7 @@ serve(
         .eq('user_id', userData.user.id)
         .maybeSingle();
 
-      if (!providerRow) return errorResponse('No eres un proveedor registrado', 403);
+      if (!providerRow) return errorResponse(corsHeaders, 'No eres un proveedor registrado', 403);
 
       // Verificar que el vet tiene un pet_vet_link activo con esta mascota
       const { data: vetLink } = await supabaseAdmin
@@ -91,6 +89,7 @@ serve(
 
       if (!vetLink) {
         return errorResponse(
+          corsHeaders,
           'No tienes un vínculo activo con esta mascota. Solicita acceso al dueño.',
           403
         );
@@ -106,7 +105,7 @@ serve(
 
       if (cached && cached.expires_at && new Date(cached.expires_at) > new Date()) {
         console.log(`Cache hit for ${cacheKey}`);
-        return jsonResponse({
+        return jsonResponse(corsHeaders, {
           summary: cached.result,
           cached: true,
           remaining: quota.remaining,
@@ -122,7 +121,7 @@ serve(
         .eq('id', petId)
         .maybeSingle();
 
-      if (!pet) return errorResponse('Mascota no encontrada', 404);
+      if (!pet) return errorResponse(corsHeaders, 'Mascota no encontrada', 404);
 
       // Fetch vet clinical notes (all from this provider for this pet)
       const { data: vetNotes } = await supabaseAdmin
@@ -226,7 +225,7 @@ serve(
       const totalSessions = (vetNotes?.length || 0) + (medRecords?.length || 0);
 
       if (totalSessions === 0) {
-        return jsonResponse({
+        return jsonResponse(corsHeaders, {
           summary: {
             diagnosticos: [],
             tratamientos: [],
@@ -321,11 +320,15 @@ ${ownerRecordsText || 'Sin registros del dueño.'}`;
 
       if (!response.ok) {
         if (response.status === 429) {
-          return errorResponse('Límite de solicitudes IA excedido. Intenta más tarde.', 429);
+          return errorResponse(
+            corsHeaders,
+            'Límite de solicitudes IA excedido. Intenta más tarde.',
+            429
+          );
         }
         const errText = await response.text();
         console.error('Claude API error:', response.status, errText);
-        return errorResponse('Error al generar el consolidado con IA', 500);
+        return errorResponse(corsHeaders, 'Error al generar el consolidado con IA', 500);
       }
 
       const claudeData = await response.json();
@@ -391,14 +394,18 @@ ${ownerRecordsText || 'Sin registros del dueño.'}`;
 
       console.log('Consolidado generado exitosamente');
 
-      return jsonResponse({
+      return jsonResponse(corsHeaders, {
         summary,
         cached: false,
         remaining: quota.remaining,
       });
     } catch (error) {
       console.error('Error in generate-vet-patient-summary:', error);
-      return errorResponse('Error al generar el consolidado. Intenta de nuevo más tarde.', 500);
+      return errorResponse(
+        corsHeaders,
+        'Error al generar el consolidado. Intenta de nuevo más tarde.',
+        500
+      );
     }
   })
 );

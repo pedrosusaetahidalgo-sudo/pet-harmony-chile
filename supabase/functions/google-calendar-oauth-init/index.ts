@@ -15,11 +15,7 @@
 import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
 import { withTelemetry } from '../_shared/telemetry.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.2';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 const SCOPES = [
   'https://www.googleapis.com/auth/calendar.events',
@@ -28,6 +24,7 @@ const SCOPES = [
 
 serve(
   withTelemetry('google-calendar-oauth-init', async (req) => {
+    const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') {
       return new Response('ok', { headers: corsHeaders });
     }

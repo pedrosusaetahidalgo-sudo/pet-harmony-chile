@@ -2,11 +2,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { checkAiQuota, rateLimitResponse } from '../_shared/rate-limit.ts';
 import { withTelemetry } from '../_shared/telemetry.ts';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 /**
  * Sanitiza la transcripcion para prevenir prompt injection.
@@ -27,6 +23,7 @@ function sanitizeTranscript(input: string): string {
 
 serve(
   withTelemetry('process-consultation-transcript', async (req) => {
+    const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }

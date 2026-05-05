@@ -25,11 +25,7 @@ import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.2';
 import { withTelemetry } from '../_shared/telemetry.ts';
 import { canReceive, logAttempt } from '../_shared/notification-prefs.ts';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
-  'Access-Control-Allow-Headers': 'authorization, content-type',
-};
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 const META_GRAPH_VERSION = 'v21.0';
 
@@ -91,6 +87,7 @@ async function sendWhatsAppTemplate(
 
 serve(
   withTelemetry('send-whatsapp-reminder', async (req) => {
+    const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') {
       return new Response('ok', { headers: corsHeaders });
     }

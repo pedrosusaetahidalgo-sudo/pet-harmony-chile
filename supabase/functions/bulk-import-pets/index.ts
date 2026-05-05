@@ -26,24 +26,19 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { withTelemetry } from '../_shared/telemetry.ts';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 const MAX_ROWS = 500;
 const BATCH_SIZE = 50;
 
-function jsonResponse(data: unknown, status = 200) {
+function jsonResponse(corsHeaders: Record<string, string>, data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
 }
 
-function errorResponse(message: string, status = 500) {
+function errorResponse(corsHeaders: Record<string, string>, message: string, status = 500) {
   return new Response(JSON.stringify({ error: message }), {
     status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -85,6 +80,7 @@ interface RawRow {
 
 serve(
   withTelemetry('bulk-import-pets', async (req) => {
+    const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') {
       return new Response('ok', { headers: corsHeaders });
     }
@@ -92,7 +88,7 @@ serve(
     try {
       // Auth
       const authHeader = req.headers.get('Authorization');
-      if (!authHeader) return errorResponse('Authorization required', 401);
+      if (!authHeader) return errorResponse(corsHeaders, 'Authorization required', 401);
       const token = authHeader.replace('Bearer ', '');
 
       const supabase = createClient(
@@ -101,7 +97,8 @@ serve(
       );
 
       const { data: userData, error: userError } = await supabase.auth.getUser(token);
-      if (userError || !userData.user) return errorResponse('User not authenticated', 401);
+      if (userError || !userData.user)
+        return errorResponse(corsHeaders, 'User not authenticated', 401);
       const callerId = userData.user.id;
 
       // Body
@@ -119,11 +116,15 @@ serve(
         callerType === 'shelter' &&
         (!adoption_center_id || typeof adoption_center_id !== 'string')
       ) {
-        return errorResponse('adoption_center_id or service_provider_id required', 400);
+        return errorResponse(
+          corsHeaders,
+          'adoption_center_id or service_provider_id required',
+          400
+        );
       }
-      if (rows.length === 0) return errorResponse('rows array empty', 400);
+      if (rows.length === 0) return errorResponse(corsHeaders, 'rows array empty', 400);
       if (rows.length > MAX_ROWS) {
-        return errorResponse(`max ${MAX_ROWS} rows per import`, 400);
+        return errorResponse(corsHeaders, `max ${MAX_ROWS} rows per import`, 400);
       }
 
       let ownerShelterId: string | null = null;
@@ -139,7 +140,7 @@ serve(
           .maybeSingle();
 
         if (shelterError || !shelter) {
-          return errorResponse('Only shelter owner can bulk import', 403);
+          return errorResponse(corsHeaders, 'Only shelter owner can bulk import', 403);
         }
         ownerShelterId = shelter.id;
 
@@ -152,7 +153,7 @@ serve(
           .gte('created_at', oneDayAgo);
 
         if ((recentImports ?? 0) >= 5) {
-          return errorResponse('Limite: 5 bulk imports por dia. Intenta mañana.', 429);
+          return errorResponse(corsHeaders, 'Limite: 5 bulk imports por dia. Intenta mañana.', 429);
         }
       } else {
         // Modo vet B2B: verificar ownership + plan clinic_starter o pro_max
@@ -164,12 +165,17 @@ serve(
           .maybeSingle();
 
         if (vetErr || !vetProvider) {
-          return errorResponse('Solo el dueño del service_provider puede hacer bulk import', 403);
+          return errorResponse(
+            corsHeaders,
+            'Solo el dueño del service_provider puede hacer bulk import',
+            403
+          );
         }
 
         const PLANS_WITH_BULK = new Set(['provider_clinic_starter', 'provider_pro_max']);
         if (!PLANS_WITH_BULK.has(vetProvider.provider_plan ?? 'provider_free')) {
           return errorResponse(
+            corsHeaders,
             'Bulk import de pacientes esta disponible desde plan Clinica o Pro Max. Actualiza tu plan.',
             403
           );
@@ -185,7 +191,11 @@ serve(
           .gte('created_at', oneDayAgo);
 
         if ((recentVetImports ?? 0) >= 500) {
-          return errorResponse('Limite diario alcanzado (500 pacientes por vet).', 429);
+          return errorResponse(
+            corsHeaders,
+            'Limite diario alcanzado (500 pacientes por vet).',
+            429
+          );
         }
       }
 
@@ -207,6 +217,7 @@ serve(
 
         if (auditError || !auditRow) {
           return errorResponse(
+            corsHeaders,
             'Failed to create audit record: ' + (auditError?.message || ''),
             500
           );
@@ -298,7 +309,7 @@ serve(
           .eq('id', audit.id);
       }
 
-      return jsonResponse({
+      return jsonResponse(corsHeaders, {
         success: true,
         caller_type: callerType,
         audit_id: audit?.id ?? null,
@@ -309,7 +320,7 @@ serve(
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       console.error('[bulk-import-pets] error:', message);
-      return errorResponse('Internal error: ' + message, 500);
+      return errorResponse(corsHeaders, 'Internal error: ' + message, 500);
     }
   })
 );
