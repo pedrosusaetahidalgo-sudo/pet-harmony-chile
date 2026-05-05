@@ -26,6 +26,7 @@ import { Card, CardContent } from '@/components/ui/card';
 
 // Components ligeros: import eager.
 import { QuickActionsBar, type DashboardPeriod } from './dashboard/QuickActionsBar';
+import { RecordConsultationLauncher } from './RecordConsultationLauncher';
 import { AlertsBanner } from './dashboard/AlertsBanner';
 import { InteractiveMetricCard } from './dashboard/InteractiveMetricCard';
 import { ClinicalTab } from './dashboard/ClinicalTab'; // 23L, eager
@@ -69,6 +70,7 @@ const ProviderDashboard = () => {
   const [period, setPeriod] = useState<DashboardPeriod>('current_month');
   const [activeTab, setActiveTab] = useState('clinico');
   const [showNewPatient, setShowNewPatient] = useState(false);
+  const [showRecordLauncher, setShowRecordLauncher] = useState(false);
 
   // Fetch display name
   const { data: profile } = useQuery({
@@ -123,7 +125,13 @@ const ProviderDashboard = () => {
         period={period}
         onPeriodChange={setPeriod}
         onNewPatient={() => setShowNewPatient(true)}
-        onRecordConsultation={() => setActiveTab('clinico')}
+        onRecordConsultation={() => setShowRecordLauncher(true)}
+      />
+
+      <RecordConsultationLauncher
+        open={showRecordLauncher}
+        onOpenChange={setShowRecordLauncher}
+        providerId={stats.providerId ?? null}
       />
 
       {/* ═══ Two-column layout: Metrics+Alerts (left) + Next24h+Actions (right) ═══ */}
