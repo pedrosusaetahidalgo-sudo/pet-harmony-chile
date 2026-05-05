@@ -48,6 +48,39 @@
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- ─────────────────────────────────────────────────────────────────────────
+-- A0. Ampliar CHECK a SUPERSET temporal (incluye 'antiparasitic' + 'flea' +
+--     todos los canonicos nuevos). Necesario antes del UPDATE backfill —
+--     si saltas a este paso al CHECK final sin 'antiparasitic', el ALTER
+--     valida contra filas existentes con type='antiparasitic' y aborta.
+--     Si hacemos UPDATE primero sin permitir 'flea', el UPDATE aborta.
+--     Solucion: superset temporal cubre ambos lados durante la transicion.
+-- ─────────────────────────────────────────────────────────────────────────
+ALTER TABLE public.pet_reminders
+  DROP CONSTRAINT IF EXISTS pet_reminders_type_check;
+
+ALTER TABLE public.pet_reminders
+  ADD CONSTRAINT pet_reminders_type_check
+  CHECK (
+    type IN (
+      'vaccine',
+      'checkup',
+      'deworming',
+      'flea',
+      'medication',
+      'grooming',
+      'weight',
+      'dental',
+      'food',
+      'insurance',
+      'license',
+      'heat_cycle',
+      'custom',
+      'followup',
+      'antiparasitic'  -- ← legacy, se purga del set en B despues del backfill
+    )
+  );
+
+-- ─────────────────────────────────────────────────────────────────────────
 -- A. Backfill de filas con 'antiparasitic' (legacy del hotfix abril 2026)
 --    Heuristica: titulo sugiere uso externo → 'flea'; resto → 'deworming'.
 --    Misma logica que mig 20260521000040 §A.
@@ -71,7 +104,9 @@ SET type = 'deworming'
 WHERE type = 'antiparasitic';
 
 -- ─────────────────────────────────────────────────────────────────────────
--- B. CHECK canonico — 13 tipos del frontend + followup. Drop 'antiparasitic'.
+-- B. CHECK canonico final — 13 tipos del frontend + followup.
+--    Ya no quedan filas con 'antiparasitic' (las migro A.flea/A.deworming
+--    arriba). El ALTER ahora es seguro contra las filas existentes.
 -- ─────────────────────────────────────────────────────────────────────────
 ALTER TABLE public.pet_reminders
   DROP CONSTRAINT IF EXISTS pet_reminders_type_check;
