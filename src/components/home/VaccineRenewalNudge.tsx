@@ -51,7 +51,7 @@ export function VaccineRenewalNudge({ petId, petName }: VaccineRenewalNudgeProps
         .select('id, pet_id, title, due_date')
         .eq('pet_id', petId)
         .eq('type', 'vaccine')
-        .eq('completed', false)
+        .eq('is_completed', false)
         .gte('due_date', today)
         .lte('due_date', in30)
         .order('due_date', { ascending: true })
