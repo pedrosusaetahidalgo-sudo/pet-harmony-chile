@@ -11,6 +11,9 @@ assets/captions/
 !assets/captions/.gitkeep
 assets/custom/
 !assets/custom/.gitkeep
+assets/launch-raw/
+assets/launch-voice/
+assets/brand-v2/
 whisper.cpp/
 .env
 .env.local

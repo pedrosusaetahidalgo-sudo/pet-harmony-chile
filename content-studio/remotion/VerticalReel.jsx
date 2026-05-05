@@ -23,7 +23,8 @@ import { BrandDropParticles } from './effects/BrandDropParticles.jsx';
 import { ChyronLabel } from './effects/ChyronLabel.jsx';
 
 // Duracion del outro branded que se agrega despues de las scenes del JSON.
-export const OUTRO_SECONDS = 2.4;
+// 3.0s para dar aire al outro v3 con micro-CTAs staggered (logo→url→line1→line2→sig).
+export const OUTRO_SECONDS = 3.0;
 
 // Intenta cargar SFX opcionales. Si no existen, silencioso (no crashea).
 function tryStaticFile(path) {
