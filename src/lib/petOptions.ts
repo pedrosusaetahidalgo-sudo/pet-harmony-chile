@@ -38,6 +38,7 @@ export const FOOD_BRANDS = [
   { value: 'champion_cat', label: 'Champion cat' },
   { value: 'champion_dog', label: 'Champion dog' },
   { value: 'master_dog', label: 'Master dog' },
+  { value: 'bravery', label: 'Bravery' },
   { value: 'pedigree', label: 'Pedigree' },
   { value: 'whiskas', label: 'Whiskas' },
   { value: 'felix', label: 'Felix' },

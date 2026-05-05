@@ -165,7 +165,10 @@ const PetClinicalRecord = () => {
   const queryClient = useQueryClient();
   const { addReminder } = useReminders();
   const [showReminderForm, setShowReminderForm] = useState(false);
-  const [showAssistant, setShowAssistant] = useState(false);
+  // Si la URL trae ?ai=1, abrir el chat IA al montar la pagina (entry-point
+  // desde /home — feedback Antonia 2026-05-05: "nunca me acuerdo que esta
+  // dentro de ficha", agregamos shortcut visible en home).
+  const [showAssistant, setShowAssistant] = useState(searchParams.get('ai') === '1');
   const [activeAITool, setActiveAITool] = useState<
     'none' | 'triage' | 'nutrition' | 'wound' | 'prep'
   >('none');

@@ -17,10 +17,10 @@
 
 export const HERO = {
   badge: 'Hecho en Chile · Lo esencial gratis para siempre',
-  h1Lead: 'La salud de tu peludo,',
-  h1Highlight: 'en un solo lugar.',
-  h1Tail: 'Empieza gratis.',
-  sub: 'Ficha clínica que cualquier vet puede leer. Veterinarios verificados cerca de ti. Recordatorios. Y una comunidad pet lover que empuja parejo.',
+  h1Lead: 'La ficha médica gratuita de tu mascota,',
+  h1Highlight: 'siempre a mano.',
+  h1Tail: 'Tu mascota tiene una historia. Paw Friend la cuida contigo.',
+  sub: 'Para que nunca más dependas de una libreta, un WhatsApp perdido o la memoria del veterinario. Historial médico, vacunas, alertas, veterinarios, adopción y comunidad en una sola herramienta chilena.',
   ctaPrimary: 'Crear cuenta gratis',
   ctaPrimaryAuth: 'Ir al inicio',
   ctaSecondary: 'Ver demo (1 min)',

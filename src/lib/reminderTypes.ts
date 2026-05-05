@@ -22,6 +22,7 @@ export const REMINDER_TYPES = [
   { value: 'food', label: 'Comprar alimento', defaultRecurrence: 'monthly' },
   { value: 'insurance', label: 'Renovar seguro', defaultRecurrence: 'yearly' },
   { value: 'license', label: 'Renovar registro municipal', defaultRecurrence: 'yearly' },
+  { value: 'heat_cycle', label: 'Celo / ciclo reproductivo', defaultRecurrence: 'biannual' },
   { value: 'custom', label: 'Otro (personalizado)', defaultRecurrence: null },
 ] as const;
 

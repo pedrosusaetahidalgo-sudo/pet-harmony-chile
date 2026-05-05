@@ -27,8 +27,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Syringe, Bug, Stethoscope, Scale, Sparkles, Pencil, ArrowLeft } from 'lucide-react';
-import { addDays, addMonths, addYears, format } from 'date-fns';
+import { Syringe, Bug, Stethoscope, Scale, Sparkles, Pencil, ArrowLeft, Heart } from 'lucide-react';
+import { addDays, addMonths, addYears, format, startOfWeek, addWeeks } from 'date-fns';
 import { type ReminderType } from '@/lib/reminderTypes';
 
 interface Pet {
@@ -109,6 +109,16 @@ const PRESETS: PresetMeta[] = [
     defaultDaysAhead: 30,
   },
   {
+    key: 'heat_cycle',
+    label: 'Celo',
+    Icon: Heart,
+    iconBg: 'bg-pink-50',
+    iconColor: 'text-pink-600',
+    reminderType: 'heat_cycle',
+    defaultTitle: 'Próximo celo',
+    defaultDaysAhead: 180,
+  },
+  {
     key: 'custom',
     label: 'Otro',
     Icon: Pencil,
@@ -117,6 +127,29 @@ const PRESETS: PresetMeta[] = [
     reminderType: 'custom',
     defaultTitle: '',
     defaultDaysAhead: 7,
+  },
+];
+
+// Shortcuts de fecha aproximada: "esta semana", "próxima semana", "en 2
+// semanas". Resuelven el caso de uso "no sé el día exacto pero sí la semana"
+// (feedback Antonia 2026-05-05). Mapean a un día concreto (sábado de la semana
+// objetivo) para no requerir migración de schema con rangos.
+type DateShortcut = { key: string; label: string; getDate: () => Date };
+const DATE_SHORTCUTS: DateShortcut[] = [
+  {
+    key: 'this_week',
+    label: 'Esta semana',
+    getDate: () => addDays(startOfWeek(new Date(), { weekStartsOn: 1 }), 5),
+  },
+  {
+    key: 'next_week',
+    label: 'Próxima semana',
+    getDate: () => addDays(startOfWeek(addWeeks(new Date(), 1), { weekStartsOn: 1 }), 5),
+  },
+  {
+    key: 'in_2_weeks',
+    label: 'En 2 semanas',
+    getDate: () => addDays(startOfWeek(addWeeks(new Date(), 2), { weekStartsOn: 1 }), 5),
   },
 ];
 
@@ -249,9 +282,21 @@ export function AddReminderDialog({
               </div>
             )}
 
-            {/* Fecha (siempre) */}
+            {/* Fecha (siempre) — con shortcuts de rango aproximado */}
             <div className="space-y-2">
               <Label>¿Cuándo?</Label>
+              <div className="flex flex-wrap gap-2">
+                {DATE_SHORTCUTS.map((sc) => (
+                  <button
+                    key={sc.key}
+                    type="button"
+                    onClick={() => setDueDate(format(sc.getDate(), 'yyyy-MM-dd'))}
+                    className="px-3 py-1.5 rounded-full text-xs font-medium border border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors"
+                  >
+                    {sc.label}
+                  </button>
+                ))}
+              </div>
               <Input
                 type="date"
                 value={dueDate}

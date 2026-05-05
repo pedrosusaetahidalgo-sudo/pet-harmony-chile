@@ -251,23 +251,24 @@ export default function Donaciones() {
           </Button>
         </div>
 
-        {/* Hero emocional */}
+        {/* Hero emocional — feedback Antonia 2026-05-05 */}
         <section className="text-center space-y-3">
           <Badge variant="outline" className="bg-pink-50 border-pink-200 text-pink-700 text-[11px]">
             <Sparkles className="h-3 w-3 mr-1" />
             Home-made en Chile
           </Badge>
           <h1 className="font-display font-semibold text-4xl md:text-5xl leading-[1.08] tracking-tight">
-            Si los aportes alcanzan,
+            La salud básica de tu mascota
             <br />
             <span className="bg-brand-gold-gradient bg-clip-text text-transparent">
-              Paw Friend sigue gratis.
+              no debería depender de pagar.
             </span>
           </h1>
           <p className="text-muted-foreground max-w-xl mx-auto text-sm md:text-base">
-            Somos una sola persona detras del proyecto, en Chile, cuidando cada detalle por amor a
-            los peludos. No vendemos tus datos ni llenamos la app de publicidad. Si te sirve, puedes
-            darle una mano voluntaria.
+            Paw Friend es gratis porque creemos que la salud básica de una mascota no debería
+            depender de pagar una suscripción. Si esta herramienta te sirve, puedes aportar desde
+            $1.000 para mantenerla viva y ayudar a que refugios y tutores responsables también la
+            usen sin costo.
           </p>
         </section>
 
@@ -547,7 +548,7 @@ export default function Donaciones() {
               </div>
             )}
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
               {PRESETS.map((p) => {
                 const active = !custom && selected === p.amount;
                 return (
@@ -688,6 +689,46 @@ export default function Donaciones() {
                 convence, te devolvemos sin preguntas (escribe a {CONTACT_EMAIL}).
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Miembro fundador — feedback Antonia 2026-05-05 (idea Greenpeace) */}
+        <Card className="border-2 border-amber-300 bg-gradient-to-br from-amber-50 via-yellow-50 to-pink-50">
+          <CardContent className="p-5 space-y-3">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-amber-600" />
+              <h2 className="font-semibold">Insignia de miembro fundador</h2>
+              <Badge className="ml-auto bg-gradient-to-r from-amber-500 to-yellow-500 text-white border-0 text-[10px]">
+                Antes del 2026-12-31
+              </Badge>
+            </div>
+            <p className="text-sm text-foreground/80">
+              Si aportas mientras Paw Friend está empezando, te sumas como <b>miembro fundador</b>:
+              aparece una insignia permanente en tu perfil, recibes novedades del proyecto al mail
+              (estilo newsletter, sin spam) y entras al canal directo para sugerir mejoras y
+              co-crear espacios. Una vez al año queremos hacer una <b>feria peluda</b> y la entrada
+              para miembros fundadores será gratis.
+            </p>
+            <p className="text-[11px] text-muted-foreground italic">
+              Esto es independiente del monto. Aportar $1.000 te suma igual que aportar $30.000 — lo
+              que cuenta es estar acá desde el inicio.
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Privacidad y datos — feedback Antonia 2026-05-05 */}
+        <Card className="border-purple-200 bg-gradient-to-br from-purple-50/60 to-fuchsia-50/40">
+          <CardContent className="p-5 space-y-2">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-purple-600" />
+              <h2 className="font-semibold">La ficha de tu mascota es tuya</h2>
+            </div>
+            <p className="text-sm text-foreground/80">
+              Paw Friend no vende ni comparte fichas individuales identificables. Tú decides cuándo
+              generar un PDF, compartir un link o mostrar información de tu mascota. Los reportes
+              para empresas (pharma, seguros, retail) solo pueden ser{' '}
+              <b>agregados, anónimos y con consentimiento</b>.
+            </p>
           </CardContent>
         </Card>
 

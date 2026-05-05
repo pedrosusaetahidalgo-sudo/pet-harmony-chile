@@ -74,12 +74,20 @@ export interface DonationPreset {
  * Presets de donacion en /donaciones. Para cambiar montos/copy sin
  * redeploy, migrar a tabla `app_config` en Supabase o definir env var
  * VITE_DONATION_PRESETS_JSON (parseable como array JSON).
+ *
+ * Tramos rediseñados en feedback Antonia 2026-05-05:
+ *   $1.000  → mantener app gratis
+ *   $3.990  → Paw Member (membresía opcional con beneficios)
+ *   $9.990  → Manada (familia multimascota)
+ *   $15.000 → fichas para refugios
+ *   $30.000 → sponsor mensual con match a refugio o mascota específica
  */
 export const DONATION_PRESETS: readonly DonationPreset[] = [
-  { amount: 1000, label: '$1.000', sub: 'Un cafecito 🐾' },
-  { amount: 3000, label: '$3.000', sub: 'Paw Amigo · sticker + boletín' },
-  { amount: 5000, label: '$5.000', sub: 'El favorito', featured: true },
-  { amount: 10000, label: '$10.000', sub: 'Salvador peludo' },
+  { amount: 1000, label: '$1.000', sub: 'Ayudas a mantener Paw Friend gratis' },
+  { amount: 3990, label: '$3.990', sub: 'Te haces Paw Member', featured: true },
+  { amount: 9990, label: '$9.990', sub: 'Apoyas a una manada / familia multimascota' },
+  { amount: 15000, label: '$15.000', sub: 'Ayudas a financiar fichas para refugios' },
+  { amount: 30000, label: '$30.000', sub: 'Sponsor mensual de salud animal' },
 ];
 
 export const DONATION_MIN_CLP = readNumberEnv('VITE_DONATION_MIN_CLP', 500);

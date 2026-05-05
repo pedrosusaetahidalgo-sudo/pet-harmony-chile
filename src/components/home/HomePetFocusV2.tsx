@@ -25,7 +25,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PawPrint, Plus, Camera, Weight, Stethoscope, ChevronRight } from '@/lib/icons';
+import { PawPrint, Plus, Camera, Weight, Stethoscope, ChevronRight, Sparkles } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { format, differenceInDays, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -307,6 +307,32 @@ export function HomePetFocusV2() {
           Hoy: weight loss 10%+ en 30d + vaccine_overdue. El trigger/RPC DB
           las crea sola; el banner las muestra. Gateado por CASCADE_WEIGHT_ALERTS. */}
       {selectedPet && <PetHealthAlertsBanner petId={selectedPet.id} />}
+
+      {/* Acceso rapido a Paw IA — feedback Antonia 2026-05-05:
+          "nunca me acuerdo que esta dentro de ficha". Navega a la ficha con
+          ?ai=1 para abrir el chat asistente al montar. */}
+      {selectedPet && (
+        <button
+          type="button"
+          onClick={() => navigate(`${LINKS.petClinical(selectedPet.id)}?ai=1`)}
+          className="w-full text-left rounded-xl border border-purple-200 bg-gradient-to-r from-purple-50 via-white to-pink-50 p-3 hover:shadow-md transition-shadow group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shrink-0">
+              <Sparkles className="h-5 w-5 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold leading-tight">
+                Pregúntale a Paw IA sobre {selectedPet.name}
+              </p>
+              <p className="text-xs text-muted-foreground leading-tight">
+                Consultas rápidas con tu ficha y el directorio de vets.
+              </p>
+            </div>
+            <ChevronRight className="h-4 w-4 text-purple-600 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+          </div>
+        </button>
+      )}
 
       {/* §14.bis.6 owner-side: progreso de la mascota hacia ficha completa.
           Compact en home (1 linea con progress); full en tab Identidad. */}
