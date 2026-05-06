@@ -21,10 +21,14 @@
 
 import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
 import { withTelemetry } from '../_shared/telemetry.ts';
+import { requireCronAuth } from '../_shared/cron-auth.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.2';
 
 serve(
-  withTelemetry('reminder-cron', async (_req) => {
+  withTelemetry('reminder-cron', async (req) => {
+    const authError = requireCronAuth(req);
+    if (authError) return authError;
+
     try {
       const supabase = createClient(
         Deno.env.get('SUPABASE_URL')!,

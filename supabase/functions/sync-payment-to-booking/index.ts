@@ -27,6 +27,7 @@ import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.2';
 import { getCorsHeaders, handleCorsOptions } from '../_shared/cors.ts';
 import { withTelemetry } from '../_shared/telemetry.ts';
+import { requireCronAuth } from '../_shared/cron-auth.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -60,6 +61,14 @@ serve(
     if (req.method !== 'POST') {
       return new Response('Method not allowed', { status: 405, headers: cors });
     }
+
+    // SEC pre-beta 2026-05-05: la fn UPDATE-aba payment_status sin auth.
+    // Vector: atacante con booking_id adivinado podia marcar reserva como
+    // completed sin pagar, o refunded para sabotear. Ahora exige
+    // X-Cron-Secret o Bearer SUPABASE_SERVICE_ROLE_KEY (callers internos:
+    // flow-webhook + admin panel).
+    const authError = requireCronAuth(req);
+    if (authError) return authError;
 
     let payload: Payload;
     try {

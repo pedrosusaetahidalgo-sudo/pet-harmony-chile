@@ -6,6 +6,7 @@
 // Schedule: every 30 min
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { withTelemetry } from '../_shared/telemetry.ts';
+import { requireCronAuth } from '../_shared/cron-auth.ts';
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -40,7 +41,10 @@ async function logAttempt(
 }
 
 Deno.serve(
-  withTelemetry('booking-reminders-cron', async (_req: Request) => {
+  withTelemetry('booking-reminders-cron', async (req: Request) => {
+    const authError = requireCronAuth(req);
+    if (authError) return authError;
+
     const sb = createClient(supabaseUrl, serviceKey);
 
     const now = new Date();

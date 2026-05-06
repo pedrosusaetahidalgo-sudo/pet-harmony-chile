@@ -12,6 +12,7 @@
 import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.2';
 import { withTelemetry } from '../_shared/telemetry.ts';
+import { requireCronAuth } from '../_shared/cron-auth.ts';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import {
   blockquote,
@@ -113,6 +114,11 @@ serve(
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
+
+    // SEC: invocada desde flow-webhook (service_role). Sin auth, atacante
+    // puede gatillar emails Resend con donation_id arbitrarios.
+    const authError = requireCronAuth(req);
+    if (authError) return authError;
 
     const json = (data: unknown, status = 200) =>
       new Response(JSON.stringify(data), {

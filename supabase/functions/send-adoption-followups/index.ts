@@ -19,6 +19,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { withTelemetry } from '../_shared/telemetry.ts';
+import { requireCronAuth } from '../_shared/cron-auth.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -36,7 +37,10 @@ interface FollowupRow {
 }
 
 serve(
-  withTelemetry('send-adoption-followups', async () => {
+  withTelemetry('send-adoption-followups', async (req) => {
+    const authError = requireCronAuth(req);
+    if (authError) return authError;
+
     const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
       auth: { persistSession: false },
     });

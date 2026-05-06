@@ -20,6 +20,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { withTelemetry } from '../_shared/telemetry.ts';
+import { requireCronAuth } from '../_shared/cron-auth.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -160,6 +161,9 @@ serve(
     if (req.method === 'OPTIONS') {
       return new Response('ok', { headers: corsHeaders });
     }
+
+    const authError = requireCronAuth(req);
+    if (authError) return authError;
 
     try {
       const supabase = createClient(

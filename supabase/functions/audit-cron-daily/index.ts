@@ -27,6 +27,7 @@
 import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.2';
 import { withTelemetry } from '../_shared/telemetry.ts';
+import { requireCronAuth } from '../_shared/cron-auth.ts';
 import { getCorsHeaders } from '../_shared/cors.ts';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -214,6 +215,9 @@ serve(
     if (req.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: corsHeaders });
     }
+
+    const authError = requireCronAuth(req);
+    if (authError) return authError;
 
     try {
       const sb = createClient(

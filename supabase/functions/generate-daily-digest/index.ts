@@ -21,6 +21,7 @@
 import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.2';
 import { withTelemetry } from '../_shared/telemetry.ts';
+import { requireCronAuth } from '../_shared/cron-auth.ts';
 import { getCorsHeaders } from '../_shared/cors.ts';
 
 interface Reminder {
@@ -51,17 +52,13 @@ serve(
       return new Response('ok', { headers: corsHeaders });
     }
 
-    try {
-      // Cron secret check (opcional — si no esta configurado, no falla)
-      const cronSecret = Deno.env.get('CRON_SECRET');
-      const headerSecret = req.headers.get('x-cron-secret');
-      if (cronSecret && headerSecret !== cronSecret) {
-        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
+    // SEC: cron-only. Antes el check CRON_SECRET era opcional ('si no esta
+    // configurado, no falla') → vector real de spam. Ahora exigido via
+    // requireCronAuth (PAWFRIEND_CRON_SECRET o Bearer SERVICE_ROLE).
+    const authError = requireCronAuth(req);
+    if (authError) return authError;
 
+    try {
       const supabase = createClient(
         Deno.env.get('SUPABASE_URL')!,
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
